@@ -21,7 +21,6 @@ import {
   MessageCircle,
   X,
   AlertCircle,
-  KeyRound,
   UserCheck
 } from 'lucide-react';
 
@@ -77,12 +76,6 @@ export default function LoginPage() {
     }
   };
 
-  const fillQuickAccount = (quickEmail: string, quickPass: string) => {
-    setEmail(quickEmail);
-    setPassword(quickPass);
-    setErrorMessage(null);
-  };
-
   const openWhatsAppToAdmin = () => {
     const adminPhone = '6281234567890';
     const msg = encodeURIComponent(
@@ -92,81 +85,99 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-100/80 via-peach-50/50 to-sakura-50/60 flex flex-col justify-center items-center p-3.5 sm:p-6 font-body text-darkcocoa selection:bg-peach-100 selection:text-peach-500">
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8 items-center">
-        {/* Left Side: Branding & Feature Highlights (Desktop) */}
-        <div className="md:col-span-6 space-y-4 sm:space-y-6 text-center md:text-left">
+    <div className="min-h-screen bg-gradient-to-br from-cream-100/90 via-peach-50/40 to-sakura-50/50 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-10 font-body text-darkcocoa selection:bg-peach-100 selection:text-peach-500">
+      <div className="w-full max-w-5xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-auto">
+        {/* Left Side: Branding & Feature Highlights */}
+        <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
           {/* Logo & Mimi Mascot */}
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-sm border border-cream-200">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
+          <div className="inline-flex items-center gap-3.5 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-cream-200">
+            <div className="w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0">
               <Image
                 src="/app-logo.jpg"
                 alt="Logo KosanKu"
-                width={40}
-                height={40}
+                width={44}
+                height={44}
                 className="w-full h-full object-cover"
                 priority
               />
             </div>
             <div className="text-left">
-              <h1 className="font-heading font-extrabold text-lg sm:text-xl text-peach-500 tracking-tight leading-none">
+              <h1 className="font-heading font-black text-xl text-peach-500 tracking-tight leading-none">
                 KosanKu
               </h1>
-              <p className="text-[10px] sm:text-[11px] text-softgray font-medium flex items-center gap-1">
+              <p className="text-xs text-softgray font-medium flex items-center gap-1 mt-1">
                 <span>🐱</span>
                 <span>Kelola Kos Jadi Menyenangkan</span>
               </p>
             </div>
           </div>
 
-          <div className="space-y-1.5 sm:space-y-2">
-            <h2 className="text-xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight leading-tight">
-              Aplikasi Manajemen Kos Paling Imut &amp; Praktis ✨
+          <div className="space-y-3">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-heading font-extrabold text-darkcocoa tracking-tight leading-[1.2]">
+              Aplikasi Manajemen Kos <span className="text-peach-500">Paling Imut &amp; Praktis</span> ✨
             </h2>
-            <p className="text-xs sm:text-sm text-softgray leading-relaxed max-w-md mx-auto md:mx-0">
-              Tinggalkan pencatatan buku manual. Pantau okupansi kamar, tagihan sewa bulanan, dan arsip dokumen KTP dalam satu dashboard terpadu.
+            <p className="text-xs sm:text-sm lg:text-base text-softgray leading-relaxed max-w-xl mx-auto lg:mx-0">
+              Tinggalkan pencatatan buku manual yang melelahkan. Pantau okupansi kamar, tagihan sewa bulanan, dan arsip dokumen KTP dalam satu dashboard terpadu yang praktis.
             </p>
           </div>
 
-          {/* Highlights Grid (Visible on tablet & desktop) */}
-          <div className="hidden sm:grid grid-cols-2 gap-2.5 sm:gap-3 pt-1 text-left">
-            <div className="p-3 bg-white/90 rounded-2xl border border-cream-200 shadow-sm space-y-1">
-              <div className="w-7 h-7 rounded-xl bg-peach-100 text-peach-500 flex items-center justify-center">
+          {/* Highlights Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1 text-left">
+            <div className="p-4 bg-white/95 rounded-2xl border border-cream-200/90 shadow-sm hover:shadow-cute transition-all space-y-1.5">
+              <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-500 flex items-center justify-center">
                 <DoorOpen className="w-4 h-4" />
               </div>
-              <h4 className="font-heading font-bold text-xs text-darkcocoa">Denah Visual</h4>
-              <p className="text-[10px] text-softgray leading-tight">Pantau kamar terisi &amp; kosong per lantai.</p>
+              <h4 className="font-heading font-bold text-sm text-darkcocoa">Denah Visual Kamar</h4>
+              <p className="text-xs text-softgray leading-relaxed">Pantau kamar terisi &amp; kosong per lantai secara real-time.</p>
             </div>
 
-            <div className="p-3 bg-white/90 rounded-2xl border border-cream-200 shadow-sm space-y-1">
-              <div className="w-7 h-7 rounded-xl bg-sakura-100 text-sakura-500 flex items-center justify-center">
+            <div className="p-4 bg-white/95 rounded-2xl border border-cream-200/90 shadow-sm hover:shadow-cute transition-all space-y-1.5">
+              <div className="w-8 h-8 rounded-xl bg-sakura-100 text-sakura-500 flex items-center justify-center">
                 <Receipt className="w-4 h-4" />
               </div>
-              <h4 className="font-heading font-bold text-xs text-darkcocoa">Tagihan &amp; WA</h4>
-              <p className="text-[10px] text-softgray leading-tight">Kirim pengingat sewa instan ke WhatsApp.</p>
+              <h4 className="font-heading font-bold text-sm text-darkcocoa">Tagihan &amp; WhatsApp</h4>
+              <p className="text-xs text-softgray leading-relaxed">Kirim pengingat jatuh tempo sewa instan langsung ke WhatsApp.</p>
             </div>
 
-            <div className="p-3 bg-white/90 rounded-2xl border border-cream-200 shadow-sm space-y-1">
-              <div className="w-7 h-7 rounded-xl bg-matcha-100 text-matcha-600 flex items-center justify-center">
+            <div className="p-4 bg-white/95 rounded-2xl border border-cream-200/90 shadow-sm hover:shadow-cute transition-all space-y-1.5">
+              <div className="w-8 h-8 rounded-xl bg-matcha-100 text-matcha-600 flex items-center justify-center">
                 <FileCheck2 className="w-4 h-4" />
               </div>
-              <h4 className="font-heading font-bold text-xs text-darkcocoa">Arsip Dokumen</h4>
-              <p className="text-[10px] text-softgray leading-tight">Unggah pas foto &amp; KTP ber-watermark.</p>
+              <h4 className="font-heading font-bold text-sm text-darkcocoa">Arsip Dokumen KTP</h4>
+              <p className="text-xs text-softgray leading-relaxed">Unggah pas foto &amp; dokumen identitas ber-watermark otomatis.</p>
             </div>
 
-            <div className="p-3 bg-white/90 rounded-2xl border border-cream-200 shadow-sm space-y-1">
-              <div className="w-7 h-7 rounded-xl bg-lavender-100 text-lavender-500 flex items-center justify-center">
+            <div className="p-4 bg-white/95 rounded-2xl border border-cream-200/90 shadow-sm hover:shadow-cute transition-all space-y-1.5">
+              <div className="w-8 h-8 rounded-xl bg-lavender-100 text-lavender-500 flex items-center justify-center">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <h4 className="font-heading font-bold text-xs text-darkcocoa">Akses Terisolasi</h4>
-              <p className="text-[10px] text-softgray leading-tight">Keamanan ketat Super Admin &amp; Tenant.</p>
+              <h4 className="font-heading font-bold text-sm text-darkcocoa">Akses Terisolasi SaaS</h4>
+              <p className="text-xs text-softgray leading-relaxed">Keamanan data terisolasi mandiri untuk setiap pemilik kos.</p>
             </div>
+          </div>
+
+          {/* Social Proof & Trust */}
+          <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-semibold text-softgray">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-amber-500">⭐</span>
+              <strong className="text-darkcocoa">4.9/5</strong> Rating Pemilik Kos
+            </span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span>🐱</span>
+              <strong className="text-darkcocoa">Mimi</strong> Maskot Resmi
+            </span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span>🔒</span>
+              <strong className="text-darkcocoa">100%</strong> Data Terproteksi
+            </span>
           </div>
         </div>
 
         {/* Right Side: Auth Card (Demo + Login) */}
-        <div className="md:col-span-6 w-full">
-          <div className="bg-white rounded-3xl shadow-xl border border-cream-200 p-4 sm:p-7 space-y-4 sm:space-y-5 relative overflow-hidden">
+        <div className="lg:col-span-5 w-full">
+          <div className="bg-white rounded-3xl shadow-xl border border-cream-200 p-6 sm:p-8 space-y-5 relative overflow-hidden">
             {/* Top Badge: 1-Click Interactive Demo */}
             <div className="p-4 rounded-2xl bg-gradient-to-r from-peach-100/90 to-sakura-100/90 border border-peach-200/80 shadow-sm space-y-2.5">
               <div className="flex items-center gap-2">
@@ -181,7 +192,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={handleDemoLogin}
-                className="w-full py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-bold text-xs shadow-cute flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all"
+                className="w-full py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-bold text-xs sm:text-sm shadow-cute flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all"
               >
                 <Gamepad2 className="w-4 h-4" />
                 <span>Masuk Sebagai Akun Demo (1-Klik)</span>
@@ -198,7 +209,7 @@ export default function LoginPage() {
             </div>
 
             {/* Login Form */}
-            <form onSubmit={handleUserLogin} className="space-y-3.5 text-xs">
+            <form onSubmit={handleUserLogin} className="space-y-4 text-xs">
               {errorMessage && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs font-semibold flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
@@ -207,11 +218,11 @@ export default function LoginPage() {
               )}
 
               <div>
-                <label className="font-bold text-darkcocoa block mb-1">
+                <label className="font-bold text-darkcocoa block mb-1.5">
                   Alamat Email Terdaftar
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-softgray absolute left-3 top-3" />
+                  <Mail className="w-4 h-4 text-softgray absolute left-3.5 top-3.5" />
                   <input
                     type="email"
                     required
@@ -221,17 +232,17 @@ export default function LoginPage() {
                       setEmail(e.target.value);
                       setErrorMessage(null);
                     }}
-                    className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-9 pr-3 py-2.5 text-xs text-darkcocoa focus:outline-none focus:border-peach-400"
+                    className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-bold text-darkcocoa block mb-1">
+                <label className="font-bold text-darkcocoa block mb-1.5">
                   Kata Sandi
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-softgray absolute left-3 top-3" />
+                  <Lock className="w-4 h-4 text-softgray absolute left-3.5 top-3.5" />
                   <input
                     type="password"
                     required
@@ -241,65 +252,22 @@ export default function LoginPage() {
                       setPassword(e.target.value);
                       setErrorMessage(null);
                     }}
-                    className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-9 pr-3 py-2.5 text-xs text-darkcocoa focus:outline-none focus:border-peach-400"
+                    className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white transition-colors"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all active:scale-95 mt-1"
+                className="w-full py-3 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
               >
                 <span>Masuk ke Akun Saya</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Quick Test Accounts Accordion Card */}
-            <div className="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-2">
-              <p className="text-[11px] font-bold text-darkcocoa flex items-center gap-1.5">
-                <KeyRound className="w-3.5 h-3.5 text-peach-500" />
-                <span>Akun Uji Coba Cepat (Klik untuk Otomatis Mengisi):</span>
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
-                {/* Super Admin */}
-                <button
-                  type="button"
-                  onClick={() => fillQuickAccount('admin@kosanku.id', 'admin123')}
-                  className="p-2 rounded-xl bg-white border border-cream-200 hover:border-peach-300 text-left transition-colors group"
-                >
-                  <p className="font-bold text-[10px] text-peach-600 group-hover:underline">👑 Super Admin</p>
-                  <p className="text-[9px] text-softgray font-mono truncate">admin@kosanku.id</p>
-                  <p className="text-[9px] text-darkcocoa font-mono">admin123</p>
-                </button>
-
-                {/* Tenant Aktif */}
-                <button
-                  type="button"
-                  onClick={() => fillQuickAccount('hendra.jaksel@yahoo.com', 'password123')}
-                  className="p-2 rounded-xl bg-white border border-cream-200 hover:border-matcha-300 text-left transition-colors group"
-                >
-                  <p className="font-bold text-[10px] text-matcha-600 group-hover:underline">✅ Tenant Aktif</p>
-                  <p className="text-[9px] text-softgray font-mono truncate">hendra.jaksel...</p>
-                  <p className="text-[9px] text-darkcocoa font-mono">password123</p>
-                </button>
-
-                {/* Tenant Pending Approval */}
-                <button
-                  type="button"
-                  onClick={() => fillQuickAccount('ratna.dago@gmail.com', 'password123')}
-                  className="p-2 rounded-xl bg-white border border-cream-200 hover:border-amber-300 text-left transition-colors group"
-                >
-                  <p className="font-bold text-[10px] text-amber-600 group-hover:underline">⏳ Menunggu Bukti</p>
-                  <p className="text-[9px] text-softgray font-mono truncate">ratna.dago...</p>
-                  <p className="text-[9px] text-darkcocoa font-mono">password123</p>
-                </button>
-              </div>
-            </div>
-
             {/* Footer: Register Trigger */}
-            <div className="pt-2 border-t border-cream-100 text-center space-y-2">
+            <div className="pt-3 border-t border-cream-100 text-center space-y-2.5">
               <p className="text-xs text-softgray">
                 Belum punya akun KosanKu?{' '}
                 <button
@@ -311,7 +279,7 @@ export default function LoginPage() {
                 </button>
               </p>
 
-              <div className="pt-1.5 border-t border-cream-100/70">
+              <div className="pt-2 border-t border-cream-100/70">
                 <Link
                   href="/admin"
                   className="inline-flex items-center gap-1.5 text-[11px] text-softgray hover:text-darkcocoa hover:underline font-semibold transition-colors"
