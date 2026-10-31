@@ -1,0 +1,12 @@
+{
+  "name": "kosanku-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KosanKu SaaS Workspace",
+  "scripts": {
+    "dev": "npm --prefix nextapp run dev",
+    "build": "npm --prefix nextapp run build",
+    "start": "npm --prefix nextapp run start",
+    "lint": "npm --prefix nextapp run lint"
+  }
+}
