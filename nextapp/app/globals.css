@@ -22,14 +22,24 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ==========================================================================
    PRINT STYLESHEET (Official Invoices & Receipts)
-   Clean paper output, hides backdrops, sidebars, headers, and modal action buttons
+   Clean paper output, optimized for both Desktop and Mobile Phone (HP) browsers
    ========================================================================== */
 @media print {
+  *, *::before, *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
   html, body {
-    background: #ffffff !important;
-    color: #1a1a1a !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    overflow: visible !important;
+    position: static !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -39,27 +49,51 @@ h1, h2, h3, h4, h5, h6 {
     visibility: hidden;
   }
 
+  /* Reset all modal overlays and backdrops completely during print (Fix for HP / Mobile) */
+  .print-modal-container,
+  .fixed,
+  .backdrop-blur-sm {
+    position: static !important;
+    display: block !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: auto !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+  }
+
   /* Make the printable invoice container and all its children visible */
   .printable-invoice,
   .printable-invoice * {
-    visibility: visible;
+    visibility: visible !important;
   }
 
-  /* Reset layout of printable invoice to full page */
+  /* Reset layout of printable invoice to a clean paper card */
   .printable-invoice {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    position: static !important;
+    display: block !important;
     width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 24px 32px !important;
+    max-width: 640px !important;
+    margin: 0 auto !important;
+    padding: 20px 24px !important;
     box-shadow: none !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 16px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 12px !important;
     background: #ffffff !important;
     overflow: visible !important;
     transform: none !important;
+    -webkit-transform: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   /* Elements to explicitly hide inside or outside the invoice */
@@ -67,13 +101,18 @@ h1, h2, h3, h4, h5, h6 {
   .print-hide *,
   header,
   nav,
-  aside {
+  aside,
+  footer,
+  button {
     display: none !important;
     visibility: hidden !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   @page {
     size: auto;
-    margin: 10mm 15mm;
+    margin: 10mm 12mm;
   }
 }

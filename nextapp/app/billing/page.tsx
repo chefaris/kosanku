@@ -987,12 +987,12 @@ export default function BillingPage() {
           ===================================================================== */}
       <AnimatePresence>
         {selectedInvoiceForView && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-darkcocoa/60 backdrop-blur-sm print:p-0 print:bg-transparent overflow-y-auto">
+          <div className="print-modal-container fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-darkcocoa/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="printable-invoice relative bg-white rounded-3xl shadow-2xl border border-cream-200 p-6 md:p-8 max-w-lg w-full space-y-5 font-body overflow-hidden my-6"
+              className="printable-invoice relative bg-white rounded-3xl shadow-2xl border border-cream-200 p-5 sm:p-7 md:p-8 max-w-lg w-full space-y-4 sm:space-y-5 font-body overflow-visible my-auto sm:my-6"
             >
               {/* Close Button (Hidden on Print) */}
               <button
@@ -1005,7 +1005,7 @@ export default function BillingPage() {
               </button>
 
               {/* Header Dokumen Kuitansi / Invoice */}
-              <div className="flex items-start justify-between border-b-2 border-dashed border-cream-200 pb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-dashed border-cream-200 pb-4 print:flex-row print:items-start">
                 <div className="flex items-center gap-3">
                   <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
                     <Image
@@ -1159,9 +1159,11 @@ export default function BillingPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      window.print();
+                      setTimeout(() => {
+                        window.print();
+                      }, 120);
                     }}
-                    className="px-4 py-2.5 rounded-2xl text-xs font-bold text-darkcocoa bg-cream-100 hover:bg-cream-200 flex items-center gap-1.5 transition-colors shadow-sm"
+                    className="px-4 py-2.5 rounded-2xl text-xs font-bold text-darkcocoa bg-cream-100 hover:bg-cream-200 flex items-center gap-1.5 transition-colors shadow-sm active:scale-95"
                     title="Cetak atau simpan sebagai dokumen PDF tanpa watermark browser"
                   >
                     <Printer className="w-4 h-4 text-peach-500" />

@@ -267,7 +267,7 @@ export default function LoginPage() {
             </form>
 
             {/* Footer: Register Trigger */}
-            <div className="pt-3 border-t border-cream-100 text-center space-y-2.5">
+            <div className="pt-3 border-t border-cream-100 text-center">
               <p className="text-xs text-softgray">
                 Belum punya akun KosanKu?{' '}
                 <button
@@ -278,16 +278,6 @@ export default function LoginPage() {
                   Daftar Akun Baru (Transfer Manual)
                 </button>
               </p>
-
-              <div className="pt-2 border-t border-cream-100/70">
-                <Link
-                  href="/admin"
-                  className="inline-flex items-center gap-1.5 text-[11px] text-softgray hover:text-darkcocoa hover:underline font-semibold transition-colors"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-peach-500" />
-                  <span>Portal Khusus Pemilik SaaS (Super Admin)</span>
-                </Link>
-              </div>
             </div>
           </div>
         </div>

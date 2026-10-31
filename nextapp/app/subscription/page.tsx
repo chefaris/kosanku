@@ -551,12 +551,12 @@ export default function SubscriptionPage() {
       {/* View Printable Receipt Modal */}
       <AnimatePresence>
         {viewingInvoice && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm print:p-0 print:bg-transparent">
+          <div className="print-modal-container fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-sm print:p-0 print:bg-transparent overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="printable-invoice relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-cream-200 overflow-hidden p-6 sm:p-8 space-y-6"
+              className="printable-invoice relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-cream-200 overflow-visible p-5 sm:p-8 space-y-5 sm:space-y-6 my-auto sm:my-6"
             >
               <button
                 onClick={() => setViewingInvoice(null)}
@@ -639,8 +639,12 @@ export default function SubscriptionPage() {
               <div className="print-hide flex items-center justify-end gap-2 pt-2 border-t border-cream-100">
                 <button
                   type="button"
-                  onClick={() => window.print()}
-                  className="py-2.5 px-4 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  onClick={() => {
+                    setTimeout(() => {
+                      window.print();
+                    }, 120);
+                  }}
+                  className="py-2.5 px-4 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold flex items-center gap-1.5 transition-colors active:scale-95"
                 >
                   <Printer className="w-4 h-4 text-peach-500" />
                   <span>Cetak Kuitansi</span>
