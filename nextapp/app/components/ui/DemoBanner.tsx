@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useKosStore } from '../../lib/store/useKosStore';
-import { Sparkles, RotateCcw, UserPlus, ChevronUp, ChevronDown, Gamepad2 } from 'lucide-react';
+import { RotateCcw, UserPlus, ChevronUp, ChevronDown, Gamepad2 } from 'lucide-react';
 
 interface DemoBannerProps {
   onOpenRegisterModal: () => void;
@@ -97,8 +97,8 @@ export const DemoBanner: React.FC<DemoBannerProps> = ({ onOpenRegisterModal }) =
       {/* Floating notification when reset */}
       {showToast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-darkcocoa text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <Sparkles className="w-4 h-4 text-peach-300" />
-          <span>Data simulasi demo berhasil dikembalikan ke kondisi awal! 🐱✨</span>
+          <RotateCcw className="w-4 h-4 text-peach-300" />
+          <span>Data simulasi demo berhasil dikembalikan ke kondisi awal!</span>
         </div>
       )}
     </aside>

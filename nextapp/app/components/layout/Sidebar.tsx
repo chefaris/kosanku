@@ -88,11 +88,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
                 <span className="font-heading font-extrabold text-xl tracking-tight text-peach-500">
                   KosanKu
                 </span>
-                <Sparkles className="w-4 h-4 text-peach-400 animate-bounce" strokeWidth={1.75} />
               </div>
-              <p className="font-body text-[11px] text-softgray flex items-center gap-1 font-medium truncate">
-                <span>🐱</span>
-                <span>Mimi si Kucing Kos</span>
+              <p className="font-body text-[11px] text-softgray font-medium truncate">
+                Mimi si Kucing Kos
               </p>
             </div>
           </Link>
@@ -233,7 +231,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
               }}
               className="w-full py-1.5 px-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[10px] flex items-center justify-between transition-colors"
             >
-              <span>👑 Mode Pantau</span>
+              <span>Mode Pantau</span>
               <span className="underline">Kembali ke Admin</span>
             </button>
           </div>
@@ -260,7 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             <span className="font-heading font-extrabold text-base sm:text-lg leading-tight text-peach-500">
               KosanKu
             </span>
-            <span className="text-[9px] sm:text-[10px] text-softgray font-medium hidden xs:inline truncate">Mimi si Kucing Kos 🐾</span>
+            <span className="text-[9px] sm:text-[10px] text-softgray font-medium hidden xs:inline truncate">Mimi si Kucing Kos</span>
           </div>
         </Link>
 

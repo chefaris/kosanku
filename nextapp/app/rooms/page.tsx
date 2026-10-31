@@ -483,9 +483,8 @@ export default function RoomsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-darkcocoa tracking-tight">
-              Denah Kamar KosanKu 🚩
+              Denah Kamar KosanKu
             </h1>
-            <span className="text-xl">🐱</span>
           </div>
           <p className="text-softgray text-xs sm:text-sm mt-1">
             {activeProperty ? (
@@ -932,9 +931,8 @@ export default function RoomsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkcocoa/50 overflow-y-auto">
           <div className="bg-white rounded-3xl shadow-cute border border-cream-200 p-6 max-w-lg w-full space-y-4 font-body my-8">
             <div className="flex items-center justify-between border-b border-cream-100 pb-3">
-              <h3 className="font-heading font-extrabold text-lg text-darkcocoa flex items-center gap-2">
-                <span>Tambah Kamar Baru</span>
-                <span>🏡</span>
+              <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
+                Tambah Kamar Baru
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
@@ -1129,9 +1127,8 @@ export default function RoomsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkcocoa/50 overflow-y-auto">
           <div className="bg-white rounded-3xl shadow-cute border border-cream-200 p-6 max-w-lg w-full space-y-4 font-body my-8">
             <div className="flex items-center justify-between border-b border-cream-100 pb-3">
-              <h3 className="font-heading font-extrabold text-lg text-darkcocoa flex items-center gap-2">
-                <span>Edit Kamar {selectedRoom.number}</span>
-                <span>✏️</span>
+              <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
+                Edit Kamar {selectedRoom.number}
               </h3>
               <button
                 onClick={() => setIsEditModalOpen(false)}
@@ -1287,9 +1284,8 @@ export default function RoomsPage() {
           <div className="bg-white rounded-3xl shadow-cute border border-cream-200 p-6 max-w-lg w-full space-y-4 font-body my-8">
             <div className="flex items-center justify-between border-b border-cream-100 pb-3">
               <div>
-                <h3 className="font-heading font-extrabold text-lg text-darkcocoa flex items-center gap-2">
-                  <span>Registrasi Check-In Penghuni</span>
-                  <span>🔑</span>
+                <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
+                  Registrasi Check-In Penghuni
                 </h3>
                 <p className="text-xs text-softgray">
                   Kamar <strong>{selectedRoom.number}</strong> ({formatRupiah(selectedRoom.price)}/bln)
@@ -1460,8 +1456,8 @@ export default function RoomsPage() {
 
               {/* Kontak Darurat Keluarga */}
               <div className="p-3 bg-sakura-50/50 rounded-2xl border border-sakura-200/80 space-y-2">
-                <p className="font-bold text-darkcocoa text-xs flex items-center gap-1">
-                  <span>🚨 Kontak Darurat Keluarga (Wajib untuk Keamanan Kos):</span>
+                <p className="font-bold text-darkcocoa text-xs">
+                  Kontak Darurat Keluarga (Wajib untuk Keamanan Kos):
                 </p>
                 <div className="grid grid-cols-3 gap-2">
                   <input

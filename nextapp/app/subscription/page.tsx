@@ -57,7 +57,7 @@ export default function SubscriptionPage() {
             <span className="text-xs text-softgray">• Lisensi Resmi Pemilik Kos</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-heading font-black text-darkcocoa">
-            Langganan &amp; Lisensi KosanKu 👑
+            Langganan &amp; Lisensi KosanKu
           </h1>
           <p className="text-sm text-softgray mt-1">
             Kelola paket langganan aktif, pantau kuota kamar &amp; cabang kos, serta arsip kuitansi pembayaran resmi.
@@ -212,7 +212,7 @@ export default function SubscriptionPage() {
       <div className="space-y-6">
         <div className="text-center max-w-xl mx-auto space-y-3">
           <h2 className="text-2xl font-heading font-black text-darkcocoa">
-            Pilihan Paket SaaS KosanKu 🚀
+            Pilihan Paket SaaS KosanKu
           </h2>
           <p className="text-xs text-softgray">
             Pilih paket yang paling pas dengan skala bisnis kosan Kakak. Transaksi diproses instan dengan simulasi payment gateway.
@@ -570,7 +570,6 @@ export default function SubscriptionPage() {
               <div className="flex items-start justify-between border-b border-cream-200 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">🐱</span>
                     <h4 className="font-heading font-black text-xl text-peach-500">KosanKu SaaS</h4>
                   </div>
                   <p className="text-[11px] text-softgray">PT KosanKu Digital Nusantara</p>

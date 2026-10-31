@@ -155,9 +155,8 @@ export default function FinancePage() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight flex items-center gap-2">
-            <span>Arus Kas &amp; Pembukuan</span>
-            <span className="text-2xl">📊</span>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight">
+            Arus Kas &amp; Pembukuan
           </h1>
           <p className="text-softgray text-xs sm:text-sm mt-1">
             {activeProperty

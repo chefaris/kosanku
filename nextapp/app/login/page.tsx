@@ -8,7 +8,7 @@ import { useKosStore, SaaSUserAccount } from '../lib/store/useKosStore';
 import { RegisterModal } from '../components/ui/RegisterModal';
 import {
   Gamepad2,
-  Sparkles,
+  Star,
   Lock,
   Mail,
   ArrowRight,
@@ -105,16 +105,15 @@ export default function LoginPage() {
               <h1 className="font-heading font-black text-xl text-peach-500 tracking-tight leading-none">
                 KosanKu
               </h1>
-              <p className="text-xs text-softgray font-medium flex items-center gap-1 mt-1">
-                <span>🐱</span>
-                <span>Kelola Kos Jadi Menyenangkan</span>
+              <p className="text-xs text-softgray font-medium mt-1">
+                Kelola Kos Jadi Menyenangkan
               </p>
             </div>
           </div>
 
           <div className="space-y-3">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-heading font-extrabold text-darkcocoa tracking-tight leading-[1.2]">
-              Aplikasi Manajemen Kos <span className="text-peach-500">Paling Imut &amp; Praktis</span> ✨
+              Aplikasi Manajemen Kos <span className="text-peach-500">Paling Imut &amp; Praktis</span>
             </h2>
             <p className="text-xs sm:text-sm lg:text-base text-softgray leading-relaxed max-w-xl mx-auto lg:mx-0">
               Tinggalkan pencatatan buku manual yang melelahkan. Pantau okupansi kamar, tagihan sewa bulanan, dan arsip dokumen KTP dalam satu dashboard terpadu yang praktis.
@@ -159,17 +158,16 @@ export default function LoginPage() {
           {/* Social Proof & Trust */}
           <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-semibold text-softgray">
             <span className="inline-flex items-center gap-1.5">
-              <span className="text-amber-500">⭐</span>
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
               <strong className="text-darkcocoa">4.9/5</strong> Rating Pemilik Kos
             </span>
             <span>•</span>
             <span className="inline-flex items-center gap-1.5">
-              <span>🐱</span>
               <strong className="text-darkcocoa">Mimi</strong> Maskot Resmi
             </span>
             <span>•</span>
             <span className="inline-flex items-center gap-1.5">
-              <span>🔒</span>
+              <Lock className="w-3.5 h-3.5 text-matcha-500" />
               <strong className="text-darkcocoa">100%</strong> Data Terproteksi
             </span>
           </div>

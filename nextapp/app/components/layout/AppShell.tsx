@@ -44,7 +44,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
             <div className="space-y-1">
               <h2 className="text-xl font-heading font-black text-darkcocoa">
-                Akses Terbatas: Super Admin 👑
+                Akses Terbatas: Super Admin
               </h2>
               <p className="text-xs text-softgray leading-relaxed">
                 Halaman ini khusus untuk pemilik software SaaS KosanKu untuk memverifikasi bukti transfer dan mengelola langganan pelanggan.
@@ -121,7 +121,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 className="hidden md:inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold transition-colors"
                 title="Lihat Landing Page Publik"
               >
-                <span>🌐 Landing Page</span>
+                <span>Landing Page</span>
               </Link>
 
               <Link
@@ -179,7 +179,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               href="/admin"
               className="py-1 px-2.5 bg-white text-peach-600 hover:bg-cream-100 rounded-xl text-[10px] sm:text-[11px] font-black transition-colors self-end sm:self-auto"
             >
-              Kembali ke Panel Super Admin ➔
+              Kembali ke Panel Super Admin
             </Link>
           </div>
         )}

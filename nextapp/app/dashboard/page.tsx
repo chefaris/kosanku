@@ -180,28 +180,27 @@ export default function DashboardPage() {
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-xl text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-peach-500 text-xs font-bold shadow-sm border border-peach-200/60">
-              <Sparkles className="w-3.5 h-3.5 text-peach-500 animate-spin" strokeWidth={1.75} />
-              <span>Maskot Resmi KosanKu: Mimi si Kucing Kos 🐱🔑</span>
+              <span>Maskot Resmi KosanKu: Mimi si Kucing Kos</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight leading-snug">
-              Selamat Datang di <span className="text-peach-500">{activeProperty ? activeProperty.name : (settings.kosName || 'KosanKu')}</span>! 🏡
+              Selamat Datang di <span className="text-peach-500">{activeProperty ? activeProperty.name : (settings.kosName || 'KosanKu')}</span>
             </h1>
             <p className="text-softgray text-xs sm:text-sm md:text-base leading-relaxed">
               {activeProperty
                 ? `Ringkasan operasional area ${activeProperty.name} (${activeProperty.address}). Tipe: ${activeProperty.type}.`
-                : 'Ringkasan operasional gabungan seluruh area cabang kosan Anda. Mimi siap bantu pantau okupansi & kas! ✨'}
+                : 'Ringkasan operasional gabungan seluruh area cabang kosan Anda.'}
             </p>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 pt-1">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-matcha-100 text-matcha-700 border border-matcha-200">
-                🌱 {occupancyPercentage}% Okupansi ({occupiedRooms}/{totalRooms} Terisi)
+                {occupancyPercentage}% Okupansi ({occupiedRooms}/{totalRooms} Terisi)
               </span>
               {activeProperty ? (
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-sakura-100 text-sakura-700 border border-sakura-200">
-                  📍 {activeProperty.type} • {activeProperty.floors || 2} Lantai
+                  {activeProperty.type} • {activeProperty.floors || 2} Lantai
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-lavender-100 text-lavender-700 border border-lavender-200">
-                  🌐 Konsolidasi {properties.length} Cabang Aktif
+                  Konsolidasi {properties.length} Cabang Aktif
                 </span>
               )}
             </div>
@@ -220,9 +219,8 @@ export default function DashboardPage() {
                 priority
               />
             </div>
-            <div className="absolute -bottom-2 -right-1 bg-white px-3 py-1 rounded-full text-xs font-bold text-peach-500 shadow-md border border-peach-100 flex items-center gap-1">
+            <div className="absolute -bottom-2 -right-1 bg-white px-3 py-1 rounded-full text-xs font-bold text-peach-500 shadow-md border border-peach-100">
               <span>Mimi</span>
-              <span>🐾</span>
             </div>
           </div>
         </div>
@@ -317,7 +315,7 @@ export default function DashboardPage() {
                   {urgentTickets.length} urgent perlu ditangani
                 </span>
               ) : (
-                'Semua terkendali rapi ✨'
+                'Semua terkendali rapi'
               )}
             </p>
             <Link
@@ -404,7 +402,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <Building2 className="w-5 h-5 text-peach-500" strokeWidth={1.75} />
               <h2 className="text-xl font-heading font-extrabold text-darkcocoa">
-                Performa Antar Cabang Kos 🏢✨
+                Performa Antar Cabang Kos
               </h2>
             </div>
             <span className="text-xs text-softgray font-medium">
@@ -496,7 +494,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-peach-500" strokeWidth={1.75} />
             <h2 className="text-xl font-heading font-extrabold text-darkcocoa">
-              Tagihan &amp; Jatuh Tempo Terdekat ⏰
+              Tagihan &amp; Jatuh Tempo Terdekat
             </h2>
           </div>
           <Link
@@ -565,7 +563,7 @@ export default function DashboardPage() {
         ) : (
           <div className="p-8 bg-white rounded-3xl border border-cream-200 text-center space-y-2">
             <CheckCircle2 className="w-8 h-8 text-matcha-500 mx-auto" />
-            <p className="font-bold text-darkcocoa">Semua tagihan sewa bulan ini sudah lunas! ✨</p>
+            <p className="font-bold text-darkcocoa">Semua tagihan sewa bulan ini sudah lunas!</p>
             <p className="text-xs text-softgray">Tidak ada tagihan tertunggak saat ini.</p>
           </div>
         )}
@@ -587,9 +585,8 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div>
-                    <h3 className="font-heading font-bold text-darkcocoa text-base leading-tight flex items-center gap-1.5">
-                      <span>Pengingat Manis Mimi</span>
-                      <span>🐾</span>
+                    <h3 className="font-heading font-bold text-darkcocoa text-base leading-tight">
+                      Pengingat Manis Mimi
                     </h3>
                     <p className="text-[11px] text-softgray">Simulasi kirim pesan ramah via WhatsApp</p>
                   </div>

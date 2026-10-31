@@ -334,9 +334,8 @@ export default function BillingPage() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight flex items-center gap-2">
-            <span>Kasir &amp; Tagihan Sewa</span>
-            <span className="text-2xl">🧾</span>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight">
+            Kasir &amp; Tagihan Sewa
           </h1>
           <p className="text-softgray text-xs sm:text-sm mt-1">
             {activeProperty
@@ -353,8 +352,8 @@ export default function BillingPage() {
             className="px-3.5 py-2.5 rounded-2xl bg-white hover:bg-cream-100 text-darkcocoa text-xs font-bold border border-cream-200 shadow-sm flex items-center gap-1.5 transition-all hover:scale-[1.02] active:scale-95"
             title="Generate invoice untuk semua kamar terisi dalam 1 kali klik"
           >
-            <Sparkles className="w-4 h-4 text-peach-500" />
-            <span>⚡ Generate Tagihan Bulanan</span>
+            <Calendar className="w-4 h-4 text-peach-500" />
+            <span>Generate Tagihan Bulanan</span>
           </button>
           <button
             type="button"
@@ -828,7 +827,7 @@ export default function BillingPage() {
                           onChange={() => setFormStatus('paid')}
                           className="text-matcha-500 focus:ring-matcha-400"
                         />
-                        <span className="font-bold text-matcha-600">Langsung Lunas 🐾</span>
+                        <span className="font-bold text-matcha-600">Langsung Lunas</span>
                       </label>
                     </div>
                   </div>
@@ -853,7 +852,7 @@ export default function BillingPage() {
                       <option value="Tunai / Kasir Kos">Tunai / Kasir Kos</option>
                     </select>
                     <p className="text-[10px] text-matcha-700">
-                      ✨ Kuitansi resmi berstempel lunas logo kaki kucing KosanKu akan langsung diterbitkan setelah disimpan.
+                      Kuitansi resmi berstempel lunas logo kaki kucing KosanKu akan langsung diterbitkan setelah disimpan.
                     </p>
                   </motion.div>
                 )}
@@ -871,7 +870,7 @@ export default function BillingPage() {
                     className="px-5 py-2 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-bold shadow-cute flex items-center gap-1.5 transition-all"
                   >
                     <CheckCheck className="w-4 h-4" />
-                    <span>Terbitkan Tagihan 🧾</span>
+                    <span>Terbitkan Tagihan</span>
                   </button>
                 </div>
               </form>
@@ -895,11 +894,11 @@ export default function BillingPage() {
               <div className="flex items-center justify-between border-b border-cream-200 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-10 h-10 rounded-2xl bg-peach-100 text-peach-500 flex items-center justify-center font-bold">
-                    <Sparkles className="w-5 h-5" />
+                    <Calendar className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
-                      Generate Tagihan Bulanan ⚡
+                      Generate Tagihan Bulanan
                     </h3>
                     <p className="text-xs text-softgray">Buat tagihan massal otomatis untuk semua kamar terisi</p>
                   </div>
@@ -973,8 +972,8 @@ export default function BillingPage() {
                   onClick={handleBulkGenerate}
                   className="px-5 py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-bold text-xs shadow-cute flex items-center gap-1.5 transition-all hover:scale-[1.02]"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Generate Tagihan Sekarang 🚀</span>
+                  <Check className="w-4 h-4" />
+                  <span>Generate Tagihan Sekarang</span>
                 </button>
               </div>
             </motion.div>
@@ -1131,7 +1130,7 @@ export default function BillingPage() {
                       PEMBAYARAN RESMI DIVERIFIKASI LUNAS
                     </span>
                     <p className="text-[10px] text-softgray">
-                      Dicap sah dengan segel stempel kaki kucing KosanKu &amp; Mimi si Kucing Kos! 🐾✨
+                      Dicap sah dengan segel stempel kaki kucing KosanKu &amp; Mimi si Kucing Kos.
                     </p>
                   </div>
                 </div>
@@ -1192,7 +1191,7 @@ export default function BillingPage() {
                       className="px-4 py-2.5 rounded-2xl text-xs font-bold text-white bg-matcha-500 hover:bg-matcha-400 flex items-center gap-1.5 shadow-cute transition-all"
                     >
                       <Check className="w-4 h-4" />
-                      <span>Tandai Lunas Sekarang 🐾</span>
+                      <span>Tandai Lunas Sekarang</span>
                     </button>
                   )}
                   <button

@@ -303,7 +303,7 @@ export default function SuperAdminPage() {
             <span className="text-xs text-softgray">• Hak Akses Pemilik Platform</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-heading font-black text-darkcocoa">
-            Pusat Kendali &amp; Kustomisasi KosanKu 👑
+            Pusat Kendali &amp; Kustomisasi KosanKu
           </h1>
           <p className="text-xs sm:text-sm text-softgray mt-1">
             Kelola pelanggan, periksa bukti transfer manual, dan kustomisasi konten landing page secara langsung.
@@ -587,7 +587,7 @@ export default function SuperAdminPage() {
                           className="w-full py-2 px-3 rounded-xl bg-matcha-50 hover:bg-matcha-100 text-matcha-700 border border-matcha-200 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors"
                         >
                           <Eye className="w-3.5 h-3.5 text-matcha-600" />
-                          <span>👁️ Lihat Struk Bukti Transfer</span>
+                          <span>Lihat Struk Bukti Transfer</span>
                         </button>
                       )}
 
@@ -735,7 +735,7 @@ export default function SuperAdminPage() {
                                 title="Klik untuk langsung melihat foto struk bukti transfer"
                               >
                                 <Eye className="w-3.5 h-3.5 text-matcha-600" />
-                                <span>👁️ Lihat Bukti Transfer</span>
+                                <span>Lihat Bukti Transfer</span>
                               </button>
                             ) : (
                               <span className="text-[10px] text-softgray italic block">

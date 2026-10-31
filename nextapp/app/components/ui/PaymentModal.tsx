@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   QrCode,
@@ -9,7 +10,6 @@ import {
   CheckCircle2,
   Copy,
   Check,
-  Sparkles,
   ShieldCheck,
   Clock,
   AlertCircle,
@@ -49,7 +49,7 @@ const PLAN_META = {
     annualPrice: 1900000,
     rooms: 'Kamar Tanpa Batas',
     properties: 'Cabang Tanpa Batas',
-    badge: 'Sultan 👑'
+    badge: 'Sultan'
   }
 };
 
@@ -155,9 +155,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </span>
           </div>
 
-          <h2 className="text-2xl font-heading font-extrabold flex items-center gap-2">
-            <span>{planInfo.name}</span>
-            <Sparkles className="w-5 h-5 text-sakura-100" />
+          <h2 className="text-2xl font-heading font-extrabold">
+            {planInfo.name}
           </h2>
 
           <div className="mt-3 flex items-baseline justify-between border-t border-white/20 pt-3">
@@ -189,7 +188,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
               <div className="space-y-2">
                 <h3 className="text-2xl font-heading font-black text-darkcocoa">
-                  Hore! Pembayaran Diterima! 🎉
+                  Hore! Pembayaran Diterima!
                 </h3>
                 <p className="text-sm text-softgray max-w-md mx-auto">
                   Paket <strong>{planInfo.name}</strong> kamu kini telah aktif! Kuitansi resmi SaaS telah dicatat di riwayat langganan.
@@ -317,8 +316,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                       {/* Center Mascot Badge */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white rounded-xl shadow-md border-2 border-peach-400 flex items-center justify-center text-xl">
-                          🐱
+                        <div className="w-11 h-11 bg-white rounded-xl shadow-md border-2 border-peach-400 p-0.5 flex items-center justify-center overflow-hidden">
+                          <Image
+                            src="/app-logo.jpg"
+                            alt="Logo"
+                            width={36}
+                            height={36}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
                         </div>
                       </div>
                     </div>
@@ -473,7 +478,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4" />
                     <span>Bayar Sekarang (Simulasi)</span>
                   </>
                 )}

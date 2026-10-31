@@ -255,9 +255,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
           {step === 1 && (
             <form onSubmit={handleNextToStep2} className="space-y-3.5 text-xs">
               <div className="p-3 bg-peach-50/70 rounded-2xl border border-peach-200 text-darkcocoa">
-                <p className="font-bold text-[11px] text-peach-700 flex items-center gap-1">
-                  <span>✨</span>
-                  <span>Mulai Kelola Kos Lebih Nyaman &amp; Rapi</span>
+                <p className="font-bold text-[11px] text-peach-700">
+                  Mulai Kelola Kos Lebih Nyaman &amp; Rapi
                 </p>
                 <p className="text-[10px] text-softgray mt-0.5 leading-snug">
                   Isi informasi kos dan akun Anda. Pembayaran berlangganan dilakukan via transfer bank manual terverifikasi.
@@ -375,7 +374,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
             <div className="space-y-4 text-xs">
               <div className="space-y-1">
                 <h4 className="font-heading font-black text-sm text-darkcocoa">
-                  Pilih Paket SaaS KosanKu 🏷️
+                  Pilih Paket SaaS KosanKu
                 </h4>
                 <p className="text-softgray text-[11px]">
                   Pilih kapasitas yang paling sesuai dengan jumlah kamar &amp; cabang kos Anda.
@@ -667,7 +666,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
 
               <div className="space-y-1.5">
                 <h4 className="font-heading font-extrabold text-lg text-darkcocoa">
-                  Pendaftaran Berhasil Dikirim! 🎉
+                  Pendaftaran Berhasil Dikirim!
                 </h4>
                 <p className="text-xs text-softgray leading-relaxed max-w-sm mx-auto">
                   Terima kasih, Kak <strong>{name}</strong>! Formulir pendaftaran untuk <strong>{kosName}</strong> serta bukti transfer telah kami terima.
@@ -693,13 +692,13 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-softgray">Bukti Transfer:</span>
-                  <span className="text-matcha-600 font-bold">Terlampir &amp; Tersimpan ✅</span>
+                  <span className="text-matcha-600 font-bold">Terlampir &amp; Tersimpan</span>
                 </div>
               </div>
 
               {/* Instructions */}
               <div className="p-3 bg-peach-50/60 rounded-2xl border border-peach-200 text-left text-[11px] text-darkcocoa/90 space-y-1 leading-relaxed">
-                <p className="font-bold text-peach-700">🐱 Informasi Aktivasi:</p>
+                <p className="font-bold text-peach-700">Informasi Aktivasi:</p>
                 <p>
                   1. Super Admin akan memverifikasi bukti transfer ke mutasi rekening bank (estimasi maks. 1x24 jam).
                 </p>

@@ -243,9 +243,8 @@ export default function MaintenancePage() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight flex items-center gap-2">
-            <span>Papan Tiket Perawatan</span>
-            <span className="text-2xl">🔧</span>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight">
+            Papan Tiket Perawatan
           </h1>
           <p className="text-softgray text-xs sm:text-sm mt-1">
             Pantau laporan komplain fasilitas, penugasan teknisi, dan pencatatan biaya perbaikan

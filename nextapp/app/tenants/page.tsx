@@ -284,9 +284,8 @@ export default function TenantsPage() {
       {/* Header and Branch Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight flex items-center gap-2">
-            <span>Direktori Penghuni</span>
-            <span className="text-2xl">👥</span>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight">
+            Direktori Penghuni
           </h1>
           <p className="text-softgray text-xs sm:text-sm mt-1">
             {activeProperty ? (
@@ -547,9 +546,8 @@ export default function TenantsPage() {
               className="bg-white rounded-3xl shadow-cute border border-cream-200 p-6 max-w-lg w-full space-y-4 font-body my-8"
             >
               <div className="flex items-center justify-between border-b border-cream-100 pb-3">
-                <h3 className="font-heading font-extrabold text-lg text-darkcocoa flex items-center gap-2">
-                  <span>Pendaftaran Penghuni Baru</span>
-                  <span>✍️</span>
+                <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
+                  Pendaftaran Penghuni Baru
                 </h3>
                 <button
                   onClick={() => setIsAddModalOpen(false)}
@@ -738,7 +736,7 @@ export default function TenantsPage() {
                 {/* Kontak Darurat */}
                 <div className="p-3 bg-sakura-50/50 rounded-2xl border border-sakura-200/80 space-y-2">
                   <p className="font-bold text-darkcocoa text-xs">
-                    🚨 Kontak Darurat Keluarga (Wajib untuk Keamanan):
+                    Kontak Darurat Keluarga (Wajib untuk Keamanan):
                   </p>
                   <div className="grid grid-cols-3 gap-2">
                     <input
@@ -805,9 +803,8 @@ export default function TenantsPage() {
               className="bg-white rounded-3xl shadow-cute border border-cream-200 p-6 max-w-lg w-full space-y-4 font-body my-8"
             >
               <div className="flex items-center justify-between border-b border-cream-100 pb-3">
-                <h3 className="font-heading font-extrabold text-lg text-darkcocoa flex items-center gap-2">
-                  <span>Edit Data Penghuni: {selectedTenant.name}</span>
-                  <span>✏️</span>
+                <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
+                  Edit Data Penghuni: {selectedTenant.name}
                 </h3>
                 <button
                   onClick={() => setIsEditModalOpen(false)}

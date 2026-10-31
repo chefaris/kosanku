@@ -154,9 +154,8 @@ export default function SettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-1"
       >
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight flex items-center gap-2">
-          <span>Pengaturan KosanKu</span>
-          <span className="text-2xl">⚙️</span>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight">
+          Pengaturan KosanKu
         </h1>
         <p className="text-softgray text-xs sm:text-sm">
           Kelola cabang/area kos, master fasilitas yang dapat ditambah &amp; dihapus, rekening bank, dan pesan pengingat WA.

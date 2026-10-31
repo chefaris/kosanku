@@ -131,7 +131,7 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
             </div>
             <div>
               <h3 className="font-heading font-extrabold text-base sm:text-lg text-white">
-                Edit Data Pelanggan SaaS ✏️
+                Edit Data Pelanggan SaaS
               </h3>
               <p className="text-[11px] text-cream-200">
                 Ubah profil, paket lisensi, status, masa aktif, dan kredensial akun
