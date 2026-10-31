@@ -220,7 +220,7 @@ export default function MaintenancePage() {
   );
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast */}
       <AnimatePresence>
         {toastMessage && (
@@ -254,7 +254,7 @@ export default function MaintenancePage() {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-peach-500 hover:bg-peach-400 text-white px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-1.5 transition-all transform active:scale-95"
+          className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-1.5 transition-all transform active:scale-95"
         >
           <Plus className="w-4 h-4" strokeWidth={2.5} />
           <span>Buat Tiket Baru</span>

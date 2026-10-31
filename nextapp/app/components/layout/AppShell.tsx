@@ -107,7 +107,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                       Super Admin
                     </span>
                   </div>
-                  <p className="text-[10px] text-softgray font-medium">
+                  <p className="text-[10px] text-softgray font-medium hidden sm:block">
                     SaaS Management Console • Khusus Pemilik Software
                   </p>
                 </div>
@@ -115,7 +115,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <Link
                 href="/"
                 className="hidden md:inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold transition-colors"
@@ -126,11 +126,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-peach-50 hover:bg-peach-100 text-peach-600 text-xs font-bold transition-colors border border-peach-200"
+                className="inline-flex items-center gap-1.5 py-1.5 px-2.5 sm:px-3 rounded-xl bg-peach-50 hover:bg-peach-100 text-peach-600 text-xs font-bold transition-colors border border-peach-200"
                 title="Buka Aplikasi Sisi Tenant Kos"
               >
                 <DoorOpen className="w-3.5 h-3.5" />
-                <span>Buka App Tenant</span>
+                <span className="hidden xs:inline">Buka App</span>
+                <span className="xs:hidden">App</span>
               </Link>
 
               <button
@@ -139,7 +140,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                   logout();
                   router.push('/login');
                 }}
-                className="inline-flex items-center gap-1 py-1.5 px-3 rounded-xl bg-white border border-cream-200 hover:border-red-300 text-softgray hover:text-red-500 text-xs font-bold transition-colors"
+                className="inline-flex items-center gap-1 py-1.5 px-2 sm:px-3 rounded-xl bg-white border border-cream-200 hover:border-red-300 text-softgray hover:text-red-500 text-xs font-bold transition-colors"
                 title="Keluar dari Super Admin"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -150,7 +151,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         </header>
 
         {/* Admin Content Area (Full Width, No Tenant Sidebar or Property Selector) */}
-        <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
@@ -161,31 +162,33 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const isSuperAdminViewingTenant = currentUser?.role === 'superadmin';
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen w-full overflow-x-hidden">
       {/* Sidebar for Desktop & Mobile Header Drawer */}
       <Sidebar onOpenRegisterModal={() => setIsRegisterModalOpen(true)} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:pl-64 min-w-0">
+      <div className="flex-1 flex flex-col md:pl-64 min-w-0 w-full">
         {/* Top Banner when Super Admin is viewing tenant app */}
         {isSuperAdminViewingTenant && (
-          <div className="bg-peach-500 text-white px-4 py-2 text-xs font-bold flex items-center justify-between shadow-sm">
+          <div className="bg-peach-500 text-white px-3 sm:px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 shadow-sm">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Anda sedang login sebagai Super Admin di dalam dashboard tenant.</span>
+              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+              <span className="text-[11px] sm:text-xs">Login sebagai Super Admin di dalam dashboard tenant.</span>
             </div>
             <Link
               href="/admin"
-              className="py-1 px-3 bg-white text-peach-600 hover:bg-cream-100 rounded-xl text-[11px] font-black transition-colors"
+              className="py-1 px-2.5 bg-white text-peach-600 hover:bg-cream-100 rounded-xl text-[10px] sm:text-[11px] font-black transition-colors self-end sm:self-auto"
             >
               Kembali ke Panel Super Admin ➔
             </Link>
           </div>
         )}
 
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 w-full min-w-0 pb-20 md:pb-8">
           {/* Interactive Demo Banner (active in demo mode) */}
-          <DemoBanner onOpenRegisterModal={() => setIsRegisterModalOpen(true)} />
+          <div className="px-3 sm:px-4 md:px-8 pt-3 sm:pt-4 md:pt-6 max-w-7xl mx-auto">
+            <DemoBanner onOpenRegisterModal={() => setIsRegisterModalOpen(true)} />
+          </div>
 
           {children}
         </main>

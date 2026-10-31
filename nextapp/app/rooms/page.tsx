@@ -469,7 +469,7 @@ export default function RoomsPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-5 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-5 right-5 z-50 bg-matcha-400 text-white px-5 py-3 rounded-2xl shadow-cute flex items-center gap-2.5 font-semibold text-sm animate-in fade-in slide-in-from-top-4 duration-200">
@@ -503,52 +503,52 @@ export default function RoomsPage() {
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={handleAddFloor}
-            className="bg-cream-100 hover:bg-cream-200 text-darkcocoa px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 transition-all flex items-center gap-1.5"
+            className="flex-1 sm:flex-none justify-center bg-cream-100 hover:bg-cream-200 text-darkcocoa px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 transition-all flex items-center gap-1.5"
             title="Tambah Lantai Baru pada Cabang Ini"
           >
-            <Layers className="w-4 h-4 text-peach-500" strokeWidth={2} />
-            <span>+ Tambah Lantai</span>
+            <Layers className="w-4 h-4 text-peach-500 flex-shrink-0" strokeWidth={2} />
+            <span className="whitespace-nowrap">+ Lantai</span>
           </button>
 
           {currentMaxFloor > 1 && (
             <button
               onClick={() => handleInitiateDeleteFloor(currentMaxFloor)}
-              className="bg-white hover:bg-red-50 text-softgray hover:text-red-500 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 hover:border-red-200 transition-all flex items-center gap-1.5"
+              className="bg-white hover:bg-red-50 text-softgray hover:text-red-500 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 hover:border-red-200 transition-all flex items-center gap-1.5"
               title={`Hapus Lantai Teratas (Lantai ${currentMaxFloor})`}
             >
-              <Trash2 className="w-4 h-4" strokeWidth={2} />
-              <span>- Hapus Lantai {currentMaxFloor}</span>
+              <Trash2 className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
+              <span className="whitespace-nowrap">- Hapus L{currentMaxFloor}</span>
             </button>
           )}
 
           <button
             onClick={() => handleOpenAddModal(1)}
-            className="bg-peach-500 hover:bg-peach-400 text-white px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
+            className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
           >
-            <Plus className="w-4 h-4" strokeWidth={2.5} />
+            <Plus className="w-4 h-4 flex-shrink-0" strokeWidth={2.5} />
             <span>+ Tambah Kamar</span>
           </button>
         </div>
       </div>
 
       {/* Filter Chips Row */}
-      <div className="flex flex-wrap items-center gap-2 pt-1 border-b border-cream-200/80 pb-4">
+      <div className="flex items-center gap-2 pt-1 border-b border-cream-200/80 pb-3 overflow-x-auto scrollbar-none sm:flex-wrap">
         <button
           onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+          className={`whitespace-nowrap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
             filter === 'all'
               ? 'bg-peach-500 text-white shadow-cute'
               : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
           }`}
         >
-          Semua Kamar ({filterCounts.all})
+          Semua ({filterCounts.all})
         </button>
         <button
           onClick={() => setFilter('occupied')}
-          className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+          className={`whitespace-nowrap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
             filter === 'occupied'
               ? 'bg-sakura-400 text-white shadow-cute'
               : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -558,7 +558,7 @@ export default function RoomsPage() {
         </button>
         <button
           onClick={() => setFilter('vacant')}
-          className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+          className={`whitespace-nowrap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
             filter === 'vacant'
               ? 'bg-matcha-400 text-white shadow-cute'
               : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -568,7 +568,7 @@ export default function RoomsPage() {
         </button>
         <button
           onClick={() => setFilter('maintenance')}
-          className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+          className={`whitespace-nowrap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
             filter === 'maintenance'
               ? 'bg-lavender-400 text-white shadow-cute'
               : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -607,7 +607,8 @@ export default function RoomsPage() {
                     className="text-xs font-bold text-peach-500 hover:text-peach-600 flex items-center gap-1 hover:underline"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Kamar di Lantai {floorNum}</span>
+                    <span className="hidden xs:inline">Kamar di Lantai {floorNum}</span>
+                    <span className="xs:hidden">+ Kamar L{floorNum}</span>
                   </button>
 
                   <button
@@ -623,7 +624,7 @@ export default function RoomsPage() {
 
               {/* Grid of Room Cards */}
               {roomsInFloor.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-4">
                   {roomsInFloor.map((room) => {
                     const roomProp = properties.find((p) => p.id === room.propertyId);
 
@@ -632,7 +633,7 @@ export default function RoomsPage() {
                         key={room.id}
                         onClick={() => setSelectedRoom(room)}
                         className={`
-                          group cursor-pointer rounded-3xl p-3.5 sm:p-4 border shadow-sm
+                          group cursor-pointer rounded-2xl sm:rounded-3xl p-3 sm:p-4 border shadow-sm
                           flex flex-col justify-between transition-all duration-150
                           hover:-translate-y-1 hover:shadow-cute active:scale-95
                           ${getCardBgAndBorder(room.status)}

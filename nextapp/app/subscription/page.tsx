@@ -44,7 +44,7 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="px-3 sm:px-4 md:px-8 pt-3 sm:pt-4 md:pt-6 space-y-6 md:space-y-8 pb-12 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -442,8 +442,48 @@ export default function SubscriptionPage() {
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        {/* Mobile Invoice Cards */}
+        <div className="block md:hidden space-y-3">
+          {saasInvoices && saasInvoices.length > 0 ? (
+            saasInvoices.map((inv) => (
+              <div key={inv.id} className="p-4 rounded-2xl bg-cream-50/60 border border-cream-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-darkcocoa text-xs">{inv.invoiceNumber}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-matcha-100 text-matcha-700 font-bold text-[10px] flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Lunas
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <div>
+                    <p className="font-bold text-darkcocoa">{inv.planName}</p>
+                    <p className="text-[10px] text-softgray">{inv.date} • {inv.cycle}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono font-black text-peach-600">
+                      {inv.amount === 0 ? 'Gratis (Trial)' : `Rp ${inv.amount.toLocaleString('id-ID')}`}
+                    </p>
+                    <p className="text-[10px] text-softgray">{inv.paymentMethod}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setViewingInvoice(inv)}
+                  className="w-full py-2 rounded-xl bg-white hover:bg-peach-50 text-peach-600 font-bold text-xs border border-cream-200 flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Receipt className="w-3.5 h-3.5" />
+                  <span>Lihat Kuitansi Pembayaran</span>
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="py-6 text-center text-softgray text-xs">Belum ada riwayat faktur.</div>
+          )}
+        </div>
+
+        {/* Desktop Invoices Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left text-xs min-w-[700px]">
             <thead>
               <tr className="border-b border-cream-200 text-softgray uppercase tracking-wider font-bold">
                 <th className="py-3 px-3">No. Faktur</th>

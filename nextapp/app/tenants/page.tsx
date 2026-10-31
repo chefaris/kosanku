@@ -265,7 +265,7 @@ export default function TenantsPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast Notification */}
       <AnimatePresence>
         {toastMessage && (
@@ -302,7 +302,7 @@ export default function TenantsPage() {
 
         <button
           onClick={handleOpenAdd}
-          className="bg-peach-500 hover:bg-peach-400 text-white px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center justify-center gap-2 transition-all transform active:scale-95"
+          className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all transform active:scale-95"
         >
           <Plus className="w-4 h-4" strokeWidth={2.5} />
           <span>Tambah Penghuni Baru</span>
@@ -322,10 +322,10 @@ export default function TenantsPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto overflow-x-auto pb-1 scrollbar-none w-full sm:w-auto">
           <button
             onClick={() => setStatusFilter('active')}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-2xl text-xs font-bold transition-all ${
               statusFilter === 'active'
                 ? 'bg-peach-500 text-white shadow-cute'
                 : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -335,7 +335,7 @@ export default function TenantsPage() {
           </button>
           <button
             onClick={() => setStatusFilter('checked_out')}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-2xl text-xs font-bold transition-all ${
               statusFilter === 'checked_out'
                 ? 'bg-peach-500 text-white shadow-cute'
                 : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'

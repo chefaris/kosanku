@@ -132,7 +132,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-5xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast */}
       <AnimatePresence>
         {toastMessage && (
@@ -169,7 +169,7 @@ export default function SettingsPage() {
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl p-6 md:p-7 shadow-cute border border-cream-200 space-y-4"
+        className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 shadow-cute border border-cream-200 space-y-4"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cream-100 pb-3">
           <div className="flex items-center gap-3">
@@ -479,11 +479,11 @@ export default function SettingsPage() {
         </motion.div>
 
         {/* Form Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
           <button
             type="button"
             onClick={handleReset}
-            className="px-4 py-2.5 rounded-2xl text-xs font-bold text-softgray hover:text-peach-600 hover:bg-peach-50 border border-cream-200 flex items-center gap-1.5 transition-colors"
+            className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-2xl text-xs font-bold text-softgray hover:text-peach-600 hover:bg-peach-50 border border-cream-200 flex items-center gap-1.5 transition-colors"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Reset ke Data Demo Awal</span>
@@ -492,7 +492,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="bg-peach-500 hover:bg-peach-400 text-white px-7 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all transform active:scale-95"
+            className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-7 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all transform active:scale-95"
           >
             <Save className="w-4 h-4" />
             <span>{isSaving ? 'Menyimpan...' : 'Simpan Semua Pengaturan'}</span>

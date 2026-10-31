@@ -88,7 +88,7 @@ export const MobileNav: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 py-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-2">
                 {moreNavItems.map((item) => {
                   const Icon = item.icon;
                   const active = isItemActive(item);
@@ -128,9 +128,9 @@ export const MobileNav: React.FC = () => {
         aria-label="Navigasi Bawah"
         className="
           fixed bottom-0 left-0 right-0 z-40
-          bg-white border-t border-cream-200 shadow-lg
+          bg-white/95 backdrop-blur-md border-t border-cream-200 shadow-lg
           rounded-t-2xl md:hidden
-          px-3 py-2
+          px-3 py-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]
         "
       >
         <div className="flex items-center justify-around max-w-lg mx-auto">

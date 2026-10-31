@@ -132,7 +132,7 @@ export default function FinancePage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast Notification */}
       <AnimatePresence>
         {toastMessage && (
@@ -166,21 +166,21 @@ export default function FinancePage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-peach-500 hover:bg-peach-400 text-white px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-1.5 transition-all transform active:scale-95"
+            className="flex-1 sm:flex-none justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-1.5 transition-all transform active:scale-95"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
-            <span>Catat Pengeluaran</span>
+            <span className="whitespace-nowrap">Catat Pengeluaran</span>
           </button>
 
           <button
             onClick={handleExportCSV}
-            className="bg-white hover:bg-cream-100 text-darkcocoa px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-1.5 transition-all border border-cream-200"
+            className="flex-1 sm:flex-none justify-center bg-white hover:bg-cream-100 text-darkcocoa px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-1.5 transition-all border border-cream-200"
           >
             <Download className="w-4 h-4 text-peach-500" strokeWidth={2} />
-            <span>Export CSV</span>
+            <span className="whitespace-nowrap">Export CSV</span>
           </button>
         </div>
       </motion.div>
@@ -253,13 +253,13 @@ export default function FinancePage() {
               key={exp.id}
               className="py-3.5 flex items-center justify-between hover:bg-cream-50/50 px-2 rounded-2xl transition-colors text-xs"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1 mr-2">
                 <div className="w-10 h-10 rounded-2xl bg-cream-100 flex items-center justify-center flex-shrink-0">
                   {getCategoryIcon(exp.category)}
                 </div>
-                <div>
-                  <h3 className="font-extrabold text-darkcocoa text-sm">{exp.title}</h3>
-                  <p className="text-softgray text-[11px] capitalize">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-extrabold text-darkcocoa text-xs sm:text-sm truncate">{exp.title}</h3>
+                  <p className="text-softgray text-[10px] sm:text-[11px] capitalize truncate">
                     Kategori: {exp.category} • {exp.date}
                   </p>
                 </div>

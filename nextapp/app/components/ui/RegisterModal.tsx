@@ -204,36 +204,39 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
 
         {/* Step Indicator (Only for Steps 1-3) */}
         {step < 4 && (
-          <div className="bg-cream-50/80 px-4 py-2 border-b border-cream-100 flex items-center justify-between text-xs font-semibold text-softgray">
-            <div className={`flex items-center gap-1.5 ${step === 1 ? 'text-peach-500 font-bold' : step > 1 ? 'text-matcha-600' : ''}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+          <div className="bg-cream-50/80 px-3 sm:px-4 py-2 border-b border-cream-100 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-softgray">
+            <div className={`flex items-center gap-1 sm:gap-1.5 ${step === 1 ? 'text-peach-500 font-bold' : step > 1 ? 'text-matcha-600' : ''}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
                 step > 1 ? 'bg-matcha-500 text-white' : step === 1 ? 'bg-peach-500 text-white' : 'bg-cream-200 text-softgray'
               }`}>
                 {step > 1 ? '✓' : '1'}
               </span>
-              <span>Data Akun</span>
+              <span className="hidden xs:inline">Data Akun</span>
+              <span className="xs:hidden">Akun</span>
             </div>
 
-            <div className="w-6 h-0.5 bg-cream-200" />
+            <div className="w-3 sm:w-6 h-0.5 bg-cream-200" />
 
-            <div className={`flex items-center gap-1.5 ${step === 2 ? 'text-peach-500 font-bold' : step > 2 ? 'text-matcha-600' : ''}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+            <div className={`flex items-center gap-1 sm:gap-1.5 ${step === 2 ? 'text-peach-500 font-bold' : step > 2 ? 'text-matcha-600' : ''}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
                 step > 2 ? 'bg-matcha-500 text-white' : step === 2 ? 'bg-peach-500 text-white' : 'bg-cream-200 text-softgray'
               }`}>
                 {step > 2 ? '✓' : '2'}
               </span>
-              <span>Pilih Paket</span>
+              <span className="hidden xs:inline">Pilih Paket</span>
+              <span className="xs:hidden">Paket</span>
             </div>
 
-            <div className="w-6 h-0.5 bg-cream-200" />
+            <div className="w-3 sm:w-6 h-0.5 bg-cream-200" />
 
-            <div className={`flex items-center gap-1.5 ${step === 3 ? 'text-peach-500 font-bold' : ''}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+            <div className={`flex items-center gap-1 sm:gap-1.5 ${step === 3 ? 'text-peach-500 font-bold' : ''}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
                 step === 3 ? 'bg-peach-500 text-white' : 'bg-cream-200 text-softgray'
               }`}>
                 3
               </span>
-              <span>Transfer &amp; Bukti</span>
+              <span className="hidden xs:inline">Transfer &amp; Bukti</span>
+              <span className="xs:hidden">Bukti</span>
             </div>
           </div>
         )}

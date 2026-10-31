@@ -92,13 +92,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-100/80 via-peach-50/50 to-sakura-50/60 flex flex-col justify-center items-center p-4 sm:p-6 font-body text-darkcocoa selection:bg-peach-100 selection:text-peach-500">
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+    <div className="min-h-screen bg-gradient-to-br from-cream-100/80 via-peach-50/50 to-sakura-50/60 flex flex-col justify-center items-center p-3.5 sm:p-6 font-body text-darkcocoa selection:bg-peach-100 selection:text-peach-500">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8 items-center">
         {/* Left Side: Branding & Feature Highlights (Desktop) */}
-        <div className="md:col-span-6 space-y-6 text-center md:text-left">
+        <div className="md:col-span-6 space-y-4 sm:space-y-6 text-center md:text-left">
           {/* Logo & Mimi Mascot */}
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-sm border border-cream-200">
-            <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
+          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-sm border border-cream-200">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
               <Image
                 src="/app-logo.jpg"
                 alt="Logo KosanKu"
@@ -109,27 +109,27 @@ export default function LoginPage() {
               />
             </div>
             <div className="text-left">
-              <h1 className="font-heading font-extrabold text-xl text-peach-500 tracking-tight leading-none">
+              <h1 className="font-heading font-extrabold text-lg sm:text-xl text-peach-500 tracking-tight leading-none">
                 KosanKu
               </h1>
-              <p className="text-[11px] text-softgray font-medium flex items-center gap-1">
+              <p className="text-[10px] sm:text-[11px] text-softgray font-medium flex items-center gap-1">
                 <span>🐱</span>
                 <span>Kelola Kos Jadi Menyenangkan</span>
               </p>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight leading-tight">
+          <div className="space-y-1.5 sm:space-y-2">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight leading-tight">
               Aplikasi Manajemen Kos Paling Imut &amp; Praktis ✨
             </h2>
-            <p className="text-xs sm:text-sm text-softgray leading-relaxed">
+            <p className="text-xs sm:text-sm text-softgray leading-relaxed max-w-md mx-auto md:mx-0">
               Tinggalkan pencatatan buku manual. Pantau okupansi kamar, tagihan sewa bulanan, dan arsip dokumen KTP dalam satu dashboard terpadu.
             </p>
           </div>
 
-          {/* Highlights Grid */}
-          <div className="grid grid-cols-2 gap-3 pt-2 text-left">
+          {/* Highlights Grid (Visible on tablet & desktop) */}
+          <div className="hidden sm:grid grid-cols-2 gap-2.5 sm:gap-3 pt-1 text-left">
             <div className="p-3 bg-white/90 rounded-2xl border border-cream-200 shadow-sm space-y-1">
               <div className="w-7 h-7 rounded-xl bg-peach-100 text-peach-500 flex items-center justify-center">
                 <DoorOpen className="w-4 h-4" />
@@ -166,7 +166,7 @@ export default function LoginPage() {
 
         {/* Right Side: Auth Card (Demo + Login) */}
         <div className="md:col-span-6 w-full">
-          <div className="bg-white rounded-3xl shadow-xl border border-cream-200 p-6 sm:p-7 space-y-5 relative overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl border border-cream-200 p-4 sm:p-7 space-y-4 sm:space-y-5 relative overflow-hidden">
             {/* Top Badge: 1-Click Interactive Demo */}
             <div className="p-4 rounded-2xl bg-gradient-to-r from-peach-100/90 to-sakura-100/90 border border-peach-200/80 shadow-sm space-y-2.5">
               <div className="flex items-center gap-2">

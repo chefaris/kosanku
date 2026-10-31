@@ -69,7 +69,7 @@ export const PropertySelector: React.FC<PropertySelectorProps> = ({ compact = fa
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-peach-50 border border-peach-200 hover:bg-peach-100 text-darkcocoa transition-all text-xs font-semibold"
           >
             <span className="text-sm">{activePropertyId === 'all' ? '🌐' : '🏠'}</span>
-            <span className="max-w-[110px] truncate text-left">
+            <span className="max-w-[80px] xs:max-w-[110px] sm:max-w-[140px] truncate text-left text-[11px] sm:text-xs">
               {activePropertyId === 'all' ? 'Semua Cabang' : activeProperty?.name}
             </span>
             <ChevronDown className={`w-3.5 h-3.5 text-softgray transition-transform ${isOpen ? 'rotate-180' : ''}`} />

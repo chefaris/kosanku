@@ -154,7 +154,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast Notification */}
       <AnimatePresence>
         {toastMessage && (
@@ -175,7 +175,7 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative overflow-hidden bg-gradient-to-r from-peach-100/90 via-sakura-50 to-cream-100 rounded-3xl p-6 md:p-8 border border-peach-200 shadow-cute"
+        className="relative overflow-hidden bg-gradient-to-r from-peach-100/90 via-sakura-50 to-cream-100 rounded-3xl p-4 sm:p-6 md:p-8 border border-peach-200 shadow-cute"
       >
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-xl text-center md:text-left">
@@ -365,30 +365,30 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="flex flex-wrap items-center gap-3 pt-1"
+        className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1"
       >
         <button
           onClick={() => handleOpenWaModal()}
-          className="bg-peach-500 hover:bg-peach-400 text-white px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all transform active:scale-95"
+          className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all transform active:scale-95"
         >
-          <MessageCircle className="w-4 h-4" strokeWidth={2} />
+          <MessageCircle className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
           <span>Kirim Pengingat WA</span>
         </button>
 
         <Link
           href="/rooms"
-          className="bg-sakura-100 hover:bg-sakura-200 text-darkcocoa px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2 transition-all border border-sakura-200"
+          className="flex-1 sm:flex-none justify-center bg-sakura-100 hover:bg-sakura-200 text-darkcocoa px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2 transition-all border border-sakura-200"
         >
-          <Plus className="w-4 h-4 text-peach-500" strokeWidth={2.5} />
-          <span>Tambah / Kelola Kamar</span>
+          <Plus className="w-4 h-4 text-peach-500 flex-shrink-0" strokeWidth={2.5} />
+          <span className="whitespace-nowrap">Tambah Kamar</span>
         </Link>
 
         <Link
           href="/finance"
-          className="bg-white hover:bg-cream-100 text-darkcocoa px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2 transition-all border border-cream-200"
+          className="flex-1 sm:flex-none justify-center bg-white hover:bg-cream-100 text-darkcocoa px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2 transition-all border border-cream-200"
         >
-          <FileSpreadsheet className="w-4 h-4 text-softgray" strokeWidth={1.75} />
-          <span>Catat Pengeluaran Kas</span>
+          <FileSpreadsheet className="w-4 h-4 text-softgray flex-shrink-0" strokeWidth={1.75} />
+          <span className="whitespace-nowrap">Catat Kas</span>
         </Link>
       </motion.div>
 

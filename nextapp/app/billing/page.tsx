@@ -90,7 +90,7 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 font-body text-darkcocoa">
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
       {/* Toast */}
       <AnimatePresence>
         {toastMessage && (
@@ -167,10 +167,10 @@ export default function BillingPage() {
 
       {/* Filter and Search */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none sm:flex-wrap">
           <button
             onClick={() => setFilterStatus('all')}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
               filterStatus === 'all'
                 ? 'bg-peach-500 text-white shadow-cute'
                 : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -180,7 +180,7 @@ export default function BillingPage() {
           </button>
           <button
             onClick={() => setFilterStatus('overdue')}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
               filterStatus === 'overdue'
                 ? 'bg-peach-500 text-white shadow-cute'
                 : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -190,7 +190,7 @@ export default function BillingPage() {
           </button>
           <button
             onClick={() => setFilterStatus('unpaid')}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
               filterStatus === 'unpaid'
                 ? 'bg-peach-500 text-white shadow-cute'
                 : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
@@ -200,7 +200,7 @@ export default function BillingPage() {
           </button>
           <button
             onClick={() => setFilterStatus('paid')}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
               filterStatus === 'paid'
                 ? 'bg-peach-500 text-white shadow-cute'
                 : 'bg-white text-softgray hover:bg-cream-100 border border-cream-200'
