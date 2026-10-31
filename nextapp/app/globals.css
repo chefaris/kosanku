@@ -19,3 +19,61 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-quicksand), -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* ==========================================================================
+   PRINT STYLESHEET (Official Invoices & Receipts)
+   Clean paper output, hides backdrops, sidebars, headers, and modal action buttons
+   ========================================================================== */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide everything in the body by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make the printable invoice container and all its children visible */
+  .printable-invoice,
+  .printable-invoice * {
+    visibility: visible;
+  }
+
+  /* Reset layout of printable invoice to full page */
+  .printable-invoice {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24px 32px !important;
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  /* Elements to explicitly hide inside or outside the invoice */
+  .print-hide,
+  .print-hide *,
+  header,
+  nav,
+  aside {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 10mm 15mm;
+  }
+}

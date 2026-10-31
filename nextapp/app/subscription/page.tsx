@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useKosStore, SaaSInvoice } from '../lib/store/useKosStore';
 import { PaymentModal } from '../components/ui/PaymentModal';
+import { CatPawStamp } from '../components/ui/CatPawStamp';
 
 export default function SubscriptionPage() {
   const { subscription, saasInvoices, rooms, properties, currentUser } = useKosStore();
@@ -550,16 +551,17 @@ export default function SubscriptionPage() {
       {/* View Printable Receipt Modal */}
       <AnimatePresence>
         {viewingInvoice && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm print:p-0 print:bg-transparent">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-cream-200 overflow-hidden p-6 sm:p-8 space-y-6"
+              className="printable-invoice relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-cream-200 overflow-hidden p-6 sm:p-8 space-y-6"
             >
               <button
                 onClick={() => setViewingInvoice(null)}
-                className="absolute top-5 right-5 p-2 rounded-full bg-cream-100 hover:bg-cream-200 text-softgray hover:text-darkcocoa transition-colors"
+                className="print-hide absolute top-5 right-5 p-2 rounded-full bg-cream-100 hover:bg-cream-200 text-softgray hover:text-darkcocoa transition-colors"
+                title="Tutup"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -582,8 +584,8 @@ export default function SubscriptionPage() {
                 </div>
               </div>
 
-              {/* Receipt Details */}
-              <div className="space-y-3 text-xs">
+              {/* Receipt Details with Floating Cat Paw Stamp */}
+              <div className="space-y-3 text-xs relative">
                 <div className="flex justify-between py-1 border-b border-cream-100">
                   <span className="text-softgray">Pelanggan / Pemilik:</span>
                   <span className="font-bold text-darkcocoa">{currentUser?.name}</span>
@@ -608,30 +610,39 @@ export default function SubscriptionPage() {
                     {viewingInvoice.amount === 0 ? 'Rp 0 (Trial)' : `Rp ${viewingInvoice.amount.toLocaleString('id-ID')}`}
                   </span>
                 </div>
+
+                {/* Stempel Lunas Logo Kaki Kucing (🐾 Cat Paw Paid Stamp) */}
+                <div className="absolute right-4 -bottom-6 pointer-events-none z-10">
+                  <CatPawStamp
+                    date={viewingInvoice.date}
+                    variant="emerald"
+                    size="md"
+                    subtext="KOSANKU SAAS OFFICIAL 🐾"
+                  />
+                </div>
               </div>
 
-              {/* Cute Paid Stamp */}
-              <div className="p-4 rounded-2xl bg-matcha-50 border border-matcha-200 flex items-center justify-between">
+              {/* Cute Paid Stamp Banner */}
+              <div className="p-4 rounded-2xl bg-matcha-50/80 border border-matcha-200 flex items-center justify-between relative overflow-hidden">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-matcha-500 text-white flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-matcha-500 text-white flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-matcha-800">STATUS: LUNAS TERVERIFIKASI</p>
-                    <p className="text-[10px] text-matcha-600">Terima kasih telah mempercayai KosanKu!</p>
+                    <p className="text-xs font-bold text-matcha-800">STATUS: LUNAS TERVERIFIKASI RESMI</p>
+                    <p className="text-[10px] text-matcha-600">Disahkan dengan stempel kaki kucing KosanKu &amp; Mimi si Kucing Kos! 🐾✨</p>
                   </div>
                 </div>
-                <span className="text-2xl">💮</span>
               </div>
 
-              {/* Modal Buttons */}
-              <div className="flex items-center justify-end gap-2 pt-2">
+              {/* Modal Buttons (Hidden when printing) */}
+              <div className="print-hide flex items-center justify-end gap-2 pt-2 border-t border-cream-100">
                 <button
                   type="button"
                   onClick={() => window.print()}
                   className="py-2.5 px-4 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold flex items-center gap-1.5 transition-colors"
                 >
-                  <Printer className="w-4 h-4" />
+                  <Printer className="w-4 h-4 text-peach-500" />
                   <span>Cetak Kuitansi</span>
                 </button>
                 <button
