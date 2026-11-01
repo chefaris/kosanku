@@ -52,7 +52,7 @@ export interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegisterModal }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, logout, impersonatingFromAdmin, stopImpersonating } = useKosStore();
+  const { currentUser, subscription, logout, impersonatingFromAdmin, stopImpersonating } = useKosStore();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const toggleMobile = () => setIsMobileOpen((prev) => !prev);
@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
     <div className="flex flex-col h-full justify-between">
       {/* Header / Brand */}
       <div>
-        <div className="px-5 py-5 border-b border-cream-100">
+        <div className="px-5 py-4 border-b border-cream-100">
           <Link
             href="/dashboard"
             onClick={closeMobile}
@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/app-logo.jpg"
-                alt="Logo KosanKu"
+                alt="Logo pawskost"
                 width={48}
                 height={48}
                 className="w-full h-full object-cover"
@@ -86,14 +86,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-heading font-extrabold text-xl tracking-tight text-peach-500">
-                  KosanKu
+                  pawskost
                 </span>
+                <span className="text-xs">🐾</span>
               </div>
               <p className="font-body text-[11px] text-softgray font-medium truncate">
                 Mimi si Kucing Kos
               </p>
             </div>
           </Link>
+
+          {/* Logo Status Tenant (Jenis Paket yang Dibeli & Tulisan Jenis Langganan) */}
+          <div className="mt-3.5 p-2.5 rounded-2xl bg-gradient-to-r from-peach-50/90 to-sakura-50/80 border border-peach-200/70 shadow-xs flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-peach-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                <Crown className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[9px] uppercase tracking-wider font-extrabold text-softgray block leading-none">
+                  Jenis Langganan
+                </span>
+                <span className="font-heading font-extrabold text-xs text-darkcocoa truncate block mt-0.5">
+                  {subscription?.planName || 'Paket Juragan Pro'}
+                </span>
+              </div>
+            </div>
+            <Link
+              href="/subscription"
+              onClick={closeMobile}
+              className="px-2 py-1 rounded-lg bg-white/90 hover:bg-white text-[10px] font-bold text-peach-600 border border-peach-200 shadow-2xs flex-shrink-0 transition-colors"
+              title="Kelola Paket Langganan"
+            >
+              <span>{subscription?.status === 'trial' ? 'Trial' : 'Aktif'}</span>
+            </Link>
+          </div>
         </div>
 
         {/* Multi-Property Switcher */}

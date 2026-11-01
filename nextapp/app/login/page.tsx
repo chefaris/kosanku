@@ -68,7 +68,7 @@ export default function LoginPage() {
     } else if (authResult.error === 'wrong_password') {
       setErrorMessage('Kata sandi salah. Harap periksa kembali kata sandi Anda.');
     } else if (authResult.error === 'not_found') {
-      setErrorMessage('Email ini belum terdaftar di KosanKu. Silakan klik "Daftar Akun Baru" di bawah.');
+      setErrorMessage('Email ini belum terdaftar di pawskost. Silakan klik "Daftar Akun Baru" di bawah.');
     } else if (authResult.error === 'suspended') {
       setErrorMessage('Akun Anda sedang dinonaktifkan oleh administrator. Silakan hubungi CS.');
     } else {
@@ -79,7 +79,7 @@ export default function LoginPage() {
   const openWhatsAppToAdmin = () => {
     const adminPhone = '6281234567890';
     const msg = encodeURIComponent(
-      `Halo Super Admin KosanKu! Saya pemilik akun ${pendingAccount?.name || email} (${pendingAccount?.kosName || 'Kosan'}). Pendaftaran saya sedang menunggu verifikasi bukti transfer. Mohon bantuannya untuk aktivasi ya Kak. Terima kasih!`
+      `Halo Admin pawskost! Saya pemilik akun ${pendingAccount?.name || email} (${pendingAccount?.kosName || 'Kosan'}). Pendaftaran saya sedang menunggu verifikasi bukti transfer. Mohon bantuannya untuk aktivasi ya Kak. Terima kasih!`
     );
     window.open(`https://wa.me/${adminPhone}?text=${msg}`, '_blank');
   };
@@ -94,7 +94,7 @@ export default function LoginPage() {
             <div className="w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0">
               <Image
                 src="/app-logo.jpg"
-                alt="Logo KosanKu"
+                alt="Logo pawskost"
                 width={44}
                 height={44}
                 className="w-full h-full object-cover"
@@ -103,10 +103,10 @@ export default function LoginPage() {
             </div>
             <div className="text-left">
               <h1 className="font-heading font-black text-xl text-peach-500 tracking-tight leading-none">
-                KosanKu
+                pawskost
               </h1>
               <p className="text-xs text-softgray font-medium mt-1">
-                Kelola Kos Jadi Menyenangkan
+                Kelola Kos Jadi Menyenangkan 🐾
               </p>
             </div>
           </div>
@@ -150,8 +150,8 @@ export default function LoginPage() {
               <div className="w-8 h-8 rounded-xl bg-lavender-100 text-lavender-500 flex items-center justify-center">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <h4 className="font-heading font-bold text-sm text-darkcocoa">Akses Terisolasi SaaS</h4>
-              <p className="text-xs text-softgray leading-relaxed">Keamanan data terisolasi mandiri untuk setiap pemilik kos.</p>
+              <h4 className="font-heading font-bold text-sm text-darkcocoa">Akses Mandiri &amp; Terproteksi</h4>
+              <p className="text-xs text-softgray leading-relaxed">Keamanan data terisolasi mandiri untuk setiap pemilik kost.</p>
             </div>
           </div>
 
@@ -267,7 +267,7 @@ export default function LoginPage() {
             {/* Footer: Register Trigger */}
             <div className="pt-3 border-t border-cream-100 text-center">
               <p className="text-xs text-softgray">
-                Belum punya akun KosanKu?{' '}
+                Belum punya akun pawskost?{' '}
                 <button
                   type="button"
                   onClick={() => setIsRegisterModalOpen(true)}

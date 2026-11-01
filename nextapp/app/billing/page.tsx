@@ -50,6 +50,7 @@ export default function BillingPage() {
 
   // Unified Invoice / Receipt Viewer Modal
   const [selectedInvoiceForView, setSelectedInvoiceForView] = useState<Invoice | null>(null);
+  const [printFormat, setPrintFormat] = useState<'normal' | 'thermal'>('normal');
 
   // Modals for Generating Invoices
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -297,10 +298,10 @@ export default function BillingPage() {
     const isPaid = inv.status === 'paid';
     const waText = isPaid
       ? encodeURIComponent(
-          `Halo Kak ${inv.tenantName}! 👋\n\nTerima kasih banyak! Pembayaran sewa kamar *${inv.roomNumber}* periode *${inv.periodMonth}* sebesar *${formatRupiah(inv.amount)}* telah *LUNAS TERVERIFIKASI* dengan Stempel Resmi KosanKu 🐾✨\n\nNomor Kuitansi: ${inv.invoiceNumber}\nTanggal: ${inv.paidAt || 'Hari Ini'}\n\nSalam hangat dari Mimi si Kucing Kos & Pengelola ${settings.kosName}! 🏡🌸`
+          `Halo Kak ${inv.tenantName}! 👋\n\nTerima kasih banyak! Pembayaran sewa kamar *${inv.roomNumber}* periode *${inv.periodMonth}* sebesar *${formatRupiah(inv.amount)}* telah *LUNAS TERVERIFIKASI* dengan Stempel Resmi pawskost 🐾✨\n\nNomor Kuitansi: ${inv.invoiceNumber}\nTanggal: ${inv.paidAt || 'Hari Ini'}\n\nSalam hangat dari Mimi si Kucing Kos & Pengelola ${settings.kosName}! 🏡🌸`
         )
       : encodeURIComponent(
-          `Halo Kak ${inv.tenantName}! 👋 Salam manis dari KosanKu & Mimi si Kucing Kos 🐱✨\n\nSekadar info manis, tagihan sewa kamar *${inv.roomNumber}* sebesar *${formatRupiah(inv.amount)}* untuk periode *${inv.periodMonth}* akan jatuh tempo pada *${inv.dueDate}*.\n\nPembayaran via Transfer ${settings.bankName}: *${settings.accountNumber}* (a.n *${settings.accountHolder}*).\n\nTerima kasih banyak sudah menjaga kenyamanan kost bersama Mimi! 🏡🌸`
+          `Halo Kak ${inv.tenantName}! 👋 Salam manis dari pawskost & Mimi si Kucing Kos 🐱✨\n\nSekadar info manis, tagihan sewa kamar *${inv.roomNumber}* sebesar *${formatRupiah(inv.amount)}* untuk periode *${inv.periodMonth}* akan jatuh tempo pada *${inv.dueDate}*.\n\nPembayaran via Transfer ${settings.bankName}: *${settings.accountNumber}* (a.n *${settings.accountHolder}*).\n\nTerima kasih banyak sudah menjaga kenyamanan kost bersama Mimi! 🏡🌸`
         );
 
     if (phone) {
@@ -311,8 +312,9 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa">
-      {/* Toast Notification */}
+    <div className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8 font-body text-darkcocoa print:p-0 print:m-0 print:max-w-none">
+      <div className="print:hidden space-y-4 sm:space-y-6 md:space-y-8">
+        {/* Toast Notification */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
@@ -852,7 +854,7 @@ export default function BillingPage() {
                       <option value="Tunai / Kasir Kos">Tunai / Kasir Kos</option>
                     </select>
                     <p className="text-[10px] text-matcha-700">
-                      Kuitansi resmi berstempel lunas logo kaki kucing KosanKu akan langsung diterbitkan setelah disimpan.
+                      Kuitansi resmi berstempel lunas logo kaki kucing pawskost akan langsung diterbitkan setelah disimpan.
                     </p>
                   </motion.div>
                 )}
@@ -980,18 +982,23 @@ export default function BillingPage() {
           </div>
         )}
       </AnimatePresence>
+      </div>
 
       {/* =====================================================================
           MODAL 3: PRATINJAU CETAK INVOICE & KUITANSI (DENGAN STEMPEL KAKI KUCING 🐾)
           ===================================================================== */}
       <AnimatePresence>
         {selectedInvoiceForView && (
-          <div className="print-modal-container fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-darkcocoa/60 backdrop-blur-sm overflow-y-auto">
+          <div className="print-modal-container fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-darkcocoa/60 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-transparent">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="printable-invoice relative bg-white rounded-3xl shadow-2xl border border-cream-200 p-5 sm:p-7 md:p-8 max-w-lg w-full space-y-4 sm:space-y-5 font-body overflow-visible my-auto sm:my-6"
+              className={`relative bg-white shadow-2xl border border-cream-200 p-5 sm:p-7 my-auto font-body overflow-visible print:p-4 print:shadow-none print:border-gray-300 print:my-0 ${
+                printFormat === 'thermal'
+                  ? 'printable-thermal rounded-2xl max-w-[340px] w-full font-mono text-xs print:max-w-[58mm] print:p-1'
+                  : 'printable-invoice rounded-3xl max-w-lg w-full space-y-3 sm:space-y-4 font-body print:max-w-[520px] print:space-y-2'
+              }`}
             >
               {/* Close Button (Hidden on Print) */}
               <button
@@ -1003,153 +1010,251 @@ export default function BillingPage() {
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Header Dokumen Kuitansi / Invoice */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-dashed border-cream-200 pb-4 print:flex-row print:items-start">
-                <div className="flex items-center gap-3">
-                  <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
-                    <Image
-                      src="/mimi-mascot.jpg"
-                      alt="Mimi si Kucing Kos"
-                      width={48}
-                      height={48}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-extrabold text-base sm:text-lg text-peach-500 leading-tight">
-                      {selectedInvoiceForView.status === 'paid'
-                        ? 'KUITANSI RESMI PEMBAYARAN'
-                        : 'INVOICE TAGIHAN SEWA'}
-                    </h3>
-                    <p className="text-xs font-bold text-darkcocoa">
-                      {properties.find((p) => p.id === selectedInvoiceForView.propertyId)?.name || settings.kosName}
-                    </p>
-                    <p className="text-[10px] text-softgray">
-                      {properties.find((p) => p.id === selectedInvoiceForView.propertyId)?.address || settings.kosAddress || 'Bandung'} • Dokumen Sah
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <span className="font-mono font-bold text-xs text-darkcocoa block">
-                    {selectedInvoiceForView.invoiceNumber}
-                  </span>
-                  <span
-                    className={`inline-block text-[10px] font-extrabold px-2 py-0.5 rounded-full mt-1 ${
-                      selectedInvoiceForView.status === 'paid'
-                        ? 'bg-matcha-100 text-matcha-700 border border-matcha-300'
-                        : 'bg-peach-100 text-peach-700 border border-peach-300'
+              {/* Format Toggle Bar (Hidden on Print) */}
+              <div className="print-hide mb-3 pb-3 border-b border-cream-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <span className="text-xs font-bold text-darkcocoa flex items-center gap-1.5">
+                  <Printer className="w-4 h-4 text-peach-500" />
+                  Format Cetak:
+                </span>
+                <div className="flex bg-cream-100 p-1 rounded-xl gap-1 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => setPrintFormat('normal')}
+                    className={`flex-1 sm:flex-initial px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      printFormat === 'normal'
+                        ? 'bg-white text-darkcocoa shadow-sm'
+                        : 'text-softgray hover:text-darkcocoa'
                     }`}
                   >
-                    {selectedInvoiceForView.status === 'paid' ? 'LUNAS SAH' : 'BELUM DIBAYAR'}
-                  </span>
+                    📄 Normal (A4 1 Hal)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPrintFormat('thermal')}
+                    className={`flex-1 sm:flex-initial px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      printFormat === 'thermal'
+                        ? 'bg-peach-500 text-white shadow-sm'
+                        : 'text-softgray hover:text-darkcocoa'
+                    }`}
+                  >
+                    🧾 Thermal (58mm)
+                  </button>
                 </div>
               </div>
 
-              {/* Rincian Tagihan / Kuitansi & Floating Stempel Kaki Kucing */}
-              <div className="space-y-2.5 text-xs relative">
-                <div className="flex justify-between py-0.5">
-                  <span className="text-softgray font-medium">Nomor Dokumen:</span>
-                  <span className="font-mono font-bold text-darkcocoa">
-                    {selectedInvoiceForView.invoiceNumber}
-                  </span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-softgray font-medium">
-                    {selectedInvoiceForView.status === 'paid' ? 'Diterima Dari:' : 'Ditujukan Kepada:'}
-                  </span>
-                  <span className="font-bold text-darkcocoa">{selectedInvoiceForView.tenantName}</span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-softgray font-medium">Unit Kamar Sewa:</span>
-                  <span className="font-bold text-peach-600">{selectedInvoiceForView.roomNumber}</span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-softgray font-medium">Untuk Pembayaran:</span>
-                  <span className="font-semibold text-darkcocoa">
-                    Sewa Periode {selectedInvoiceForView.periodMonth}
-                  </span>
-                </div>
-                <div className="flex justify-between py-0.5">
-                  <span className="text-softgray font-medium">Jatuh Tempo:</span>
-                  <span className="font-semibold text-darkcocoa">{selectedInvoiceForView.dueDate}</span>
-                </div>
-
-                {selectedInvoiceForView.status === 'paid' ? (
-                  <>
-                    <div className="flex justify-between py-0.5">
-                      <span className="text-softgray font-medium">Metode Pembayaran:</span>
-                      <span className="font-semibold text-darkcocoa">
-                        {selectedInvoiceForView.paymentMethod || 'Transfer Bank'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between py-0.5">
-                      <span className="text-softgray font-medium">Tanggal Pelunasan:</span>
-                      <span className="font-semibold text-darkcocoa">
-                        {selectedInvoiceForView.paidAt || 'Hari Ini'}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex justify-between py-0.5">
-                    <span className="text-softgray font-medium">Status Pembayaran:</span>
-                    <span className="font-bold text-peach-600">Menunggu Transfer</span>
-                  </div>
-                )}
-
-                <div className="pt-3 border-t-2 border-dashed border-cream-200 flex justify-between items-center text-sm">
-                  <span className="font-bold text-darkcocoa">
-                    {selectedInvoiceForView.status === 'paid' ? 'Jumlah Yang Diterima:' : 'Total Tagihan Sewa:'}
-                  </span>
-                  <span className="font-heading font-extrabold text-xl text-matcha-600">
-                    {formatRupiah(selectedInvoiceForView.amount)}
-                  </span>
-                </div>
-
-                {/* STEMPEL RESMI LOGO KAKI KUCING 🐾 (Floating Stamp) */}
-                {selectedInvoiceForView.status === 'paid' && (
-                  <div className="absolute right-2 -bottom-5 pointer-events-none z-10">
-                    <CatPawStamp
-                      date={selectedInvoiceForView.paidAt || 'Hari Ini'}
-                      variant="emerald"
-                      size="md"
-                      subtext="KOSANKU • MIMI 🐾"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Banner Status Bawah Dokumen */}
-              {selectedInvoiceForView.status === 'paid' ? (
-                <div className="bg-matcha-50 rounded-2xl p-3 border border-matcha-200 flex items-center gap-3 relative overflow-hidden">
-                  <div className="w-8 h-8 rounded-full bg-matcha-500 text-white flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-matcha-800 font-extrabold text-xs block">
-                      PEMBAYARAN RESMI DIVERIFIKASI LUNAS
-                    </span>
-                    <p className="text-[10px] text-softgray">
-                      Dicap sah dengan segel stempel kaki kucing KosanKu &amp; Mimi si Kucing Kos.
+              {printFormat === 'thermal' ? (
+                /* ================= THERMAL 58MM RECEIPT LAYOUT ================= */
+                <div className="space-y-2 text-darkcocoa">
+                  <div className="text-center space-y-1">
+                    <p className="font-extrabold text-sm tracking-wider uppercase">PAWSKOST 🐾</p>
+                    <p className="font-bold text-[11px] leading-tight">
+                      {properties.find((p) => p.id === selectedInvoiceForView.propertyId)?.name || settings.kosName}
                     </p>
+                    <p className="text-[10px] text-gray-500">
+                      {properties.find((p) => p.id === selectedInvoiceForView.propertyId)?.address || settings.kosAddress || 'Kost Nyaman Ramah Kucing'}
+                    </p>
+                    <div className="border-b border-dashed border-gray-400 my-1.5" />
+                    <p className="font-bold text-xs uppercase">
+                      {selectedInvoiceForView.status === 'paid' ? 'STRUK BUKTI PEMBAYARAN' : 'TAGIHAN SEWA KOST'}
+                    </p>
+                  </div>
+
+                  <div className="text-[11px] space-y-1 py-1">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">No. Nota:</span>
+                      <span className="font-bold">{selectedInvoiceForView.invoiceNumber}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Tanggal:</span>
+                      <span>{selectedInvoiceForView.paidAt || selectedInvoiceForView.dueDate}</span>
+                    </div>
+                    <div className="border-b border-dashed border-gray-300 my-1" />
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Penyewa:</span>
+                      <span className="font-bold">{selectedInvoiceForView.tenantName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Kamar:</span>
+                      <span className="font-bold">{selectedInvoiceForView.roomNumber}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Periode:</span>
+                      <span>{selectedInvoiceForView.periodMonth}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Metode:</span>
+                      <span>{selectedInvoiceForView.paymentMethod || 'Transfer'}</span>
+                    </div>
+                  </div>
+
+                  <div className="border-b-2 border-dashed border-gray-800 my-1.5" />
+                  <div className="flex justify-between items-center py-1">
+                    <span className="font-extrabold text-xs uppercase">TOTAL</span>
+                    <span className="font-extrabold text-sm">{formatRupiah(selectedInvoiceForView.amount)}</span>
+                  </div>
+                  <div className="border-b-2 border-dashed border-gray-800 my-1.5" />
+
+                  <div className="text-center py-1 space-y-1">
+                    <span className={`inline-block text-[11px] font-extrabold px-2 py-0.5 rounded ${
+                      selectedInvoiceForView.status === 'paid' ? 'bg-black text-white' : 'border border-gray-600'
+                    }`}>
+                      {selectedInvoiceForView.status === 'paid' ? '*** LUNAS SAH ***' : '*** BELUM LUNAS ***'}
+                    </span>
+                    <p className="text-[10px] text-gray-500">
+                      Dicetak otomatis via pawskost
+                    </p>
+                    <p className="text-[10px] font-bold">Terima kasih atas pembayaran Anda! 🐾</p>
                   </div>
                 </div>
               ) : (
-                <div className="bg-peach-50 rounded-2xl p-3.5 border border-peach-200 space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-peach-700 font-bold text-xs">
-                    <CreditCard className="w-4 h-4 text-peach-500" />
-                    <span>Rekening Tujuan Pembayaran Sewa:</span>
+                /* ================= NORMAL A4 1-PAGE INVOICE/RECEIPT ================= */
+                <>
+                  {/* Header Dokumen Kuitansi / Invoice */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-dashed border-cream-200 pb-3 print:flex-row print:items-start">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
+                        <Image
+                          src="/mimi-mascot.jpg"
+                          alt="Mimi si Kucing Kos"
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-heading font-extrabold text-base sm:text-lg text-peach-500 leading-tight">
+                          {selectedInvoiceForView.status === 'paid'
+                            ? 'KUITANSI RESMI PEMBAYARAN'
+                            : 'INVOICE TAGIHAN SEWA'}
+                        </h3>
+                        <p className="text-xs font-bold text-darkcocoa">
+                          {properties.find((p) => p.id === selectedInvoiceForView.propertyId)?.name || settings.kosName}
+                        </p>
+                        <p className="text-[10px] text-softgray">
+                          {properties.find((p) => p.id === selectedInvoiceForView.propertyId)?.address || settings.kosAddress || 'Bandung'} • Dokumen Sah pawskost
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="font-mono font-bold text-xs text-darkcocoa block">
+                        {selectedInvoiceForView.invoiceNumber}
+                      </span>
+                      <span
+                        className={`inline-block text-[10px] font-extrabold px-2 py-0.5 rounded-full mt-1 ${
+                          selectedInvoiceForView.status === 'paid'
+                            ? 'bg-matcha-100 text-matcha-700 border border-matcha-300'
+                            : 'bg-peach-100 text-peach-700 border border-peach-300'
+                        }`}
+                      >
+                        {selectedInvoiceForView.status === 'paid' ? 'LUNAS SAH' : 'BELUM DIBAYAR'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="bg-white/80 rounded-xl p-2.5 border border-peach-200/80 font-mono text-xs text-darkcocoa space-y-0.5">
-                    <p className="font-bold">
-                      {settings.bankName}: <span className="text-peach-600">{settings.accountNumber}</span>
-                    </p>
-                    <p className="text-[11px] text-softgray">a.n {settings.accountHolder}</p>
+
+                  {/* Rincian Tagihan / Kuitansi & Floating Stempel Kaki Kucing */}
+                  <div className="space-y-2 text-xs relative">
+                    <div className="flex justify-between py-0.5">
+                      <span className="text-softgray font-medium">Nomor Dokumen:</span>
+                      <span className="font-mono font-bold text-darkcocoa">
+                        {selectedInvoiceForView.invoiceNumber}
+                      </span>
+                    </div>
+                    <div className="flex justify-between py-0.5">
+                      <span className="text-softgray font-medium">
+                        {selectedInvoiceForView.status === 'paid' ? 'Diterima Dari:' : 'Ditujukan Kepada:'}
+                      </span>
+                      <span className="font-bold text-darkcocoa">{selectedInvoiceForView.tenantName}</span>
+                    </div>
+                    <div className="flex justify-between py-0.5">
+                      <span className="text-softgray font-medium">Unit Kamar Sewa:</span>
+                      <span className="font-bold text-peach-600">{selectedInvoiceForView.roomNumber}</span>
+                    </div>
+                    <div className="flex justify-between py-0.5">
+                      <span className="text-softgray font-medium">Untuk Pembayaran:</span>
+                      <span className="font-semibold text-darkcocoa">
+                        Sewa Periode {selectedInvoiceForView.periodMonth}
+                      </span>
+                    </div>
+                    <div className="flex justify-between py-0.5">
+                      <span className="text-softgray font-medium">Jatuh Tempo:</span>
+                      <span className="font-semibold text-darkcocoa">{selectedInvoiceForView.dueDate}</span>
+                    </div>
+
+                    {selectedInvoiceForView.status === 'paid' ? (
+                      <>
+                        <div className="flex justify-between py-0.5">
+                          <span className="text-softgray font-medium">Metode Pembayaran:</span>
+                          <span className="font-semibold text-darkcocoa">
+                            {selectedInvoiceForView.paymentMethod || 'Transfer Bank'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between py-0.5">
+                          <span className="text-softgray font-medium">Tanggal Pelunasan:</span>
+                          <span className="font-semibold text-darkcocoa">
+                            {selectedInvoiceForView.paidAt || 'Hari Ini'}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex justify-between py-0.5">
+                        <span className="text-softgray font-medium">Status Pembayaran:</span>
+                        <span className="font-bold text-peach-600">Menunggu Transfer</span>
+                      </div>
+                    )}
+
+                    <div className="pt-2 border-t-2 border-dashed border-cream-200 flex justify-between items-center text-sm">
+                      <span className="font-bold text-darkcocoa">
+                        {selectedInvoiceForView.status === 'paid' ? 'Jumlah Yang Diterima:' : 'Total Tagihan Sewa:'}
+                      </span>
+                      <span className="font-heading font-extrabold text-xl text-matcha-600">
+                        {formatRupiah(selectedInvoiceForView.amount)}
+                      </span>
+                    </div>
+
+                    {/* STEMPEL RESMI LOGO KAKI KUCING 🐾 (Floating Stamp) */}
+                    {selectedInvoiceForView.status === 'paid' && (
+                      <div className="absolute right-2 -bottom-4 pointer-events-none z-10">
+                        <CatPawStamp
+                          date={selectedInvoiceForView.paidAt || 'Hari Ini'}
+                          variant="emerald"
+                          size="md"
+                          subtext="PAWSKOST • MIMI 🐾"
+                        />
+                      </div>
+                    )}
                   </div>
-                  <p className="text-[10px] text-softgray">
-                    Harap mencantumkan nama dan nomor kamar saat melakukan transfer.
-                  </p>
-                </div>
+
+                  {/* Banner Status Bawah Dokumen */}
+                  {selectedInvoiceForView.status === 'paid' ? (
+                    <div className="bg-matcha-50 rounded-2xl p-2.5 border border-matcha-200 flex items-center gap-2.5 relative overflow-hidden">
+                      <div className="w-7 h-7 rounded-full bg-matcha-500 text-white flex items-center justify-center flex-shrink-0">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="text-matcha-800 font-extrabold text-xs block">
+                          PEMBAYARAN RESMI DIVERIFIKASI LUNAS
+                        </span>
+                        <p className="text-[10px] text-softgray">
+                          Dicap sah dengan segel stempel kaki kucing pawskost &amp; Mimi si Kucing Kos.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-peach-50 rounded-2xl p-2.5 border border-peach-200 space-y-1">
+                      <div className="flex items-center gap-1.5 text-peach-700 font-bold text-xs">
+                        <CreditCard className="w-3.5 h-3.5 text-peach-500" />
+                        <span>Rekening Tujuan Pembayaran Sewa:</span>
+                      </div>
+                      <div className="bg-white/80 rounded-xl p-2 border border-peach-200/80 font-mono text-xs text-darkcocoa space-y-0.5">
+                        <p className="font-bold">
+                          {settings.bankName}: <span className="text-peach-600">{settings.accountNumber}</span>
+                        </p>
+                        <p className="text-[10px] text-softgray">a.n {settings.accountHolder}</p>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Action Buttons (Hidden on Print / PDF Export) */}
@@ -1163,10 +1268,10 @@ export default function BillingPage() {
                       }, 120);
                     }}
                     className="px-4 py-2.5 rounded-2xl text-xs font-bold text-darkcocoa bg-cream-100 hover:bg-cream-200 flex items-center gap-1.5 transition-colors shadow-sm active:scale-95"
-                    title="Cetak atau simpan sebagai dokumen PDF tanpa watermark browser"
+                    title={printFormat === 'thermal' ? 'Cetak Struk Thermal 58mm' : 'Cetak Dokumen A4 1 Halaman'}
                   >
                     <Printer className="w-4 h-4 text-peach-500" />
-                    <span>Cetak / PDF</span>
+                    <span>{printFormat === 'thermal' ? 'Cetak Struk Thermal' : 'Cetak Dokumen (A4)'}</span>
                   </button>
                   <button
                     type="button"

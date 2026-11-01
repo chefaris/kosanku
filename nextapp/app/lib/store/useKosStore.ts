@@ -14,9 +14,9 @@ export interface UserProfile {
 
 export const defaultDemoUser: UserProfile = {
   id: 'usr-demo-1',
-  name: 'Tamu Demo KosanKu',
-  email: 'demo@kosanku.id',
-  kosName: 'KosanKu Paviliun Dago & Sukajadi',
+  name: 'Tamu Demo pawskost',
+  email: 'demo@pawskost.id',
+  kosName: 'pawskost Paviliun Dago & Sukajadi',
   role: 'demo',
   plan: 'demo_sandbox',
   trialDaysRemaining: 14,
@@ -25,9 +25,9 @@ export const defaultDemoUser: UserProfile = {
 
 export const defaultSuperAdmin: UserProfile = {
   id: 'usr-admin-root',
-  name: 'Super Admin KosanKu',
-  email: 'admin@kosanku.id',
-  kosName: 'Platform KosanKu SaaS',
+  name: 'Super Admin pawskost',
+  email: 'admin@pawskost.id',
+  kosName: 'pawskost Platform',
   role: 'superadmin',
   plan: 'enterprise',
   isDemo: false
@@ -149,7 +149,7 @@ export interface LandingPageConfig {
 }
 
 export const initialLandingPageConfig: LandingPageConfig = {
-  heroBadge: 'Platform Manajemen Kos SaaS No. 1 di Indonesia 🐱✨',
+  heroBadge: 'Platform Manajemen Kos No. 1 di Indonesia 🐾✨',
   heroHeadline: 'Kelola Kos Jadi Menyenangkan, Kamar Penuh, Tagihan Beres!',
   heroSubheadline: 'Tinggalkan buku catatan manual yang bikin pusing. Pantau okupansi kamar, kirim pengingat tagihan sewa ke WhatsApp dalam 1 klik, dan simpan arsip KTP penghuni secara aman.',
   heroCtaText: 'Coba Demo Interaktif (1-Klik Tanpa Daftar)',
@@ -182,17 +182,17 @@ export const initialLandingPageConfig: LandingPageConfig = {
       id: 'bank-bca',
       bankName: 'BCA (Bank Central Asia)',
       accountNumber: '8420-1928-31',
-      accountHolder: 'Rumah KosanKu Indonesia'
+      accountHolder: 'pawskost Indonesia'
     },
     {
       id: 'bank-mandiri',
       bankName: 'BANK MANDIRI',
       accountNumber: '1370-0192-8381',
-      accountHolder: 'Rumah KosanKu Indonesia'
+      accountHolder: 'pawskost Indonesia'
     }
   ],
   adminWhatsApp: '0812-3456-7890',
-  adminEmail: 'support@kosanku.id',
+  adminEmail: 'support@pawskost.id',
   faqs: [
     {
       id: 'faq-1',
@@ -351,12 +351,43 @@ export interface RoomFacilities {
   custom?: string[];
 }
 
+export interface RoomTypeItem {
+  id: string;
+  name: string;
+  description?: string;
+  defaultPrice?: number;
+}
+
+export interface FacilityItem {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+export type AppTheme = 'paw-peach' | 'matcha-mint' | 'sakura-blossom' | 'ocean-blue' | 'lavender-cozy' | 'mocha-latte';
+
+export interface TransactionCategoryItem {
+  id: string;
+  name: string;
+  icon: string;
+  type: 'income' | 'expense';
+  color?: string;
+}
+
+export interface CashAccountItem {
+  id: string;
+  name: string;
+  type: 'cash' | 'bank' | 'ewallet';
+  accountNumber?: string;
+  balance?: number;
+}
+
 export interface Room {
   id: string;
   propertyId: string;
   floor: number;
   number: string;
-  type: 'Deluxe' | 'Standard';
+  type: string;
   status: 'occupied' | 'vacant' | 'maintenance';
   price: number; // in Rupiah
   tenantId?: string;
@@ -451,10 +482,17 @@ interface KosStoreState {
   properties: Property[];
   activePropertyId: string; // 'all' or propertyId
   availableFacilities: string[];
+  facilityDefinitions: FacilityItem[];
+  roomTypes: RoomTypeItem[];
   rooms: Room[];
   tenants: Tenant[];
   invoices: Invoice[];
   expenses: Expense[];
+  incomeCategories: TransactionCategoryItem[];
+  expenseCategories: TransactionCategoryItem[];
+  cashAccounts: CashAccountItem[];
+  monthlyBudgets: Record<string, number>;
+  appTheme: AppTheme;
   maintenanceTickets: MaintenanceTicket[];
   settings: PropertySettings;
 
@@ -563,6 +601,30 @@ interface KosStoreState {
   landingPageConfig: LandingPageConfig;
   updateLandingPageConfig: (updates: Partial<LandingPageConfig>) => void;
   resetLandingPageConfig: () => void;
+
+  // App Theme Action
+  setAppTheme: (theme: AppTheme) => void;
+
+  // Room Types Actions
+  addRoomType: (item: Omit<RoomTypeItem, 'id'>) => void;
+  updateRoomType: (id: string, updates: Partial<RoomTypeItem>) => void;
+  deleteRoomType: (id: string) => void;
+
+  // Facility Definition Actions
+  addFacilityWithIcon: (name: string, icon: string) => void;
+  updateFacilityDefinition: (id: string, updates: Partial<FacilityItem>) => void;
+
+  // Category & Cash Account Actions
+  addCategory: (item: Omit<TransactionCategoryItem, 'id'>) => void;
+  updateCategory: (id: string, updates: Partial<TransactionCategoryItem>) => void;
+  deleteCategory: (id: string) => void;
+  addCashAccount: (item: Omit<CashAccountItem, 'id'>) => void;
+  updateCashAccount: (id: string, updates: Partial<CashAccountItem>) => void;
+  deleteCashAccount: (id: string) => void;
+
+  // Budget Actions
+  setMonthlyBudget: (categoryId: string, amount: number) => void;
+  clearMonthlyBudget: (categoryId: string) => void;
 }
 
 // Initial Seed Properties
@@ -894,7 +956,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 2,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-music.jpg',
+    jobTitle: 'Mahasiswi ITB'
   },
   {
     id: 't2',
@@ -908,7 +972,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 1,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-gamer.jpg',
+    jobTitle: 'Software Developer'
   },
   {
     id: 't3',
@@ -922,7 +988,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 8,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-laundry.jpg',
+    jobTitle: 'Desainer Grafis'
   },
   {
     id: 't5',
@@ -936,7 +1004,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 5,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-gym.jpg',
+    jobTitle: 'Fitness Coach'
   },
   {
     id: 't6',
@@ -950,7 +1020,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 12,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-groceries.jpg',
+    jobTitle: 'Barista'
   },
   {
     id: 't7',
@@ -964,7 +1036,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 15,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-music.jpg',
+    jobTitle: 'Content Creator'
   },
   {
     id: 't11',
@@ -978,7 +1052,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 3,
     depositAmount: 600000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-gamer.jpg',
+    jobTitle: 'Musisi'
   },
   {
     id: 't14',
@@ -992,7 +1068,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 3,
     depositAmount: 500000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-groceries.jpg',
+    jobTitle: 'Akuntan'
   },
 
   // Cabang Sukajadi
@@ -1008,7 +1086,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 4,
     depositAmount: 1000000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-laundry.jpg',
+    jobTitle: 'Penyanyi'
   },
   {
     id: 't22',
@@ -1022,7 +1102,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 9,
     depositAmount: 1000000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-music.jpg',
+    jobTitle: 'Komposer'
   },
   {
     id: 't23',
@@ -1036,7 +1118,9 @@ const initialTenants: Tenant[] = [
     dueDayOfMonth: 11,
     depositAmount: 1000000,
     depositStatus: 'paid',
-    status: 'active'
+    status: 'active',
+    profilePhoto: '/cat-avatar-gym.jpg',
+    jobTitle: 'Konsultan Pendidikan'
   }
 ];
 
@@ -1208,13 +1292,40 @@ const initialTickets: MaintenanceTicket[] = [
 const initialSettings: PropertySettings = {
   bankName: 'BCA (Bank Central Asia)',
   accountNumber: '8420-1928-31',
-  accountHolder: 'Rumah KosanKu Indonesia',
+  accountHolder: 'pawskost Indonesia',
   waTemplate:
-    'Halo Kak {nama}! 🌸 Ini Mimi dari KosanKu mengingatkan tagihan kos kamar {kamar} bulan {bulan} sebesar {nominal} jatuh tempo pada {tanggal}. Pembayaran via transfer ke {bank} a.n {pemilik}. Terima kasih ya Kak! 🐱✨',
-  kosName: 'KosanKu Living',
+    'Halo Kak {nama}! 🐾 Salam manis dari pawskost & Mimi si Kucing Kos. Tagihan sewa kamar {kamar} bulan {bulan} sebesar {nominal} jatuh tempo pada {tanggal}. Pembayaran via transfer {bank}: {rekening} a.n {pemilik}. Terima kasih! 🐱✨',
+  kosName: 'pawskost Living',
   kosAddress: 'Bandung, Jawa Barat',
   kosPhone: '0812-3456-7890'
 };
+
+export const defaultRoomTypes: RoomTypeItem[] = [
+  { id: 'rt-std', name: 'Standard', description: 'Kamar nyaman ukuran standar', defaultPrice: 1500000 },
+  { id: 'rt-dlx', name: 'Deluxe', description: 'Kamar luas dengan fasilitas lengkap', defaultPrice: 1800000 },
+  { id: 'rt-vip', name: 'VIP', description: 'Kamar premium view terbaik & perabotan eksklusif', defaultPrice: 2200000 },
+  { id: 'rt-ste', name: 'Suite', description: 'Kamar mewah dengan pantry & ruang santai pribadi', defaultPrice: 2800000 },
+  { id: 'rt-eko', name: 'Ekonomi', description: 'Pilihan hemat bersahabat dengan kantong', defaultPrice: 1000000 }
+];
+
+export const defaultFacilityDefinitions: FacilityItem[] = [
+  { id: 'fac-ac', name: 'AC (Air Conditioner)', icon: 'Snowflake' },
+  { id: 'fac-wifi', name: 'WiFi Internet Cepat', icon: 'Wifi' },
+  { id: 'fac-km', name: 'Kamar Mandi Dalam', icon: 'ShowerHead' },
+  { id: 'fac-water-heater', name: 'Water Heater', icon: 'Flame' },
+  { id: 'fac-bed', name: 'Kasur Springbed', icon: 'Layers' },
+  { id: 'fac-lemari', name: 'Meja & Lemari Pakaian', icon: 'Armchair' },
+  { id: 'fac-tv', name: 'Smart TV', icon: 'Tv' },
+  { id: 'fac-kulkas', name: 'Kulkas Kamar', icon: 'Refrigerator' },
+  { id: 'fac-listrik', name: 'Listrik Token Termasuk', icon: 'Zap' },
+  { id: 'fac-mobil', name: 'Parkir Mobil', icon: 'Car' },
+  { id: 'fac-motor', name: 'Parkir Motor', icon: 'Bike' },
+  { id: 'fac-dapur', name: 'Dapur Bersama', icon: 'UtensilsCrossed' },
+  { id: 'fac-laundry', name: 'Mesin Cuci / Laundry', icon: 'Shirt' },
+  { id: 'fac-cctv', name: 'CCTV 24 Jam', icon: 'Shield' },
+  { id: 'fac-lock', name: 'Smart Door Lock', icon: 'KeyRound' },
+  { id: 'fac-air', name: 'Air Minum Bersama', icon: 'Droplets' }
+];
 
 export const defaultFacilities: string[] = [
   'AC Dingin',
@@ -1230,6 +1341,45 @@ export const defaultFacilities: string[] = [
   'Kulkas'
 ];
 
+export const defaultIncomeCategories: TransactionCategoryItem[] = [
+  { id: 'inc-sewa', name: 'Sewa Kamar Pokok', icon: 'Home', type: 'income' },
+  { id: 'inc-deposit', name: 'Uang Jaminan / Deposit', icon: 'ShieldCheck', type: 'income' },
+  { id: 'inc-denda', name: 'Denda Keterlambatan', icon: 'AlertTriangle', type: 'income' },
+  { id: 'inc-listrik', name: 'Tambahan Listrik / Elektronik', icon: 'Zap', type: 'income' },
+  { id: 'inc-parkir', name: 'Parkir Kendaraan', icon: 'Car', type: 'income' },
+  { id: 'inc-laundry', name: 'Jasa Cuci / Laundry', icon: 'Shirt', type: 'income' },
+  { id: 'inc-lainnya', name: 'Pendapatan Lain-lain', icon: 'Sparkles', type: 'income' }
+];
+
+export const defaultExpenseCategories: TransactionCategoryItem[] = [
+  { id: 'exp-listrik', name: 'Tagihan Listrik / PLN', icon: 'Zap', type: 'expense' },
+  { id: 'exp-air', name: 'Tagihan Air / PDAM', icon: 'Droplets', type: 'expense' },
+  { id: 'exp-wifi', name: 'Internet & WiFi', icon: 'Wifi', type: 'expense' },
+  { id: 'exp-gaji', name: 'Gaji Karyawan & Penjaga', icon: 'Users', type: 'expense' },
+  { id: 'exp-kebersihan', name: 'Kebersihan & Iuran Sampah', icon: 'Trash2', type: 'expense' },
+  { id: 'exp-maintenance', name: 'Perbaikan & Perawatan', icon: 'Wrench', type: 'expense' },
+  { id: 'exp-perlengkapan', name: 'Perlengkapan & Amenities', icon: 'ShoppingBag', type: 'expense' },
+  { id: 'exp-keamanan', name: 'Iuran Keamanan Lingkungan', icon: 'Shield', type: 'expense' },
+  { id: 'exp-lainnya', name: 'Pengeluaran Lain-lain', icon: 'Sparkles', type: 'expense' }
+];
+
+export const defaultCashAccounts: CashAccountItem[] = [
+  { id: 'acc-cash', name: 'Kas Tunai (Petty Cash)', type: 'cash' },
+  { id: 'acc-bca', name: 'BCA 8420-1928-31', type: 'bank', accountNumber: '8420-1928-31' },
+  { id: 'acc-mandiri', name: 'Bank Mandiri 1370-0192', type: 'bank', accountNumber: '1370-0192-8381' },
+  { id: 'acc-qris', name: 'QRIS / E-Wallet', type: 'ewallet' }
+];
+
+export const defaultMonthlyBudgets: Record<string, number> = {
+  'exp-listrik': 1500000,
+  'exp-air': 450000,
+  'exp-wifi': 550000,
+  'exp-gaji': 2500000,
+  'exp-maintenance': 1000000,
+  'exp-kebersihan': 350000,
+  'exp-perlengkapan': 500000
+};
+
 export const useKosStore = create<KosStoreState>()(
   persist(
     (set, get) => ({
@@ -1243,10 +1393,17 @@ export const useKosStore = create<KosStoreState>()(
       properties: initialProperties,
       activePropertyId: 'all',
       availableFacilities: defaultFacilities,
+      facilityDefinitions: defaultFacilityDefinitions,
+      roomTypes: defaultRoomTypes,
       rooms: initialRooms,
       tenants: initialTenants,
       invoices: initialInvoices,
       expenses: initialExpenses,
+      incomeCategories: defaultIncomeCategories,
+      expenseCategories: defaultExpenseCategories,
+      cashAccounts: defaultCashAccounts,
+      monthlyBudgets: defaultMonthlyBudgets,
+      appTheme: 'paw-peach',
       maintenanceTickets: initialTickets,
       settings: initialSettings,
 
@@ -1949,8 +2106,18 @@ export const useKosStore = create<KosStoreState>()(
         const today = new Date();
         const monthYear = today.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
+        const defaultCatAvatars = [
+          '/cat-avatar-gamer.jpg',
+          '/cat-avatar-groceries.jpg',
+          '/cat-avatar-gym.jpg',
+          '/cat-avatar-laundry.jpg',
+          '/cat-avatar-music.jpg'
+        ];
+        const randomAvatar = defaultCatAvatars[Math.floor(Math.random() * defaultCatAvatars.length)];
+
         const newTenant: Tenant = {
           ...tenantData,
+          profilePhoto: tenantData.profilePhoto || randomAvatar,
           id: tenantId,
           propertyId: room.propertyId,
           roomId: room.id,
@@ -2112,68 +2279,202 @@ export const useKosStore = create<KosStoreState>()(
         }));
       },
 
+      // --- THEME ACTIONS ---
+      setAppTheme: (theme) => {
+        set({ appTheme: theme });
+      },
+
+      // --- ROOM TYPES ACTIONS ---
+      addRoomType: (item) => {
+        const id = 'rt-' + Date.now().toString(36);
+        set((state) => ({
+          roomTypes: [...state.roomTypes, { ...item, id }]
+        }));
+      },
+
+      updateRoomType: (id, updates) => {
+        set((state) => ({
+          roomTypes: state.roomTypes.map((rt) => (rt.id === id ? { ...rt, ...updates } : rt))
+        }));
+      },
+
+      deleteRoomType: (id) => {
+        set((state) => ({
+          roomTypes: state.roomTypes.filter((rt) => rt.id !== id)
+        }));
+      },
+
+      // --- FACILITY DEFINITION ACTIONS ---
+      addFacilityWithIcon: (name, icon) => {
+        const trimmed = name.trim();
+        if (!trimmed) return;
+        const id = 'fac-' + Date.now().toString(36);
+        set((state) => {
+          const newDef: FacilityItem = { id, name: trimmed, icon };
+          const newAvail = state.availableFacilities.includes(trimmed)
+            ? state.availableFacilities
+            : [...state.availableFacilities, trimmed];
+          return {
+            facilityDefinitions: [...state.facilityDefinitions, newDef],
+            availableFacilities: newAvail
+          };
+        });
+      },
+
+      updateFacilityDefinition: (id, updates) => {
+        set((state) => ({
+          facilityDefinitions: state.facilityDefinitions.map((f) =>
+            f.id === id ? { ...f, ...updates } : f
+          )
+        }));
+      },
+
+      // --- CATEGORY & ACCOUNT ACTIONS ---
+      addCategory: (item) => {
+        const id = (item.type === 'income' ? 'inc-' : 'exp-') + Date.now().toString(36);
+        const newCat: TransactionCategoryItem = { ...item, id };
+        set((state) => {
+          if (item.type === 'income') {
+            return { incomeCategories: [...state.incomeCategories, newCat] };
+          }
+          return { expenseCategories: [...state.expenseCategories, newCat] };
+        });
+      },
+
+      updateCategory: (id, updates) => {
+        set((state) => ({
+          incomeCategories: state.incomeCategories.map((c) => (c.id === id ? { ...c, ...updates } : c)),
+          expenseCategories: state.expenseCategories.map((c) => (c.id === id ? { ...c, ...updates } : c))
+        }));
+      },
+
+      deleteCategory: (id) => {
+        set((state) => ({
+          incomeCategories: state.incomeCategories.filter((c) => c.id !== id),
+          expenseCategories: state.expenseCategories.filter((c) => c.id !== id)
+        }));
+      },
+
+      addCashAccount: (item) => {
+        const id = 'acc-' + Date.now().toString(36);
+        set((state) => ({
+          cashAccounts: [...state.cashAccounts, { ...item, id }]
+        }));
+      },
+
+      updateCashAccount: (id, updates) => {
+        set((state) => ({
+          cashAccounts: state.cashAccounts.map((a) => (a.id === id ? { ...a, ...updates } : a))
+        }));
+      },
+
+      deleteCashAccount: (id) => {
+        set((state) => ({
+          cashAccounts: state.cashAccounts.filter((a) => a.id !== id)
+        }));
+      },
+
+      // --- BUDGET ACTIONS ---
+      setMonthlyBudget: (categoryId, amount) => {
+        set((state) => ({
+          monthlyBudgets: {
+            ...state.monthlyBudgets,
+            [categoryId]: amount
+          }
+        }));
+      },
+
+      clearMonthlyBudget: (categoryId) => {
+        set((state) => {
+          const next = { ...state.monthlyBudgets };
+          delete next[categoryId];
+          return { monthlyBudgets: next };
+        });
+      },
+
       // --- RESET TO DEMO ---
       resetToDefaultData: () => {
         set({
           properties: initialProperties,
           activePropertyId: 'all',
           availableFacilities: defaultFacilities,
+          facilityDefinitions: defaultFacilityDefinitions,
+          roomTypes: defaultRoomTypes,
           rooms: initialRooms,
           tenants: initialTenants,
           invoices: initialInvoices,
           expenses: initialExpenses,
+          incomeCategories: defaultIncomeCategories,
+          expenseCategories: defaultExpenseCategories,
+          cashAccounts: defaultCashAccounts,
+          monthlyBudgets: defaultMonthlyBudgets,
+          appTheme: 'paw-peach',
           maintenanceTickets: initialTickets,
           settings: initialSettings
         });
       }
     }),
     {
-      name: 'kosanku_store_v7',
+      name: 'pawskost_store_v9',
       storage: createJSONStorage(() => localStorage),
-      version: 7,
+      version: 9,
       migrate: (persistedState: any, version: number) => {
-        if (!persistedState || version < 7) {
-          const accounts = (persistedState?.saasAccounts || initialSaaSAccounts).map((acc: any) => ({
-            ...acc,
-            password: acc.password || (acc.id === 'usr-admin-root' ? 'admin123' : 'password123'),
-            proofUrl: acc.proofUrl || (acc.status === 'pending_approval' ? sampleProofReceipt : undefined),
-            proofNotes: acc.proofNotes || (acc.status === 'pending_approval' ? 'Transfer via m-BCA a/n Ratna Dewi Rp 99.000 ref: 20261031772910842' : undefined)
-          }));
-          return {
-            ...persistedState,
-            currentUser: persistedState?.currentUser || defaultDemoUser,
-            authMode: persistedState?.authMode || 'demo',
-            subscription: persistedState?.subscription || initialSubscription,
-            saasInvoices: persistedState?.saasInvoices || initialSaaSInvoices,
-            saasAccounts: accounts,
-            landingPageConfig: persistedState?.landingPageConfig || initialLandingPageConfig,
-            impersonatingFromAdmin: false,
-            properties: persistedState?.properties || initialProperties,
-            activePropertyId: persistedState?.activePropertyId || 'all',
-            availableFacilities: persistedState?.availableFacilities || defaultFacilities,
-            rooms: (persistedState?.rooms || initialRooms).map((r: any, idx: number) => ({
-              ...r,
-              propertyId: r.propertyId || (idx >= 14 ? 'prop-2' : 'prop-1')
-            })),
-            tenants: (persistedState?.tenants || initialTenants).map((t: any) => ({
-              ...t,
-              propertyId: t.propertyId || 'prop-1'
-            })),
-            invoices: (persistedState?.invoices || initialInvoices).map((i: any) => ({
-              ...i,
-              propertyId: i.propertyId || 'prop-1'
-            })),
-            expenses: (persistedState?.expenses || initialExpenses).map((e: any) => ({
-              ...e,
-              propertyId: e.propertyId || 'prop-1'
-            })),
-            maintenanceTickets: (persistedState?.maintenanceTickets || initialTickets).map((m: any) => ({
-              ...m,
-              propertyId: m.propertyId || 'prop-1'
-            }))
-          };
-        }
-        return persistedState;
+        const catAvatars = [
+          '/cat-avatar-gamer.jpg',
+          '/cat-avatar-groceries.jpg',
+          '/cat-avatar-gym.jpg',
+          '/cat-avatar-laundry.jpg',
+          '/cat-avatar-music.jpg'
+        ];
+        const accounts = (persistedState?.saasAccounts || initialSaaSAccounts).map((acc: any) => ({
+          ...acc,
+          password: acc.password || (acc.id === 'usr-admin-root' ? 'admin123' : 'password123'),
+          proofUrl: acc.proofUrl || (acc.status === 'pending_approval' ? sampleProofReceipt : undefined),
+          proofNotes: acc.proofNotes || (acc.status === 'pending_approval' ? 'Transfer via m-BCA a/n Ratna Dewi Rp 99.000 ref: 20261031772910842' : undefined)
+        }));
+        return {
+          ...persistedState,
+          currentUser: persistedState?.currentUser || defaultDemoUser,
+          authMode: persistedState?.authMode || 'demo',
+          subscription: persistedState?.subscription || initialSubscription,
+          saasInvoices: persistedState?.saasInvoices || initialSaaSInvoices,
+          saasAccounts: accounts,
+          landingPageConfig: persistedState?.landingPageConfig || initialLandingPageConfig,
+          impersonatingFromAdmin: false,
+          properties: persistedState?.properties || initialProperties,
+          activePropertyId: persistedState?.activePropertyId || 'all',
+          availableFacilities: persistedState?.availableFacilities || defaultFacilities,
+          facilityDefinitions: persistedState?.facilityDefinitions || defaultFacilityDefinitions,
+          roomTypes: persistedState?.roomTypes || defaultRoomTypes,
+          incomeCategories: persistedState?.incomeCategories || defaultIncomeCategories,
+          expenseCategories: persistedState?.expenseCategories || defaultExpenseCategories,
+          cashAccounts: persistedState?.cashAccounts || defaultCashAccounts,
+          monthlyBudgets: persistedState?.monthlyBudgets || defaultMonthlyBudgets,
+          appTheme: persistedState?.appTheme || 'paw-peach',
+          rooms: (persistedState?.rooms || initialRooms).map((r: any, idx: number) => ({
+            ...r,
+            propertyId: r.propertyId || (idx >= 14 ? 'prop-2' : 'prop-1')
+          })),
+          tenants: (persistedState?.tenants || initialTenants).map((t: any, idx: number) => ({
+            ...t,
+            propertyId: t.propertyId || 'prop-1',
+            profilePhoto: (t.profilePhoto && !t.profilePhoto.startsWith('data:image/svg'))
+              ? t.profilePhoto
+              : catAvatars[idx % catAvatars.length]
+          })),
+          invoices: (persistedState?.invoices || initialInvoices).map((i: any) => ({
+            ...i,
+            propertyId: i.propertyId || 'prop-1'
+          })),
+          expenses: (persistedState?.expenses || initialExpenses).map((e: any) => ({
+            ...e,
+            propertyId: e.propertyId || 'prop-1'
+          })),
+          maintenanceTickets: (persistedState?.maintenanceTickets || initialTickets).map((m: any) => ({
+            ...m,
+            propertyId: m.propertyId || 'prop-1'
+          }))
+        };
       }
     }
   )

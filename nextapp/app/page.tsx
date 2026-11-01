@@ -52,72 +52,72 @@ export default function LandingPage() {
       {/* ======================================================== */}
       {/* 1. NAVBAR PUBLIK                                         */}
       {/* ======================================================== */}
-      <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-cream-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-cream-200/90 shadow-xs py-3.5 sm:py-4 transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/app-logo.jpg"
-                alt="Logo KosanKu"
-                width={40}
-                height={40}
+                alt="Logo pawskost"
+                width={44}
+                height={44}
                 className="w-full h-full object-cover"
                 priority
               />
             </div>
             <div>
-              <div className="flex items-center gap-1">
-                <span className="font-heading font-extrabold text-xl tracking-tight text-peach-500">
-                  KosanKu
+              <div className="flex items-center gap-1.5">
+                <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-peach-500">
+                  pawskost
                 </span>
-                <Sparkles className="w-3.5 h-3.5 text-peach-400" />
+                <span className="text-xs">🐾</span>
               </div>
-              <p className="text-[10px] text-softgray font-medium -mt-0.5">
-                Kelola Kos Jadi Menyenangkan 🐱
+              <p className="text-[11px] text-softgray font-semibold -mt-0.5">
+                Kelola Kos Jadi Menyenangkan
               </p>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-bold text-softgray">
-            <a href="#solusi" className="hover:text-peach-500 transition-colors">Masalah vs Solusi</a>
-            <a href="#fitur" className="hover:text-peach-500 transition-colors">Fitur Unggulan</a>
-            <a href="#harga" className="hover:text-peach-500 transition-colors">Paket Harga</a>
-            <a href="#testimoni" className="hover:text-peach-500 transition-colors">Testimoni</a>
-            <a href="#faq" className="hover:text-peach-500 transition-colors">Tanya Jawab</a>
+          {/* Desktop Navigation Links (Proportional & Elegant) */}
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-semibold text-softgray tracking-normal">
+            <a href="#solusi" className="hover:text-peach-500 transition-colors py-1">Masalah vs Solusi</a>
+            <a href="#fitur" className="hover:text-peach-500 transition-colors py-1">Fitur Unggulan</a>
+            <a href="#harga" className="hover:text-peach-500 transition-colors py-1">Paket Harga</a>
+            <a href="#testimoni" className="hover:text-peach-500 transition-colors py-1">Testimoni</a>
+            <a href="#faq" className="hover:text-peach-500 transition-colors py-1">Tanya Jawab</a>
           </nav>
 
           {/* Action Buttons */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          <div className="hidden sm:flex items-center gap-3">
             <button
               onClick={handleStartDemo}
-              className="px-4 py-2 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold border border-cream-200 shadow-sm flex items-center gap-1.5 transition-all hover:scale-105"
+              className="px-4 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs sm:text-sm font-bold border border-cream-200 shadow-xs flex items-center gap-1.5 transition-all hover:scale-105"
             >
-              <Gamepad2 className="w-3.5 h-3.5 text-peach-500" />
+              <Gamepad2 className="w-4 h-4 text-peach-500" />
               <span>Coba Demo</span>
             </button>
 
             <Link
               href="/login"
-              className="px-4 py-2 rounded-2xl text-xs font-bold text-softgray hover:text-darkcocoa transition-colors"
+              className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-softgray hover:text-darkcocoa transition-colors"
             >
               Masuk
             </Link>
 
             <button
               onClick={() => setIsRegisterModalOpen(true)}
-              className="px-5 py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white text-xs font-bold shadow-cute flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+              className="px-5 py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
             >
               <span>Uji Coba 14 Hari</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl bg-cream-100 text-darkcocoa"
+            className="md:hidden p-2.5 rounded-xl bg-cream-100 text-darkcocoa hover:bg-cream-200 transition-colors"
             aria-label="Buka navigasi"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -257,9 +257,9 @@ export default function LandingPage() {
                   <span className="w-3 h-3 rounded-full bg-matcha-400" />
                 </div>
                 <span className="text-[11px] font-bold text-softgray">
-                  app.kosanku.id • Dashboard Juragan Kos
+                  app.pawskost.id • Dashboard Juragan Kos
                 </span>
-                <span className="text-xs">🐱</span>
+                <span className="text-xs">🐾</span>
               </div>
 
               {/* Mock Dashboard Grid */}
@@ -300,10 +300,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-bold text-peach-500 uppercase tracking-wider">
-              Mengapa Harus Pindah ke KosanKu?
+              Mengapa Harus Pindah ke pawskost?
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa">
-              Bandingkan Hidup Anda Sebelum &amp; Sesudah KosanKu
+              Bandingkan Hidup Anda Sebelum &amp; Sesudah pawskost
             </h2>
             <p className="text-xs sm:text-sm text-softgray">
               Sudah saatnya pemilik kos modern beristirahat dengan tenang tanpa drama penagihan sewa.
@@ -343,12 +343,12 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            {/* Cara KosanKu */}
+            {/* Cara pawskost */}
             <div className="p-6 md:p-8 rounded-3xl bg-matcha-50/50 border-2 border-matcha-300 shadow-cute space-y-4">
               <div className="flex items-center gap-2.5 text-matcha-600">
                 <CheckCircle2 className="w-6 h-6" />
                 <h3 className="font-heading font-extrabold text-lg text-darkcocoa">
-                  Dengan KosanKu (Rapi &amp; Menyenangkan)
+                  Dengan pawskost (Rapi &amp; Menyenangkan)
                 </h3>
               </div>
               <ul className="space-y-3 text-xs text-darkcocoa/90">
@@ -366,7 +366,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-matcha-600 font-bold">✓</span>
-                  <span>Arsip foto profil &amp; KTP aman berstempel watermark resmi &quot;ARSIP RESMI KOSANKU&quot;.</span>
+                  <span>Arsip foto profil &amp; KTP aman berstempel watermark resmi &quot;ARSIP RESMI PAWSKOST&quot;.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-matcha-600 font-bold">✓</span>
@@ -879,7 +879,7 @@ export default function LandingPage() {
                 />
               </div>
               <span className="font-heading font-extrabold text-base text-white">
-                KosanKu
+                pawskost
               </span>
             </div>
             <p className="text-[11px] text-white/60 leading-relaxed">
@@ -912,7 +912,7 @@ export default function LandingPage() {
               Tim Mimi siap membantu pengaturan kosan Anda:
             </p>
             <a
-              href="https://wa.me/6281234567890?text=Halo%20Mimi%20KosanKu,%20saya%20mau%20tanya%20tentang%20aplikasi%20KosanKu"
+              href="https://wa.me/6281234567890?text=Halo%20Mimi%20pawskost,%20saya%20mau%20tanya%20tentang%20aplikasi%20pawskost"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-matcha-400 font-bold hover:underline"
@@ -924,7 +924,7 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-8 border-t border-white/10 text-center text-[10px] text-white/50">
-          © {new Date().getFullYear()} KosanKu SaaS • Dibuat dengan cinta untuk Pemilik Kos Indonesia 🐾
+          © {new Date().getFullYear()} pawskost • Dibuat dengan cinta untuk Pemilik Kos Indonesia 🐾
         </div>
       </footer>
 

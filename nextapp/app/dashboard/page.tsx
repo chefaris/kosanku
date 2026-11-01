@@ -21,10 +21,12 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useKosStore, Invoice, Tenant } from '../lib/store/useKosStore';
 import { MimiLoader } from '../components/ui/MimiLoader';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const {
     properties,
@@ -226,22 +228,23 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* 4 KPI Cards (Dynamic Calculations) */}
+      {/* 4 KPI Cards (Dynamic Calculations & Clickable) */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
       >
-        {/* KPI 1: Okupansi Kamar */}
+        {/* KPI 1: Okupansi Kamar (Clickable -> /rooms) */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-sakura-400 flex flex-col justify-between"
+          whileHover={{ y: -5, transition: { duration: 0.2 } }}
+          onClick={() => router.push('/rooms')}
+          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-sakura-400 flex flex-col justify-between cursor-pointer group hover:shadow-lg transition-all"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-softgray">Okupansi Kamar</span>
-            <div className="w-10 h-10 rounded-2xl bg-sakura-50 flex items-center justify-center text-sakura-500">
+            <span className="text-xs font-bold text-softgray group-hover:text-darkcocoa transition-colors">Okupansi Kamar</span>
+            <div className="w-10 h-10 rounded-2xl bg-sakura-50 flex items-center justify-center text-sakura-500 group-hover:bg-sakura-100 transition-colors">
               <Building2 className="w-5 h-5" strokeWidth={1.75} />
             </div>
           </div>
@@ -260,18 +263,23 @@ export default function DashboardPage() {
               <span>{occupancyPercentage}% terisi</span>
               <span className="text-sakura-500 font-bold">{vacantRooms} kosong</span>
             </p>
+            <div className="pt-1 flex items-center gap-1 text-[11px] text-sakura-500 font-bold group-hover:translate-x-1 transition-transform">
+              <span>Kelola Kamar</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </div>
           </div>
         </motion.div>
 
-        {/* KPI 2: Sewa Terkumpul */}
+        {/* KPI 2: Sewa Terkumpul (Clickable -> /billing) */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-matcha-400 flex flex-col justify-between"
+          whileHover={{ y: -5, transition: { duration: 0.2 } }}
+          onClick={() => router.push('/billing')}
+          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-matcha-400 flex flex-col justify-between cursor-pointer group hover:shadow-lg transition-all"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-softgray">Sewa Terkumpul</span>
-            <div className="w-10 h-10 rounded-2xl bg-matcha-50 flex items-center justify-center text-matcha-500">
+            <span className="text-xs font-bold text-softgray group-hover:text-darkcocoa transition-colors">Sewa Terkumpul</span>
+            <div className="w-10 h-10 rounded-2xl bg-matcha-50 flex items-center justify-center text-matcha-500 group-hover:bg-matcha-100 transition-colors">
               <Wallet className="w-5 h-5" strokeWidth={1.75} />
             </div>
           </div>
@@ -290,18 +298,23 @@ export default function DashboardPage() {
                   : '0%'}
               </span>
             </div>
+            <div className="pt-2 flex items-center gap-1 text-[11px] text-matcha-600 font-bold group-hover:translate-x-1 transition-transform">
+              <span>Buka Tagihan &amp; Kasir</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </div>
           </div>
         </motion.div>
 
-        {/* KPI 3: Keluhan Aktif */}
+        {/* KPI 3: Keluhan Aktif (Clickable -> /maintenance) */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-peach-400 flex flex-col justify-between"
+          whileHover={{ y: -5, transition: { duration: 0.2 } }}
+          onClick={() => router.push('/maintenance')}
+          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-peach-400 flex flex-col justify-between cursor-pointer group hover:shadow-lg transition-all"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-softgray">Keluhan Fasilitas</span>
-            <div className="w-10 h-10 rounded-2xl bg-peach-50 flex items-center justify-center text-peach-500">
+            <span className="text-xs font-bold text-softgray group-hover:text-darkcocoa transition-colors">Keluhan Fasilitas</span>
+            <div className="w-10 h-10 rounded-2xl bg-peach-50 flex items-center justify-center text-peach-500 group-hover:bg-peach-100 transition-colors">
               <AlertCircle className="w-5 h-5" strokeWidth={1.75} />
             </div>
           </div>
@@ -318,25 +331,23 @@ export default function DashboardPage() {
                 'Semua terkendali rapi'
               )}
             </p>
-            <Link
-              href="/maintenance"
-              className="text-[11px] text-peach-500 font-bold hover:underline inline-flex items-center gap-1 pt-1"
-            >
-              <span>Buka Papan Servis</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
+            <div className="pt-2 flex items-center gap-1 text-[11px] text-peach-500 font-bold group-hover:translate-x-1 transition-transform">
+              <span>Papan Perawatan</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </div>
           </div>
         </motion.div>
 
-        {/* KPI 4: Estimasi Kas Bersih */}
+        {/* KPI 4: Estimasi Kas Bersih (Clickable -> /finance) */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-lavender-400 flex flex-col justify-between"
+          whileHover={{ y: -5, transition: { duration: 0.2 } }}
+          onClick={() => router.push('/finance')}
+          className="bg-white rounded-3xl shadow-cute p-5 border-l-4 border-lavender-400 flex flex-col justify-between cursor-pointer group hover:shadow-lg transition-all"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-softgray">Estimasi Kas Bersih</span>
-            <div className="w-10 h-10 rounded-2xl bg-lavender-50 flex items-center justify-center text-lavender-500">
+            <span className="text-xs font-bold text-softgray group-hover:text-darkcocoa transition-colors">Estimasi Kas Bersih</span>
+            <div className="w-10 h-10 rounded-2xl bg-lavender-50 flex items-center justify-center text-lavender-500 group-hover:bg-lavender-100 transition-colors">
               <TrendingUp className="w-5 h-5" strokeWidth={1.75} />
             </div>
           </div>
@@ -347,13 +358,10 @@ export default function DashboardPage() {
             <p className="text-xs text-softgray font-medium">
               Total Pengeluaran: {formatRupiah(totalExpenseAmount)}
             </p>
-            <Link
-              href="/finance"
-              className="text-[11px] text-lavender-600 font-bold hover:underline inline-flex items-center gap-1 pt-1"
-            >
-              <span>Lihat Buku Kas</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
+            <div className="pt-2 flex items-center gap-1 text-[11px] text-lavender-600 font-bold group-hover:translate-x-1 transition-transform">
+              <span>Laporan Keuangan</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </div>
           </div>
         </motion.div>
       </motion.div>

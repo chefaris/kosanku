@@ -31,6 +31,9 @@ import {
 import { useKosStore, Room, Tenant } from '../lib/store/useKosStore';
 import { MimiLoader } from '../components/ui/MimiLoader';
 import { PlanLimitModal } from '../components/ui/PlanLimitModal';
+import { AvatarPicker } from '../components/ui/AvatarPicker';
+import { FacilityIconPicker, renderFacilityIcon } from '../components/ui/FacilityIconPicker';
+import { ManageRoomTypesModal } from '../components/ui/ManageRoomTypesModal';
 
 type FilterType = 'all' | 'occupied' | 'vacant' | 'maintenance';
 
@@ -41,7 +44,10 @@ export default function RoomsPage() {
     activePropertyId,
     setActivePropertyId,
     availableFacilities,
+    facilityDefinitions,
+    roomTypes,
     addFacility,
+    addFacilityWithIcon,
     deleteFacility,
     addFloorToProperty,
     deleteFloorFromProperty,
@@ -72,6 +78,7 @@ export default function RoomsPage() {
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
   const [isCheckOutModalOpen, setIsCheckOutModalOpen] = useState(false);
   const [isKtpModalOpen, setIsKtpModalOpen] = useState(false);
+  const [isRoomTypesModalOpen, setIsRoomTypesModalOpen] = useState(false);
   const [ktpViewerData, setKtpViewerData] = useState<{ name: string; ktpPhoto: string; ktpNumber?: string } | null>(null);
   const [deleteFloorTarget, setDeleteFloorTarget] = useState<{
     propertyId: string;
@@ -86,10 +93,12 @@ export default function RoomsPage() {
   const [targetPropertyId, setTargetPropertyId] = useState<string>('');
   const [roomNumber, setRoomNumber] = useState('');
   const [roomFloor, setRoomFloor] = useState(1);
-  const [roomType, setRoomType] = useState<'Standard' | 'Deluxe'>('Standard');
+  const [roomType, setRoomType] = useState<string>('Standard');
   const [roomPrice, setRoomPrice] = useState(1500000);
   const [selectedCustomFacilities, setSelectedCustomFacilities] = useState<string[]>([]);
   const [newFacilityInput, setNewFacilityInput] = useState('');
+  const [newFacilityIcon, setNewFacilityIcon] = useState('Sparkles');
+  const [showIconPicker, setShowIconPicker] = useState(false);
   const [idMeteranPln, setIdMeteranPln] = useState('');
   const [roomNotes, setRoomNotes] = useState('');
 
@@ -185,12 +194,13 @@ export default function RoomsPage() {
     e.preventDefault();
     if (!newFacilityInput.trim()) return;
     const name = newFacilityInput.trim();
-    addFacility(name);
+    addFacilityWithIcon(name, newFacilityIcon || 'Sparkles');
     if (!selectedCustomFacilities.includes(name)) {
       setSelectedCustomFacilities((prev) => [...prev, name]);
     }
     setNewFacilityInput('');
-    showToast(`Fasilitas "${name}" ditambahkan! ✨`);
+    setShowIconPicker(false);
+    showToast(`Fasilitas "${name}" dengan ikon pilihan berhasil ditambahkan! 🌸✨`);
   };
 
   // Handlers
@@ -666,16 +676,34 @@ export default function RoomsPage() {
                           <div className="mb-2.5">{renderStatusBadge(room.status)}</div>
 
                           {/* Tenant Info if Occupied */}
-                          {room.status === 'occupied' && (
-                            <div className="bg-white/80 rounded-xl p-2 mb-2 border border-cream-200/50">
-                              <p className="font-bold text-darkcocoa text-[11px] truncate">
-                                {room.tenantName}
-                              </p>
-                              <p className="text-[10px] text-softgray">
-                                Tempo: <strong className="text-peach-500">{room.dueDate || 'Awal Bln'}</strong>
-                              </p>
-                            </div>
-                          )}
+                          {room.status === 'occupied' && (() => {
+                            const tObj = tenants.find((t) => t.id === room.tenantId || t.name === room.tenantName);
+                            return (
+                              <div className="bg-white/90 rounded-xl p-1.5 mb-2 border border-cream-200/70 flex items-center gap-2 shadow-xs">
+                                <div className="w-7 h-7 rounded-lg overflow-hidden bg-cream-100 flex-shrink-0 border border-peach-200">
+                                  {tObj?.profilePhoto ? (
+                                    <img
+                                      src={tObj.profilePhoto}
+                                      alt={room.tenantName}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center font-bold text-[10px] text-peach-600 bg-peach-50">
+                                      {room.tenantName?.charAt(0) || '🐾'}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="font-bold text-darkcocoa text-[11px] truncate leading-tight">
+                                    {room.tenantName}
+                                  </p>
+                                  <p className="text-[10px] text-softgray leading-tight">
+                                    Tempo: <strong className="text-peach-500">{room.dueDate || 'Awal Bln'}</strong>
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         {/* Facilities Icons row */}
@@ -991,14 +1019,33 @@ export default function RoomsPage() {
               {/* Tipe & Tarif */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-darkcocoa block mb-1">Tipe Kamar</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-darkcocoa block">Tipe Kamar</label>
+                    <button
+                      type="button"
+                      onClick={() => setIsRoomTypesModalOpen(true)}
+                      className="text-[11px] font-bold text-peach-500 hover:text-peach-600 underline flex items-center gap-1"
+                    >
+                      <Tag className="w-3 h-3" />
+                      <span>Kelola Tipe</span>
+                    </button>
+                  </div>
                   <select
                     value={roomType}
-                    onChange={(e) => setRoomType(e.target.value as 'Standard' | 'Deluxe')}
+                    onChange={(e) => {
+                      const selected = roomTypes.find((rt) => rt.name === e.target.value);
+                      setRoomType(e.target.value);
+                      if (selected?.defaultPrice) {
+                        setRoomPrice(selected.defaultPrice);
+                      }
+                    }}
                     className="w-full bg-cream-50 border border-cream-200 rounded-xl px-3 py-2 text-darkcocoa font-semibold text-sm focus:outline-none focus:border-peach-400 focus:bg-white"
                   >
-                    <option value="Standard">Standard</option>
-                    <option value="Deluxe">Deluxe</option>
+                    {roomTypes.map((rt) => (
+                      <option key={rt.id} value={rt.name}>
+                        {rt.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -1036,6 +1083,8 @@ export default function RoomsPage() {
                 <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-cream-50/50 rounded-2xl border border-cream-200">
                   {availableFacilities.map((fac) => {
                     const isChecked = selectedCustomFacilities.includes(fac);
+                    const def = facilityDefinitions?.find((fd) => fd.name.toLowerCase() === fac.toLowerCase());
+                    const iconName = def?.icon || 'Sparkles';
                     return (
                       <span
                         key={fac}
@@ -1046,7 +1095,7 @@ export default function RoomsPage() {
                             : 'bg-white text-darkcocoa border border-cream-200 hover:border-peach-300'
                         }`}
                       >
-                        {isChecked && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                        {renderFacilityIcon(iconName, `w-3.5 h-3.5 ${isChecked ? 'text-white' : 'text-peach-500'}`)}
                         <span>{fac}</span>
                         <button
                           type="button"
@@ -1069,22 +1118,44 @@ export default function RoomsPage() {
                   })}
                 </div>
 
-                {/* Inline Add New Facility Form */}
-                <div className="flex items-center gap-2 mt-2">
-                  <input
-                    type="text"
-                    placeholder="+ Tambah fasilitas baru..."
-                    value={newFacilityInput}
-                    onChange={(e) => setNewFacilityInput(e.target.value)}
-                    className="flex-1 bg-white border border-cream-200 rounded-xl px-3 py-1.5 text-xs text-darkcocoa focus:outline-none focus:border-peach-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddNewFacility}
-                    className="px-3 py-1.5 rounded-xl bg-peach-100 hover:bg-peach-200 text-peach-700 font-bold text-xs"
-                  >
-                    Tambah
-                  </button>
+                {/* Inline Add New Facility Form with Icon Picker */}
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowIconPicker(!showIconPicker)}
+                      className="p-2 rounded-xl bg-peach-50 hover:bg-peach-100 border border-peach-200 text-peach-600 flex items-center gap-1 text-xs font-bold transition-colors"
+                      title="Ubah ikon fasilitas"
+                    >
+                      {renderFacilityIcon(newFacilityIcon, 'w-4 h-4')}
+                      <span className="text-[10px]">Pilih Ikon</span>
+                    </button>
+                    <input
+                      type="text"
+                      placeholder="+ Tambah fasilitas baru..."
+                      value={newFacilityInput}
+                      onChange={(e) => setNewFacilityInput(e.target.value)}
+                      className="flex-1 bg-white border border-cream-200 rounded-xl px-3 py-1.5 text-xs text-darkcocoa focus:outline-none focus:border-peach-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddNewFacility}
+                      className="px-3 py-1.5 rounded-xl bg-peach-500 hover:bg-peach-400 text-white font-bold text-xs shadow-2xs"
+                    >
+                      Tambah
+                    </button>
+                  </div>
+                  {showIconPicker && (
+                    <div className="p-2 bg-white rounded-2xl border border-cream-200 shadow-sm animate-in fade-in">
+                      <FacilityIconPicker
+                        selectedIcon={newFacilityIcon}
+                        onSelectIcon={(ic) => {
+                          setNewFacilityIcon(ic);
+                          setShowIconPicker(false);
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1168,14 +1239,27 @@ export default function RoomsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-darkcocoa block mb-1">Tipe Kamar</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-darkcocoa block">Tipe Kamar</label>
+                    <button
+                      type="button"
+                      onClick={() => setIsRoomTypesModalOpen(true)}
+                      className="text-[11px] font-bold text-peach-500 hover:text-peach-600 underline flex items-center gap-1"
+                    >
+                      <Tag className="w-3 h-3" />
+                      <span>Kelola Tipe</span>
+                    </button>
+                  </div>
                   <select
                     value={roomType}
-                    onChange={(e) => setRoomType(e.target.value as 'Standard' | 'Deluxe')}
+                    onChange={(e) => setRoomType(e.target.value)}
                     className="w-full bg-cream-50 border border-cream-200 rounded-xl px-3 py-2 text-darkcocoa font-semibold text-sm focus:outline-none focus:border-peach-400 focus:bg-white"
                   >
-                    <option value="Standard">Standard</option>
-                    <option value="Deluxe">Deluxe</option>
+                    {roomTypes.map((rt) => (
+                      <option key={rt.id} value={rt.name}>
+                        {rt.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -1300,38 +1384,14 @@ export default function RoomsPage() {
             </div>
 
             <form onSubmit={handleSaveCheckIn} className="space-y-4 text-xs">
-              {/* UPLOAD FOTO PROFIL & FOTO KTP */}
-              <div className="grid grid-cols-2 gap-3 p-3 bg-cream-50 rounded-2xl border border-cream-200">
-                {/* Pas Foto Profil */}
-                <div className="flex flex-col items-center text-center space-y-1.5">
-                  <span className="font-bold text-darkcocoa text-[11px]">Pas Foto Penghuni</span>
-                  <div className="relative w-20 h-20 rounded-2xl bg-white border-2 border-dashed border-peach-300 overflow-hidden flex items-center justify-center group shadow-sm">
-                    {profilePhoto ? (
-                      <img src={profilePhoto} alt="Profil" className="w-full h-full object-cover" />
-                    ) : (
-                      <Camera className="w-6 h-6 text-peach-400" />
-                    )}
-                    <label className="absolute inset-0 bg-darkcocoa/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
-                      Ganti
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => handleImageUpload(e, setProfilePhoto)}
-                      />
-                    </label>
-                  </div>
-                  <label className="cursor-pointer text-[10px] font-bold text-peach-600 hover:underline">
-                    {profilePhoto ? 'Ubah Foto' : '+ Upload Foto'}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageUpload(e, setProfilePhoto)}
-                    />
-                  </label>
-                </div>
+              {/* UPLOAD FOTO PROFIL (AVATAR PICKER) & FOTO KTP */}
+              <AvatarPicker
+                currentPhoto={profilePhoto}
+                onSelectPhoto={(photo) => setProfilePhoto(photo)}
+                label="Pilih Avatar Profil atau Unggah Foto Penghuni"
+              />
 
+              <div className="p-3 bg-cream-50 rounded-2xl border border-cream-200">
                 {/* Foto KTP */}
                 <div className="flex flex-col items-center text-center space-y-1.5">
                   <span className="font-bold text-darkcocoa text-[11px]">Foto Kartu KTP</span>
@@ -1728,6 +1788,12 @@ export default function RoomsPage() {
           planName={planLimitData.planName}
         />
       )}
+
+      {/* Modal Kelola Tipe Kamar */}
+      <ManageRoomTypesModal
+        isOpen={isRoomTypesModalOpen}
+        onClose={() => setIsRoomTypesModalOpen(false)}
+      />
     </div>
   );
 }

@@ -570,10 +570,10 @@ export default function SubscriptionPage() {
               <div className="flex items-start justify-between border-b border-cream-200 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="font-heading font-black text-xl text-peach-500">KosanKu SaaS</h4>
+                    <h4 className="font-heading font-black text-xl text-peach-500">pawskost 🐾</h4>
                   </div>
-                  <p className="text-[11px] text-softgray">PT KosanKu Digital Nusantara</p>
-                  <p className="text-[11px] text-softgray">Dago Asri No. 12, Bandung • support@kosanku.id</p>
+                  <p className="text-[11px] text-softgray">pawskost System Digital Indonesia</p>
+                  <p className="text-[11px] text-softgray">Bandung, Jawa Barat • support@pawskost.id</p>
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-mono font-bold text-darkcocoa block">

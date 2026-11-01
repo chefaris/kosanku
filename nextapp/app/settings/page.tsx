@@ -20,12 +20,19 @@ import {
   Edit2,
   Building2,
   Tag,
-  Check
+  Check,
+  Palette,
+  Layers,
+  BedDouble,
+  DollarSign,
+  Play
 } from 'lucide-react';
 import Image from 'next/image';
-import { useKosStore, Property } from '../lib/store/useKosStore';
+import { useKosStore, Property, AppTheme } from '../lib/store/useKosStore';
 import { PropertyModal } from '../components/ui/PropertyModal';
 import { PlanLimitModal } from '../components/ui/PlanLimitModal';
+import { ManageRoomTypesModal } from '../components/ui/ManageRoomTypesModal';
+import { ManageMasterFinanceModal } from '../components/ui/ManageMasterFinanceModal';
 
 export default function SettingsPage() {
   const {
@@ -38,7 +45,9 @@ export default function SettingsPage() {
     availableFacilities,
     addFacility,
     deleteFacility,
-    canAddProperty
+    canAddProperty,
+    appTheme,
+    setAppTheme
   } = useKosStore();
 
   const [bankName, setBankName] = useState(settings.bankName);
@@ -56,9 +65,13 @@ export default function SettingsPage() {
   const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
-  // SaaS Quota Limit Modal State
+  // Quota Limit Modal State
   const [isPlanLimitModalOpen, setIsPlanLimitModalOpen] = useState(false);
   const [planLimitData, setPlanLimitData] = useState<{ current: number; max: number; planName: string } | null>(null);
+
+  // Master Modals State
+  const [isRoomTypesModalOpen, setIsRoomTypesModalOpen] = useState(false);
+  const [isMasterFinanceModalOpen, setIsMasterFinanceModalOpen] = useState(false);
 
   // New facility input state
   const [newFacilityName, setNewFacilityName] = useState('');
@@ -72,6 +85,76 @@ export default function SettingsPage() {
     setKosAddress(settings.kosAddress);
     setKosPhone(settings.kosPhone);
   }, [settings]);
+
+  // Theme palettes configuration (Item 15)
+  const themeOptions: {
+    id: AppTheme;
+    name: string;
+    desc: string;
+    previewBg: string;
+    badgeColor: string;
+    borderActive: string;
+  }[] = [
+    {
+      id: 'paw-peach',
+      name: 'Paw Peach 🐾',
+      desc: 'Hangat, ceria & bersahabat (Tema Utama)',
+      previewBg: 'bg-gradient-to-r from-[#ff8559] to-[#ffb199]',
+      badgeColor: 'bg-[#ff8559] text-white',
+      borderActive: 'border-[#ff8559] ring-2 ring-[#ff8559]/30'
+    },
+    {
+      id: 'matcha-mint',
+      name: 'Matcha Mint 🍃',
+      desc: 'Segar, alami & asri bernuansa hijau',
+      previewBg: 'bg-gradient-to-r from-[#10b981] to-[#6ee7b7]',
+      badgeColor: 'bg-[#10b981] text-white',
+      borderActive: 'border-[#10b981] ring-2 ring-[#10b981]/30'
+    },
+    {
+      id: 'sakura-blossom',
+      name: 'Sakura Blossom 🌸',
+      desc: 'Manis, lembut & estetika pastel merah muda',
+      previewBg: 'bg-gradient-to-r from-[#ec4899] to-[#fbcfe8]',
+      badgeColor: 'bg-[#ec4899] text-white',
+      borderActive: 'border-[#ec4899] ring-2 ring-[#ec4899]/30'
+    },
+    {
+      id: 'ocean-blue',
+      name: 'Ocean Blue 🌊',
+      desc: 'Tenang, rapi, terpercaya & profesional',
+      previewBg: 'bg-gradient-to-r from-[#0ea5e9] to-[#bae6fd]',
+      badgeColor: 'bg-[#0ea5e9] text-white',
+      borderActive: 'border-[#0ea5e9] ring-2 ring-[#0ea5e9]/30'
+    },
+    {
+      id: 'lavender-cozy',
+      name: 'Lavender Cozy 💜',
+      desc: 'Santai, elegan & modern ungu lembut',
+      previewBg: 'bg-gradient-to-r from-[#8b5cf6] to-[#ddd6fe]',
+      badgeColor: 'bg-[#8b5cf6] text-white',
+      borderActive: 'border-[#8b5cf6] ring-2 ring-[#8b5cf6]/30'
+    },
+    {
+      id: 'mocha-latte',
+      name: 'Mocha Latte ☕',
+      desc: 'Klasik, hangat & nyaman cokelat kopi',
+      previewBg: 'bg-gradient-to-r from-[#d97706] to-[#fde68a]',
+      badgeColor: 'bg-[#d97706] text-white',
+      borderActive: 'border-[#d97706] ring-2 ring-[#d97706]/30'
+    }
+  ];
+
+  const handleSelectTheme = (themeId: AppTheme) => {
+    setAppTheme(themeId);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', themeId);
+      document.body.setAttribute('data-theme', themeId);
+    }
+    const themeName = themeOptions.find((t) => t.id === themeId)?.name || themeId;
+    setToastMessage(`Tema warna aplikasi diubah ke ${themeName}! 🎨✨`);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,11 +238,109 @@ export default function SettingsPage() {
         className="space-y-1"
       >
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight">
-          Pengaturan KosanKu
+          Pengaturan pawskost
         </h1>
         <p className="text-softgray text-xs sm:text-sm">
-          Kelola cabang/area kos, master fasilitas yang dapat ditambah &amp; dihapus, rekening bank, dan pesan pengingat WA.
+          Sesuaikan tema warna aplikasi, cabang kos, master tipe kamar, fasilitas, dan rekening bank 🐾
         </p>
+      </motion.div>
+
+      {/* ======================================================== */}
+      {/* ITEM 15: PILIHAN PATTERN TEMA WARNA APLIKASI (EDITABLE)   */}
+      {/* ======================================================== */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 shadow-cute border border-cream-200 space-y-4"
+      >
+        <div className="flex items-center gap-3 border-b border-cream-100 pb-3">
+          <div className="w-10 h-10 rounded-2xl bg-peach-50 flex items-center justify-center text-peach-500">
+            <Palette className="w-5 h-5" strokeWidth={1.75} />
+          </div>
+          <div>
+            <h2 className="text-base sm:text-lg font-heading font-extrabold text-darkcocoa">
+              Pilihan Pattern Tema Warna Aplikasi
+            </h2>
+            <p className="text-xs text-softgray">
+              Pilih palet warna yang Anda sukai untuk mengubah tampilan antarmuka pawskost secara instan
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
+          {themeOptions.map((item) => {
+            const isSelected = (appTheme || 'paw-peach') === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleSelectTheme(item.id)}
+                className={`text-left p-3.5 rounded-2xl border transition-all relative flex flex-col justify-between group hover:scale-[1.02] ${
+                  isSelected
+                    ? `${item.borderActive} bg-cream-50/80 shadow-cute`
+                    : 'border-cream-200 bg-white hover:border-peach-300'
+                }`}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-heading font-extrabold text-xs text-darkcocoa">
+                      {item.name}
+                    </span>
+                    {isSelected && (
+                      <span className="w-5 h-5 rounded-full bg-peach-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
+                        ✓
+                      </span>
+                    )}
+                  </div>
+                  <div className={`h-8 rounded-xl ${item.previewBg} shadow-inner flex items-center px-3`} />
+                  <p className="text-[11px] text-softgray leading-tight">{item.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* ======================================================== */}
+      {/* SEKSI SHORTCUT: MASTER DATA (TIPE KAMAR & KEUANGAN)      */}
+      {/* ======================================================== */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-cream-50 rounded-3xl p-5 border border-cream-200 flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-peach-600 shadow-sm">
+            <Layers className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-heading font-extrabold text-sm sm:text-base text-darkcocoa">
+              Master Data Operasional
+            </h3>
+            <p className="text-xs text-softgray">
+              Kelola master jenis kamar kost dan master kategori pos keuangan dengan icon kustom
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={() => setIsRoomTypesModalOpen(true)}
+            className="flex-1 sm:flex-none justify-center px-4 py-2 rounded-2xl bg-white hover:bg-cream-100 text-darkcocoa border border-cream-200 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+          >
+            <BedDouble className="w-4 h-4 text-peach-500" />
+            <span>Kelola Tipe Kamar</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsMasterFinanceModalOpen(true)}
+            className="flex-1 sm:flex-none justify-center px-4 py-2 rounded-2xl bg-white hover:bg-cream-100 text-darkcocoa border border-cream-200 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+          >
+            <DollarSign className="w-4 h-4 text-matcha-600" />
+            <span>Master Keuangan</span>
+          </button>
+        </div>
       </motion.div>
 
       {/* ======================================================== */}
@@ -177,7 +358,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-heading font-extrabold text-darkcocoa">
-                Daftar Cabang &amp; Area KosanKu
+                Daftar Cabang &amp; Area pawskost
               </h2>
               <p className="text-xs text-softgray">
                 Kelola multiple properti atau lokasi kos yang Anda miliki
@@ -479,14 +660,31 @@ export default function SettingsPage() {
 
         {/* Form Actions */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-2xl text-xs font-bold text-softgray hover:text-peach-600 hover:bg-peach-50 border border-cream-200 flex items-center gap-1.5 transition-colors"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Reset ke Data Demo Awal</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-2xl text-xs font-bold text-softgray hover:text-peach-600 hover:bg-peach-50 border border-cream-200 flex items-center gap-1.5 transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset ke Data Demo Awal</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  sessionStorage.removeItem('pawskost_bumper_seen');
+                  window.dispatchEvent(new CustomEvent('play-pawskost-bumper'));
+                }
+              }}
+              className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-2xl text-xs font-bold text-darkcocoa hover:text-peach-600 bg-white hover:bg-peach-50 border border-cream-200 shadow-sm flex items-center gap-1.5 transition-colors"
+              title="Putar video bumper intro aplikasi"
+            >
+              <Play className="w-4 h-4 text-peach-500 fill-peach-500" />
+              <span>Putar Video Bumper 🎬</span>
+            </button>
+          </div>
 
           <button
             type="submit"
@@ -509,7 +707,7 @@ export default function SettingsPage() {
         editingProperty={editingProperty}
       />
 
-      {/* SaaS Property Quota Limit Modal */}
+      {/* Quota Limit Modal */}
       {planLimitData && (
         <PlanLimitModal
           isOpen={isPlanLimitModalOpen}
@@ -520,6 +718,18 @@ export default function SettingsPage() {
           planName={planLimitData.planName}
         />
       )}
+
+      {/* Manage Room Types Modal */}
+      <ManageRoomTypesModal
+        isOpen={isRoomTypesModalOpen}
+        onClose={() => setIsRoomTypesModalOpen(false)}
+      />
+
+      {/* Manage Master Finance Modal */}
+      <ManageMasterFinanceModal
+        isOpen={isMasterFinanceModalOpen}
+        onClose={() => setIsMasterFinanceModalOpen(false)}
+      />
     </div>
   );
 }

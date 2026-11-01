@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useKosStore, Tenant } from '../lib/store/useKosStore';
 import { MimiLoader } from '../components/ui/MimiLoader';
+import { AvatarPicker } from '../components/ui/AvatarPicker';
 
 export default function TenantsPage() {
   const [isMounted, setIsMounted] = useState(false);
@@ -362,7 +363,7 @@ export default function TenantsPage() {
                 {/* Header card with Profile Photo */}
                 <div className="flex items-start justify-between border-b border-cream-100 pb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-peach-100 to-sakura-100 flex items-center justify-center text-peach-600 font-heading font-extrabold text-base ring-2 ring-peach-200 shadow-sm overflow-hidden flex-shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-peach-100 to-sakura-100 flex items-center justify-center text-peach-600 font-heading font-extrabold text-base ring-2 ring-peach-300 shadow-sm overflow-hidden flex-shrink-0">
                       {tenant.profilePhoto ? (
                         <img
                           src={tenant.profilePhoto}
@@ -558,47 +559,32 @@ export default function TenantsPage() {
               </div>
 
               <form onSubmit={handleSaveAddTenant} className="space-y-4 text-xs">
-                {/* Upload Foto Profil & KTP */}
-                <div className="grid grid-cols-2 gap-3 p-3 bg-cream-50 rounded-2xl border border-cream-200">
-                  <div className="flex flex-col items-center text-center space-y-1">
-                    <span className="font-bold text-darkcocoa text-[11px]">Pas Foto Profil</span>
-                    <div className="relative w-20 h-20 rounded-2xl bg-white border-2 border-dashed border-peach-300 overflow-hidden flex items-center justify-center shadow-sm group">
-                      {profilePhoto ? (
-                        <img src={profilePhoto} alt="Profil" className="w-full h-full object-cover" />
-                      ) : (
-                        <Camera className="w-6 h-6 text-peach-400" />
-                      )}
-                      <label className="absolute inset-0 bg-darkcocoa/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
-                        Ganti
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => handleImageUpload(e, setProfilePhoto)}
-                        />
-                      </label>
-                    </div>
-                    <label className="cursor-pointer text-[10px] font-bold text-peach-600 hover:underline">
-                      {profilePhoto ? 'Ubah' : '+ Upload Foto'}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => handleImageUpload(e, setProfilePhoto)}
-                      />
-                    </label>
-                  </div>
+                {/* Upload Foto Profil (Avatar Picker & Custom Upload) */}
+                <div className="p-3 bg-cream-50 rounded-2xl border border-cream-200">
+                  <AvatarPicker
+                    currentPhoto={profilePhoto}
+                    onSelectPhoto={(photo) => setProfilePhoto(photo)}
+                    label="Pilih Avatar / Upload Foto Profil Penghuni"
+                  />
+                </div>
 
-                  <div className="flex flex-col items-center text-center space-y-1">
-                    <span className="font-bold text-darkcocoa text-[11px]">Foto Kartu KTP</span>
-                    <div className="relative w-28 h-20 rounded-2xl bg-white border-2 border-dashed border-sakura-300 overflow-hidden flex items-center justify-center shadow-sm group">
-                      {ktpPhoto ? (
-                        <img src={ktpPhoto} alt="KTP" className="w-full h-full object-cover" />
-                      ) : (
-                        <IdCard className="w-7 h-7 text-sakura-400" />
-                      )}
-                      <label className="absolute inset-0 bg-darkcocoa/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
-                        Ganti
+                {/* Upload KTP */}
+                <div className="p-3 bg-cream-50 rounded-2xl border border-cream-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-darkcocoa text-[11px] block">Foto Kartu KTP</span>
+                      <span className="text-[10px] text-softgray">Wajib untuk verifikasi identitas resmi</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="relative w-16 h-12 rounded-xl bg-white border border-dashed border-sakura-300 overflow-hidden flex items-center justify-center shadow-sm">
+                        {ktpPhoto ? (
+                          <img src={ktpPhoto} alt="KTP" className="w-full h-full object-cover" />
+                        ) : (
+                          <IdCard className="w-5 h-5 text-sakura-400" />
+                        )}
+                      </div>
+                      <label className="cursor-pointer text-xs font-bold text-sakura-600 hover:bg-sakura-50 px-2.5 py-1.5 rounded-xl border border-sakura-200 transition-colors">
+                        {ktpPhoto ? 'Ganti KTP' : '+ Upload KTP'}
                         <input
                           type="file"
                           accept="image/*"
@@ -607,15 +593,6 @@ export default function TenantsPage() {
                         />
                       </label>
                     </div>
-                    <label className="cursor-pointer text-[10px] font-bold text-sakura-600 hover:underline">
-                      {ktpPhoto ? 'Ubah' : '+ Upload KTP'}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => handleImageUpload(e, setKtpPhoto)}
-                      />
-                    </label>
                   </div>
                 </div>
 
@@ -815,38 +792,32 @@ export default function TenantsPage() {
               </div>
 
               <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
-                {/* Upload Foto Profil & KTP */}
-                <div className="grid grid-cols-2 gap-3 p-3 bg-cream-50 rounded-2xl border border-cream-200">
-                  <div className="flex flex-col items-center text-center space-y-1">
-                    <span className="font-bold text-darkcocoa text-[11px]">Pas Foto Profil</span>
-                    <div className="relative w-20 h-20 rounded-2xl bg-white border-2 border-dashed border-peach-300 overflow-hidden flex items-center justify-center shadow-sm group">
-                      {profilePhoto ? (
-                        <img src={profilePhoto} alt="Profil" className="w-full h-full object-cover" />
-                      ) : (
-                        <Camera className="w-6 h-6 text-peach-400" />
-                      )}
-                      <label className="absolute inset-0 bg-darkcocoa/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
-                        Ganti
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => handleImageUpload(e, setProfilePhoto)}
-                        />
-                      </label>
-                    </div>
-                  </div>
+                {/* Upload Foto Profil (Avatar Picker & Custom Upload) */}
+                <div className="p-3 bg-cream-50 rounded-2xl border border-cream-200">
+                  <AvatarPicker
+                    currentPhoto={profilePhoto}
+                    onSelectPhoto={(photo) => setProfilePhoto(photo)}
+                    label="Pilih Avatar / Upload Foto Profil Penghuni"
+                  />
+                </div>
 
-                  <div className="flex flex-col items-center text-center space-y-1">
-                    <span className="font-bold text-darkcocoa text-[11px]">Foto Kartu KTP</span>
-                    <div className="relative w-28 h-20 rounded-2xl bg-white border-2 border-dashed border-sakura-300 overflow-hidden flex items-center justify-center shadow-sm group">
-                      {ktpPhoto ? (
-                        <img src={ktpPhoto} alt="KTP" className="w-full h-full object-cover" />
-                      ) : (
-                        <IdCard className="w-7 h-7 text-sakura-400" />
-                      )}
-                      <label className="absolute inset-0 bg-darkcocoa/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold">
-                        Ganti
+                {/* Upload KTP */}
+                <div className="p-3 bg-cream-50 rounded-2xl border border-cream-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-darkcocoa text-[11px] block">Foto Kartu KTP</span>
+                      <span className="text-[10px] text-softgray">Wajib untuk verifikasi identitas resmi</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="relative w-16 h-12 rounded-xl bg-white border border-dashed border-sakura-300 overflow-hidden flex items-center justify-center shadow-sm">
+                        {ktpPhoto ? (
+                          <img src={ktpPhoto} alt="KTP" className="w-full h-full object-cover" />
+                        ) : (
+                          <IdCard className="w-5 h-5 text-sakura-400" />
+                        )}
+                      </div>
+                      <label className="cursor-pointer text-xs font-bold text-sakura-600 hover:bg-sakura-50 px-2.5 py-1.5 rounded-xl border border-sakura-200 transition-colors">
+                        {ktpPhoto ? 'Ganti KTP' : '+ Upload KTP'}
                         <input
                           type="file"
                           accept="image/*"
@@ -1019,7 +990,7 @@ export default function TenantsPage() {
                 />
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                   <span className="text-black/10 font-black text-2xl rotate-[-25deg] select-none tracking-widest border-2 border-dashed border-black/10 px-4 py-2 rounded-xl">
-                    ARSIP RESMI KOSANKU
+                    ARSIP RESMI PAWSKOST 🐾
                   </span>
                 </div>
               </div>

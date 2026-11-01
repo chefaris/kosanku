@@ -2,10 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+[data-theme="paw-peach"] {
   --color-darkcocoa: #2D283E;
   --color-softgray: #6B6778;
   --color-cream-50: #FFFDF9;
+  --theme-primary: #FF8A65;
+  --theme-primary-light: #FFF0EB;
+  --theme-primary-hover: #F4511E;
+
+  --theme-peach-50: #FFF5F2;
+  --theme-peach-100: #FFE9E4;
+  --theme-peach-200: #FFD2C8;
+  --theme-peach-300: #FFB5A5;
+  --theme-peach-400: #FF8F78;
+  --theme-peach-500: #FF6B4A;
+  --theme-peach-600: #E65100;
+  --theme-peach-700: #C2410C;
+  --theme-shadow-cute: rgba(255, 107, 74, 0.18);
+}
+
+/* Theme Palettes */
+[data-theme="matcha-mint"] {
+  --theme-primary: #10B981;
+  --theme-primary-light: #ECFDF5;
+  --theme-primary-hover: #059669;
+
+  --theme-peach-50: #F0FDF4;
+  --theme-peach-100: #DCFCE7;
+  --theme-peach-200: #BBF7D0;
+  --theme-peach-300: #86EFAC;
+  --theme-peach-400: #34D399;
+  --theme-peach-500: #10B981;
+  --theme-peach-600: #059669;
+  --theme-peach-700: #047857;
+  --theme-shadow-cute: rgba(16, 185, 129, 0.2);
+}
+
+[data-theme="sakura-blossom"] {
+  --theme-primary: #F43F5E;
+  --theme-primary-light: #FFF1F2;
+  --theme-primary-hover: #E11D48;
+
+  --theme-peach-50: #FDF2F8;
+  --theme-peach-100: #FCE7F3;
+  --theme-peach-200: #FBCFE8;
+  --theme-peach-300: #F9A8D4;
+  --theme-peach-400: #F472B6;
+  --theme-peach-500: #EC4899;
+  --theme-peach-600: #DB2777;
+  --theme-peach-700: #BE185D;
+  --theme-shadow-cute: rgba(236, 72, 153, 0.2);
+}
+
+[data-theme="ocean-blue"] {
+  --theme-primary: #0EA5E9;
+  --theme-primary-light: #F0F9FF;
+  --theme-primary-hover: #0284C7;
+
+  --theme-peach-50: #F0F9FF;
+  --theme-peach-100: #E0F2FE;
+  --theme-peach-200: #BAE6FD;
+  --theme-peach-300: #7DD3FC;
+  --theme-peach-400: #38BDF8;
+  --theme-peach-500: #0EA5E9;
+  --theme-peach-600: #0284C7;
+  --theme-peach-700: #0369A1;
+  --theme-shadow-cute: rgba(14, 165, 233, 0.2);
+}
+
+[data-theme="lavender-cozy"] {
+  --theme-primary: #8B5CF6;
+  --theme-primary-light: #F5F3FF;
+  --theme-primary-hover: #7C3AED;
+
+  --theme-peach-50: #F5F3FF;
+  --theme-peach-100: #EDE9FE;
+  --theme-peach-200: #DDD6FE;
+  --theme-peach-300: #C4B5FD;
+  --theme-peach-400: #A78BFA;
+  --theme-peach-500: #8B5CF6;
+  --theme-peach-600: #7C3AED;
+  --theme-peach-700: #6D28D9;
+  --theme-shadow-cute: rgba(139, 92, 246, 0.2);
+}
+
+[data-theme="mocha-latte"] {
+  --theme-primary: #D97706;
+  --theme-primary-light: #FEFCE8;
+  --theme-primary-hover: #B45309;
+
+  --theme-peach-50: #FEFCE8;
+  --theme-peach-100: #FEF9C3;
+  --theme-peach-200: #FDE68A;
+  --theme-peach-300: #FCD34D;
+  --theme-peach-400: #F59E0B;
+  --theme-peach-500: #D97706;
+  --theme-peach-600: #B45309;
+  --theme-peach-700: #92400E;
+  --theme-shadow-cute: rgba(217, 119, 6, 0.22);
 }
 
 body {
@@ -21,10 +116,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
-   PRINT STYLESHEET (Official Invoices & Receipts)
-   Clean paper output, optimized for both Desktop and Mobile Phone (HP) browsers
+   PRINT STYLESHEET (Official Invoices, Receipts & Thermal 58mm)
+   Strict 1-Page Layout for A4, and 58mm POS receipt format
    ========================================================================== */
 @media print {
+  @page {
+    size: auto;
+    margin: 6mm 8mm;
+  }
+
   *, *::before, *::after {
     box-shadow: none !important;
     text-shadow: none !important;
@@ -33,7 +133,7 @@ h1, h2, h3, h4, h5, h6 {
   html, body {
     width: 100% !important;
     height: auto !important;
-    min-height: 100% !important;
+    min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
@@ -44,12 +144,54 @@ h1, h2, h3, h4, h5, h6 {
     print-color-adjust: exact !important;
   }
 
-  /* Hide everything in the body by default */
-  body * {
-    visibility: hidden;
+  /* Completely remove from flow: sidebars, navbars, headers, footers, buttons, and hidden sections */
+  header,
+  nav,
+  aside,
+  footer,
+  button,
+  .print-hide,
+  .print-hide *,
+  .print\:hidden,
+  [class*="print:hidden"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
   }
 
-  /* Reset all modal overlays and backdrops completely during print (Fix for HP / Mobile) */
+  /* Prevent awkward page cuts on cards, tables, charts, widgets, and sections */
+  .break-inside-avoid,
+  .print-avoid-break,
+  .bg-white,
+  .shadow-cute,
+  div[class*="rounded-3xl"],
+  div[class*="rounded-2xl"],
+  section,
+  article,
+  tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Support strict multi-column grid printing for financial cards & charts */
+  .print\:grid-cols-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  .print\:grid-cols-2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .print\:grid-cols-1 {
+    display: grid !important;
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  /* Reset all modal overlays and backdrops completely during print */
   .print-modal-container,
   .fixed,
   .backdrop-blur-sm {
@@ -71,48 +213,45 @@ h1, h2, h3, h4, h5, h6 {
     -webkit-transform: none !important;
   }
 
-  /* Make the printable invoice container and all its children visible */
-  .printable-invoice,
-  .printable-invoice * {
-    visibility: visible !important;
-  }
-
-  /* Reset layout of printable invoice to a clean paper card */
+  /* Normal A4 1-Page layout */
   .printable-invoice {
-    position: static !important;
+    position: relative !important;
     display: block !important;
     width: 100% !important;
-    max-width: 640px !important;
+    max-width: 680px !important;
     margin: 0 auto !important;
-    padding: 20px 24px !important;
+    padding: 12px 18px !important;
     box-shadow: none !important;
     border: 1px solid #d1d5db !important;
     border-radius: 12px !important;
     background: #ffffff !important;
-    overflow: visible !important;
-    transform: none !important;
-    -webkit-transform: none !important;
     page-break-inside: avoid !important;
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
     break-inside: avoid !important;
+    break-after: avoid !important;
+    max-height: 96vh !important;
+    overflow: hidden !important;
   }
 
-  /* Elements to explicitly hide inside or outside the invoice */
-  .print-hide,
-  .print-hide *,
-  header,
-  nav,
-  aside,
-  footer,
-  button {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  @page {
-    size: auto;
-    margin: 10mm 12mm;
+  /* Thermal 58mm Layout */
+  .printable-thermal {
+    position: relative !important;
+    display: block !important;
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 auto !important;
+    padding: 2mm 1mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    page-break-inside: avoid !important;
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    break-after: avoid !important;
   }
 }

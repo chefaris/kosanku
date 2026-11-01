@@ -9,6 +9,7 @@ import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { DemoBanner } from '../ui/DemoBanner';
 import { RegisterModal } from '../ui/RegisterModal';
+import { VideoBumperOverlay } from '../ui/VideoBumperOverlay';
 import { useKosStore } from '../../lib/store/useKosStore';
 
 interface AppShellProps {
@@ -19,17 +20,29 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const { currentUser, authenticateUser, logout } = useKosStore();
+  const { currentUser, logout, appTheme } = useKosStore();
+
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', appTheme || 'paw-peach');
+      document.body.setAttribute('data-theme', appTheme || 'paw-peach');
+    }
+  }, [appTheme]);
 
   const isPublicPage = pathname === '/login' || pathname === '/';
   const isAdminPage = pathname.startsWith('/admin');
 
   // 1. Halaman Publik (Landing Page & Login)
   if (isPublicPage) {
-    return <main className="min-h-screen w-full">{children}</main>;
+    return (
+      <main className="min-h-screen w-full">
+        {children}
+        <VideoBumperOverlay />
+      </main>
+    );
   }
 
-  // 2. Halaman Super Admin (Console Terpisah Khusus Pemilik Platform SaaS)
+  // 2. Halaman Super Admin (Console Terpisah Khusus Pemilik Platform)
   if (isAdminPage) {
     // Access Gate: Jika pengguna belum login sebagai superadmin
     const isSuperAdmin = currentUser?.role === 'superadmin';
@@ -42,38 +55,22 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               <ShieldCheck className="w-9 h-9" />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <h2 className="text-xl font-heading font-black text-darkcocoa">
                 Akses Terbatas: Super Admin
               </h2>
               <p className="text-xs text-softgray leading-relaxed">
-                Halaman ini khusus untuk pemilik software SaaS KosanKu untuk memverifikasi bukti transfer dan mengelola langganan pelanggan.
+                Halaman ini dilindungi dan khusus untuk administrator sistem pawskost. Silakan masuk melalui portal login dengan akun terotorisasi.
               </p>
             </div>
 
-            <div className="p-3 bg-peach-50 rounded-2xl border border-peach-200 text-left text-xs text-darkcocoa space-y-1">
-              <p className="font-bold text-peach-700">Kredensial Super Admin Bawaan:</p>
-              <p className="font-mono text-[11px] text-softgray">Email: admin@kosanku.id</p>
-              <p className="font-mono text-[11px] text-softgray">Password: admin123</p>
-            </div>
-
-            <div className="space-y-2 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  authenticateUser('admin@kosanku.id', 'admin123');
-                }}
-                className="w-full py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-bold text-xs shadow-cute flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95"
-              >
-                <KeyRound className="w-4 h-4" />
-                <span>Masuk Otomatis Sebagai Super Admin</span>
-              </button>
-
+            <div className="pt-2">
               <Link
                 href="/login"
-                className="block w-full py-2 rounded-2xl bg-cream-100 hover:bg-cream-200 text-softgray hover:text-darkcocoa font-bold text-xs transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white font-bold text-xs shadow-md transition-all active:scale-95"
               >
-                Kembali ke Halaman Login
+                <span>Menuju Halaman Login</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -92,7 +89,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 <div className="relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-peach-400 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
                   <Image
                     src="/app-logo.jpg"
-                    alt="Logo KosanKu"
+                    alt="Logo pawskost"
                     width={36}
                     height={36}
                     className="w-full h-full object-cover"
@@ -101,14 +98,14 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span className="font-heading font-black text-lg text-peach-500 tracking-tight">
-                      KosanKu
+                      pawskost
                     </span>
                     <span className="px-2 py-0.5 rounded-full bg-peach-500 text-white text-[10px] font-black uppercase tracking-wider">
                       Super Admin
                     </span>
                   </div>
                   <p className="text-[10px] text-softgray font-medium hidden sm:block">
-                    SaaS Management Console • Khusus Pemilik Software
+                    Management Console • Khusus Pemilik Software
                   </p>
                 </div>
               </Link>
@@ -162,15 +159,17 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const isSuperAdminViewingTenant = currentUser?.role === 'superadmin';
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen w-full overflow-x-hidden">
+    <div className="flex flex-col md:flex-row min-h-screen w-full overflow-x-hidden print:min-h-0 print:block">
       {/* Sidebar for Desktop & Mobile Header Drawer */}
-      <Sidebar onOpenRegisterModal={() => setIsRegisterModalOpen(true)} />
+      <div className="print:hidden">
+        <Sidebar onOpenRegisterModal={() => setIsRegisterModalOpen(true)} />
+      </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:pl-64 min-w-0 w-full">
+      <div className="flex-1 flex flex-col md:pl-64 min-w-0 w-full print:pl-0 print:block">
         {/* Top Banner when Super Admin is viewing tenant app */}
         {isSuperAdminViewingTenant && (
-          <div className="bg-peach-500 text-white px-3 sm:px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 shadow-sm">
+          <div className="print:hidden bg-peach-500 text-white px-3 sm:px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 shadow-sm">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 flex-shrink-0" />
               <span className="text-[11px] sm:text-xs">Login sebagai Super Admin di dalam dashboard tenant.</span>
@@ -184,9 +183,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           </div>
         )}
 
-        <main className="flex-1 w-full min-w-0 pb-20 md:pb-8">
+        <main className="flex-1 w-full min-w-0 pb-20 md:pb-8 print:p-0 print:m-0 print:block">
           {/* Interactive Demo Banner (active in demo mode) */}
-          <div className="px-3 sm:px-4 md:px-8 pt-3 sm:pt-4 md:pt-6 max-w-7xl mx-auto">
+          <div className="print:hidden px-3 sm:px-4 md:px-8 pt-3 sm:pt-4 md:pt-6 max-w-7xl mx-auto">
             <DemoBanner onOpenRegisterModal={() => setIsRegisterModalOpen(true)} />
           </div>
 
@@ -195,13 +194,18 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </div>
 
       {/* Fixed Mobile Bottom Navigation */}
-      <MobileNav />
+      <div className="print:hidden">
+        <MobileNav />
+      </div>
 
       {/* Global Register Modal for converting demo users to real owners */}
       <RegisterModal
         isOpen={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
       />
+
+      {/* Cinematic Opening Video Bumper Overlay */}
+      <VideoBumperOverlay />
     </div>
   );
 };
