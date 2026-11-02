@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useKosStore, SaaSUserAccount } from '../lib/store/useKosStore';
+import { supabase } from '../lib/supabase';
 import { RegisterModal } from '../components/ui/RegisterModal';
 import {
   Gamepad2,
@@ -26,10 +27,11 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { loginAsDemo, authenticateUser } = useKosStore();
+  const { loginAsDemo, authenticateUser, loginAsUser } = useKosStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -42,16 +44,28 @@ export default function LoginPage() {
     router.push('/dashboard');
   };
 
-  const handleUserLogin = (e: React.FormEvent) => {
+  const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
       setErrorMessage('Harap masukkan alamat email dan kata sandi.');
       return;
     }
 
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    // 1. Cek autentikasi lokal / Super Admin
     const authResult = authenticateUser(email.trim(), password.trim());
 
     if (authResult.success) {
+      setIsSubmitting(false);
+      if (typeof document !== 'undefined') {
+        if (authResult.role === 'superadmin') {
+          document.cookie = 'pawskost_admin_session=active; path=/; max-age=86400; SameSite=Lax';
+        } else {
+          document.cookie = 'sb-access-token=active; path=/; max-age=86400; SameSite=Lax';
+        }
+      }
       if (authResult.role === 'superadmin') {
         router.push('/admin');
       } else {
@@ -60,7 +74,70 @@ export default function LoginPage() {
       return;
     }
 
-    // Handle authentication failures
+    // 2. Cek autentikasi cloud Supabase Auth (Bcrypt terenkripsi)
+    try {
+      const { data: supaAuth, error: supaErr } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password: password.trim()
+      });
+
+      if (!supaErr && supaAuth?.user) {
+        // Ambil profil dari database PostgreSQL
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', supaAuth.user.id)
+          .single();
+
+        if (profile?.status === 'pending_approval') {
+          setIsSubmitting(false);
+          setPendingAccount({
+            id: profile.id,
+            name: profile.name,
+            email: profile.email,
+            phone: profile.phone || '-',
+            kosName: profile.kos_name || 'Kosan Saya',
+            plan: profile.plan || 'pro',
+            planName: profile.plan_name || 'Paket Juragan Pro',
+            status: profile.status,
+            registeredAt: profile.created_at,
+            expiresAt: profile.expires_at,
+            daysRemaining: profile.days_remaining || 30,
+            totalPaid: profile.total_paid || 0
+          });
+          setShowPendingModal(true);
+          return;
+        }
+
+        if (profile?.status === 'suspended') {
+          setIsSubmitting(false);
+          setErrorMessage('Akun Anda sedang dinonaktifkan oleh administrator. Silakan hubungi CS.');
+          return;
+        }
+
+        // Set session cookie untuk middleware
+        if (typeof document !== 'undefined') {
+          document.cookie = 'sb-access-token=active; path=/; max-age=86400; SameSite=Lax';
+        }
+
+        loginAsUser({
+          name: profile?.name || supaAuth.user.email?.split('@')[0] || 'Pemilik Kos',
+          email: supaAuth.user.email || '',
+          kosName: profile?.kos_name || 'Kosan Saya',
+          plan: profile?.plan || 'pro'
+        });
+
+        setIsSubmitting(false);
+        router.push('/dashboard');
+        return;
+      }
+    } catch (err) {
+      console.warn('Supabase auth attempt:', err);
+    }
+
+    setIsSubmitting(false);
+
+    // Tangani pesan gagal
     if (authResult.error === 'pending_approval') {
       setPendingAccount(authResult.user || null);
       setShowPendingModal(true);
@@ -72,7 +149,7 @@ export default function LoginPage() {
     } else if (authResult.error === 'suspended') {
       setErrorMessage('Akun Anda sedang dinonaktifkan oleh administrator. Silakan hubungi CS.');
     } else {
-      setErrorMessage(authResult.message || 'Login gagal. Silakan coba kembali.');
+      setErrorMessage('Email atau kata sandi tidak cocok. Harap periksa kembali.');
     }
   };
 
@@ -257,9 +334,10 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
+                disabled={isSubmitting}
+                className="w-full py-3 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
               >
-                <span>Masuk ke Akun Saya</span>
+                <span>{isSubmitting ? 'Memeriksa Kredensial...' : 'Masuk ke Akun Saya'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>

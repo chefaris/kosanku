@@ -34,12 +34,14 @@ import {
   HelpCircle,
   Layout,
   ExternalLink,
-  ZoomIn
+  ZoomIn,
+  KeyRound
 } from 'lucide-react';
 import { useKosStore, SaaSUserAccount, LandingPageConfig } from '../lib/store/useKosStore';
 import { ManualApprovalModal } from '../components/admin/ManualApprovalModal';
 import { ProofViewerModal } from '../components/admin/ProofViewerModal';
 import { EditAccountModal } from '../components/admin/EditAccountModal';
+import { ResetTenantPasswordModal } from '../components/admin/ResetTenantPasswordModal';
 
 export default function SuperAdminPage() {
   const router = useRouter();
@@ -70,6 +72,14 @@ export default function SuperAdminPage() {
 
   const [selectedAccountForEdit, setSelectedAccountForEdit] = useState<SaaSUserAccount | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [selectedAccountForPassword, setSelectedAccountForPassword] = useState<SaaSUserAccount | null>(null);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
+  const handleOpenPasswordModal = (account: SaaSUserAccount) => {
+    setSelectedAccountForPassword(account);
+    setIsPasswordModalOpen(true);
+  };
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -607,7 +617,16 @@ export default function SuperAdminPage() {
                           className="flex-1 py-2 px-3 rounded-xl bg-cream-100 hover:bg-cream-200 text-darkcocoa font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
                         >
                           <Edit className="w-3.5 h-3.5 text-peach-500" />
-                          <span>Edit Akun</span>
+                          <span>Edit</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleOpenPasswordModal(account)}
+                          className="p-2 rounded-xl bg-peach-50 text-peach-600 hover:bg-peach-100 transition-colors border border-peach-200"
+                          title="Ubah Kata Sandi Tenant"
+                        >
+                          <KeyRound className="w-4 h-4" />
                         </button>
 
                         <button
@@ -773,6 +792,17 @@ export default function SuperAdminPage() {
                             >
                               <Edit className="w-3.5 h-3.5 text-peach-500" />
                               <span>Edit</span>
+                            </button>
+
+                            {/* Tombol Ubah Sandi Tenant */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenPasswordModal(account)}
+                              className="py-1.5 px-2.5 rounded-xl bg-peach-50 hover:bg-peach-100 text-peach-700 font-bold text-[11px] flex items-center gap-1 transition-colors border border-peach-200"
+                              title="Ubah kata sandi tenant ini"
+                            >
+                              <KeyRound className="w-3.5 h-3.5 text-peach-500" />
+                              <span>Sandi</span>
                             </button>
 
                             {/* WhatsApp Kontak */}
@@ -1269,6 +1299,14 @@ export default function SuperAdminPage() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         account={selectedAccountForEdit}
+        onSaved={(msg) => showToast(msg)}
+      />
+
+      {/* 4. Modal Ubah Kata Sandi Tenant Khusus */}
+      <ResetTenantPasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        account={selectedAccountForPassword}
         onSaved={(msg) => showToast(msg)}
       />
     </div>

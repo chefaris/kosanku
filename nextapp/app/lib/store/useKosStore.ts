@@ -520,6 +520,8 @@ interface KosStoreState {
     proofNotes?: string;
   }) => { success: boolean; accountId: string; message: string };
   registerNewOwner: (formData: { name: string; email: string; kosName: string; phone?: string }) => void;
+  changeCurrentPassword: (newPassword: string) => { success: boolean; message: string };
+  resetTenantPassword: (accountId: string, newPassword: string) => { success: boolean; message: string };
   logout: () => void;
   resetDemoData: () => void;
 
@@ -1934,6 +1936,69 @@ export const useKosStore = create<KosStoreState>()(
           saasAccounts: state.saasAccounts.filter((acc) => acc.id !== accountId)
         }));
         return true;
+      },
+
+      changeCurrentPassword: (newPassword: string) => {
+        const cleanPass = newPassword.trim();
+        if (cleanPass.length < 6) {
+          return { success: false, message: 'Kata sandi minimal harus 6 karakter.' };
+        }
+        const state = get();
+        const currentUserId = state.currentUser?.id;
+        const currentUserEmail = state.currentUser?.email?.toLowerCase();
+
+        // Check if demo account
+        if (state.currentUser?.isDemo || state.authMode === 'demo') {
+          return {
+            success: true,
+            message: 'Kata sandi akun demo berhasil diperbarui dalam sesi ini! ✨'
+          };
+        }
+
+        // Update in saasAccounts
+        let found = false;
+        set((s) => ({
+          saasAccounts: s.saasAccounts.map((acc) => {
+            if (acc.id === currentUserId || (currentUserEmail && acc.email.toLowerCase() === currentUserEmail)) {
+              found = true;
+              return { ...acc, password: cleanPass };
+            }
+            return acc;
+          })
+        }));
+
+        return {
+          success: true,
+          message: 'Kata sandi berhasil diperbarui dengan aman! 🔐'
+        };
+      },
+
+      resetTenantPassword: (accountId: string, newPassword: string) => {
+        const cleanPass = newPassword.trim();
+        if (cleanPass.length < 6) {
+          return { success: false, message: 'Kata sandi minimal harus 6 karakter.' };
+        }
+        let updated = false;
+        let tenantName = '';
+        set((s) => ({
+          saasAccounts: s.saasAccounts.map((acc) => {
+            if (acc.id === accountId) {
+              updated = true;
+              tenantName = acc.name;
+              return { ...acc, password: cleanPass };
+            }
+            return acc;
+          })
+        }));
+
+        if (!updated) {
+          return { success: false, message: 'Akun pelanggan tidak ditemukan.' };
+        }
+
+        return {
+          success: true,
+          message: `Kata sandi untuk ${tenantName} berhasil diubah menjadi: ${cleanPass}`
+        };
       },
 
       // --- SUPER ADMIN LANDING PAGE CMS ACTIONS ---

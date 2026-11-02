@@ -7,100 +7,100 @@
   --color-darkcocoa: #2D283E;
   --color-softgray: #6B6778;
   --color-cream-50: #FFFDF9;
-  --theme-primary: #FF8A65;
-  --theme-primary-light: #FFF0EB;
-  --theme-primary-hover: #F4511E;
+  --theme-primary: #FF8E72;
+  --theme-primary-light: #FFF2EE;
+  --theme-primary-hover: #F27B5E;
 
-  --theme-peach-50: #FFF5F2;
-  --theme-peach-100: #FFE9E4;
-  --theme-peach-200: #FFD2C8;
-  --theme-peach-300: #FFB5A5;
-  --theme-peach-400: #FF8F78;
-  --theme-peach-500: #FF6B4A;
-  --theme-peach-600: #E65100;
-  --theme-peach-700: #C2410C;
-  --theme-shadow-cute: rgba(255, 107, 74, 0.18);
+  --theme-peach-50: #FFF7F4;
+  --theme-peach-100: #FFEFEA;
+  --theme-peach-200: #FFDDD3;
+  --theme-peach-300: #FFC4B4;
+  --theme-peach-400: #FFA893;
+  --theme-peach-500: #FF8E72;
+  --theme-peach-600: #EA7557;
+  --theme-peach-700: #CC5A3C;
+  --theme-shadow-cute: rgba(255, 142, 114, 0.22);
 }
 
-/* Theme Palettes */
+/* Theme Palettes - Soft Pastel Aesthetics */
 [data-theme="matcha-mint"] {
-  --theme-primary: #10B981;
-  --theme-primary-light: #ECFDF5;
-  --theme-primary-hover: #059669;
+  --theme-primary: #6EAA81;
+  --theme-primary-light: #F2F8F4;
+  --theme-primary-hover: #5A946C;
 
-  --theme-peach-50: #F0FDF4;
-  --theme-peach-100: #DCFCE7;
-  --theme-peach-200: #BBF7D0;
-  --theme-peach-300: #86EFAC;
-  --theme-peach-400: #34D399;
-  --theme-peach-500: #10B981;
-  --theme-peach-600: #059669;
-  --theme-peach-700: #047857;
-  --theme-shadow-cute: rgba(16, 185, 129, 0.2);
+  --theme-peach-50: #F4F9F6;
+  --theme-peach-100: #E6F2EB;
+  --theme-peach-200: #CFE5D8;
+  --theme-peach-300: #ACD2BC;
+  --theme-peach-400: #8DBF9E;
+  --theme-peach-500: #6EAA81;
+  --theme-peach-600: #57936A;
+  --theme-peach-700: #427753;
+  --theme-shadow-cute: rgba(110, 170, 129, 0.22);
 }
 
 [data-theme="sakura-blossom"] {
-  --theme-primary: #F43F5E;
-  --theme-primary-light: #FFF1F2;
-  --theme-primary-hover: #E11D48;
+  --theme-primary: #D77992;
+  --theme-primary-light: #FDF4F6;
+  --theme-primary-hover: #C2637D;
 
-  --theme-peach-50: #FDF2F8;
-  --theme-peach-100: #FCE7F3;
-  --theme-peach-200: #FBCFE8;
-  --theme-peach-300: #F9A8D4;
-  --theme-peach-400: #F472B6;
-  --theme-peach-500: #EC4899;
-  --theme-peach-600: #DB2777;
-  --theme-peach-700: #BE185D;
-  --theme-shadow-cute: rgba(236, 72, 153, 0.2);
+  --theme-peach-50: #FDF5F7;
+  --theme-peach-100: #FBEAEE;
+  --theme-peach-200: #F6D3DC;
+  --theme-peach-300: #EDB6C4;
+  --theme-peach-400: #E395A8;
+  --theme-peach-500: #D77992;
+  --theme-peach-600: #BF627B;
+  --theme-peach-700: #9E4961;
+  --theme-shadow-cute: rgba(215, 121, 146, 0.22);
 }
 
 [data-theme="ocean-blue"] {
-  --theme-primary: #0EA5E9;
-  --theme-primary-light: #F0F9FF;
-  --theme-primary-hover: #0284C7;
+  --theme-primary: #5FA5CE;
+  --theme-primary-light: #F1F7FB;
+  --theme-primary-hover: #488FB9;
 
-  --theme-peach-50: #F0F9FF;
-  --theme-peach-100: #E0F2FE;
-  --theme-peach-200: #BAE6FD;
-  --theme-peach-300: #7DD3FC;
-  --theme-peach-400: #38BDF8;
-  --theme-peach-500: #0EA5E9;
-  --theme-peach-600: #0284C7;
-  --theme-peach-700: #0369A1;
-  --theme-shadow-cute: rgba(14, 165, 233, 0.2);
+  --theme-peach-50: #F2F8FC;
+  --theme-peach-100: #E4F1F8;
+  --theme-peach-200: #C7E2F1;
+  --theme-peach-300: #A2CEE6;
+  --theme-peach-400: #7EB8DA;
+  --theme-peach-500: #5FA5CE;
+  --theme-peach-600: #468CB5;
+  --theme-peach-700: #337196;
+  --theme-shadow-cute: rgba(95, 165, 206, 0.22);
 }
 
 [data-theme="lavender-cozy"] {
-  --theme-primary: #8B5CF6;
-  --theme-primary-light: #F5F3FF;
-  --theme-primary-hover: #7C3AED;
+  --theme-primary: #9F87DA;
+  --theme-primary-light: #F7F5FC;
+  --theme-primary-hover: #886EC5;
 
-  --theme-peach-50: #F5F3FF;
-  --theme-peach-100: #EDE9FE;
-  --theme-peach-200: #DDD6FE;
-  --theme-peach-300: #C4B5FD;
-  --theme-peach-400: #A78BFA;
-  --theme-peach-500: #8B5CF6;
-  --theme-peach-600: #7C3AED;
-  --theme-peach-700: #6D28D9;
-  --theme-shadow-cute: rgba(139, 92, 246, 0.2);
+  --theme-peach-50: #F8F6FD;
+  --theme-peach-100: #F0ECFA;
+  --theme-peach-200: #E0D7F5;
+  --theme-peach-300: #CBBCEE;
+  --theme-peach-400: #B5A1E4;
+  --theme-peach-500: #9F87DA;
+  --theme-peach-600: #866DC3;
+  --theme-peach-700: #6C52A8;
+  --theme-shadow-cute: rgba(159, 135, 218, 0.22);
 }
 
 [data-theme="mocha-latte"] {
-  --theme-primary: #D97706;
-  --theme-primary-light: #FEFCE8;
-  --theme-primary-hover: #B45309;
+  --theme-primary: #B18F6F;
+  --theme-primary-light: #FAF6F2;
+  --theme-primary-hover: #9B7756;
 
-  --theme-peach-50: #FEFCE8;
-  --theme-peach-100: #FEF9C3;
-  --theme-peach-200: #FDE68A;
-  --theme-peach-300: #FCD34D;
-  --theme-peach-400: #F59E0B;
-  --theme-peach-500: #D97706;
-  --theme-peach-600: #B45309;
-  --theme-peach-700: #92400E;
-  --theme-shadow-cute: rgba(217, 119, 6, 0.22);
+  --theme-peach-50: #FAF7F4;
+  --theme-peach-100: #F4EDE6;
+  --theme-peach-200: #E7DACB;
+  --theme-peach-300: #D6C1AC;
+  --theme-peach-400: #C4A78D;
+  --theme-peach-500: #B18F6F;
+  --theme-peach-600: #977454;
+  --theme-peach-700: #7B5C3F;
+  --theme-shadow-cute: rgba(177, 143, 111, 0.22);
 }
 
 body {

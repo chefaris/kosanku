@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useKosStore, sampleProofReceipt, initialLandingPageConfig } from '../../lib/store/useKosStore';
+import { supabase } from '../../lib/supabase';
 import {
   X,
   Sparkles,
@@ -35,12 +36,27 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
-  // Step 1: Account Info
+  // Step 1: Account Info - Clean and empty by default
   const [name, setName] = useState('');
   const [kosName, setKosName] = useState('');
-  const [phone, setPhone] = useState('08');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Reset all fields when modal opens to guarantee completely empty form & prevent autofill
+  useEffect(() => {
+    if (isOpen) {
+      setName('');
+      setKosName('');
+      setPhone('');
+      setEmail('');
+      setPassword('');
+      setProofUrl('');
+      setProofNotes('');
+      setStep(1);
+      setErrorMessage(null);
+    }
+  }, [isOpen]);
 
   // Step 2: Plan Selection
   const [selectedPlan, setSelectedPlan] = useState<'starter' | 'pro' | 'enterprise'>('pro');
@@ -121,13 +137,35 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
     setStep(3);
   };
 
-  const handleSubmitRegistration = (e: React.FormEvent) => {
+  const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!proofUrl) {
       setErrorMessage('Harap unggah bukti transfer pembayaran atau gunakan sampel bukti pengujian.');
       return;
     }
 
+    // 1. Sync ke Supabase Cloud Database & Auth (Enkripsi Bcrypt)
+    try {
+      await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password: password.trim(),
+        options: {
+          data: {
+            name: name.trim(),
+            phone: phone.trim() || '-',
+            kos_name: kosName.trim(),
+            plan: selectedPlan,
+            plan_name: planPrices[selectedPlan]?.label || 'Paket Juragan Pro',
+            proof_url: proofUrl,
+            proof_notes: proofNotes.trim() || `Transfer a/n ${name} (${planPrices[selectedPlan]?.formattedPrice})`
+          }
+        }
+      });
+    } catch (err) {
+      console.warn('Supabase registration sync:', err);
+    }
+
+    // 2. Simpan di store lokal untuk interaktivitas instan
     registerPendingOwner({
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -253,7 +291,11 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
           {/* STEP 1: FORM DATA DIRI & KREDENSIAL                      */}
           {/* ======================================================== */}
           {step === 1 && (
-            <form onSubmit={handleNextToStep2} className="space-y-3.5 text-xs">
+            <form onSubmit={handleNextToStep2} autoComplete="off" className="space-y-3.5 text-xs">
+              {/* Anti-browser autofill dummy fields */}
+              <input type="text" name="prevent_autofill_user" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+              <input type="password" name="prevent_autofill_pwd" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+
               <div className="p-3 bg-peach-50/70 rounded-2xl border border-peach-200 text-darkcocoa">
                 <p className="font-bold text-[11px] text-peach-700">
                   Mulai Kelola Kos Lebih Nyaman &amp; Rapi
@@ -273,6 +315,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
                   <input
                     type="text"
                     required
+                    autoComplete="off"
                     placeholder="misal: Ibu Ratna Dewi"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -291,6 +334,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
                   <input
                     type="text"
                     required
+                    autoComplete="off"
                     placeholder="misal: Kosan Cantika Paviliun"
                     value={kosName}
                     onChange={(e) => setKosName(e.target.value)}
@@ -310,6 +354,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
                     <input
                       type="tel"
                       required
+                      autoComplete="off"
                       placeholder="0812-xxxx-xxxx"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
@@ -326,6 +371,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
                     <Mail className="w-4 h-4 text-softgray absolute left-3 top-3" />
                     <input
                       type="email"
+                      name="register_tenant_new_email"
+                      id="register_tenant_new_email"
+                      autoComplete="off"
                       required
                       placeholder="nama@email.com"
                       value={email}
@@ -345,6 +393,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
                   <Lock className="w-4 h-4 text-softgray absolute left-3 top-3" />
                   <input
                     type="password"
+                    name="register_tenant_new_password"
+                    id="register_tenant_new_password"
+                    autoComplete="new-password"
                     required
                     placeholder="Minimal 6 karakter"
                     value={password}

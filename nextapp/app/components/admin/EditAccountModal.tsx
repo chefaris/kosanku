@@ -231,9 +231,24 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
             </div>
 
             <div>
-              <label className="font-bold text-darkcocoa block mb-1">
-                Kata Sandi Baru (Reset Password)
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="font-bold text-darkcocoa block text-xs">
+                  Kata Sandi Baru (Reset Password)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const prefixes = ['paws', 'mimi', 'kosan', 'juragan', 'kucing'];
+                    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                    const randomDigits = Math.floor(1000 + Math.random() * 9000);
+                    setPassword(`${randomPrefix}${randomDigits}!`);
+                  }}
+                  className="text-[10px] font-bold text-peach-600 hover:text-peach-700 flex items-center gap-1 hover:underline"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Buat Sandi Acak 🎲</span>
+                </button>
+              </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-softgray absolute left-3 top-3" />
                 <input
@@ -242,7 +257,7 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password untuk login tenant"
-                  className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-9 pr-3 py-2 text-xs text-darkcocoa font-mono focus:outline-none focus:border-peach-400"
+                  className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-9 pr-3 py-2 text-xs text-darkcocoa font-mono font-bold focus:outline-none focus:border-peach-400"
                 />
               </div>
               <p className="text-[10px] text-softgray mt-0.5">

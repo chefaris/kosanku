@@ -25,7 +25,12 @@ import {
   Layers,
   BedDouble,
   DollarSign,
-  Play
+  Play,
+  Lock,
+  Eye,
+  EyeOff,
+  KeyRound,
+  ShieldCheck
 } from 'lucide-react';
 import Image from 'next/image';
 import { useKosStore, Property, AppTheme } from '../lib/store/useKosStore';
@@ -33,6 +38,7 @@ import { PropertyModal } from '../components/ui/PropertyModal';
 import { PlanLimitModal } from '../components/ui/PlanLimitModal';
 import { ManageRoomTypesModal } from '../components/ui/ManageRoomTypesModal';
 import { ManageMasterFinanceModal } from '../components/ui/ManageMasterFinanceModal';
+import { supabase } from '../lib/supabase';
 
 export default function SettingsPage() {
   const {
@@ -47,7 +53,9 @@ export default function SettingsPage() {
     deleteFacility,
     canAddProperty,
     appTheme,
-    setAppTheme
+    setAppTheme,
+    currentUser,
+    changeCurrentPassword
   } = useKosStore();
 
   const [bankName, setBankName] = useState(settings.bankName);
@@ -76,6 +84,15 @@ export default function SettingsPage() {
   // New facility input state
   const [newFacilityName, setNewFacilityName] = useState('');
 
+  // Password Change State
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   useEffect(() => {
     setBankName(settings.bankName);
     setAccountNumber(settings.accountNumber);
@@ -86,7 +103,7 @@ export default function SettingsPage() {
     setKosPhone(settings.kosPhone);
   }, [settings]);
 
-  // Theme palettes configuration (Item 15)
+  // Theme palettes configuration - Soft Pastel Aesthetics (Item 15 & Update)
   const themeOptions: {
     id: AppTheme;
     name: string;
@@ -97,51 +114,51 @@ export default function SettingsPage() {
   }[] = [
     {
       id: 'paw-peach',
-      name: 'Paw Peach 🐾',
-      desc: 'Hangat, ceria & bersahabat (Tema Utama)',
-      previewBg: 'bg-gradient-to-r from-[#ff8559] to-[#ffb199]',
-      badgeColor: 'bg-[#ff8559] text-white',
-      borderActive: 'border-[#ff8559] ring-2 ring-[#ff8559]/30'
+      name: 'Soft Paw Peach 🐾',
+      desc: 'Peach pastel hangat, ceria & lembut (Tema Utama)',
+      previewBg: 'bg-gradient-to-r from-[#FF8E72] to-[#FFDDD3]',
+      badgeColor: 'bg-[#FF8E72] text-white',
+      borderActive: 'border-[#FF8E72] ring-2 ring-[#FF8E72]/30'
     },
     {
       id: 'matcha-mint',
-      name: 'Matcha Mint 🍃',
-      desc: 'Segar, alami & asri bernuansa hijau',
-      previewBg: 'bg-gradient-to-r from-[#10b981] to-[#6ee7b7]',
-      badgeColor: 'bg-[#10b981] text-white',
-      borderActive: 'border-[#10b981] ring-2 ring-[#10b981]/30'
+      name: 'Soft Matcha Sage 🍃',
+      desc: 'Sage green pastel segar & teduh',
+      previewBg: 'bg-gradient-to-r from-[#6EAA81] to-[#CFE5D8]',
+      badgeColor: 'bg-[#6EAA81] text-white',
+      borderActive: 'border-[#6EAA81] ring-2 ring-[#6EAA81]/30'
     },
     {
       id: 'sakura-blossom',
-      name: 'Sakura Blossom 🌸',
-      desc: 'Manis, lembut & estetika pastel merah muda',
-      previewBg: 'bg-gradient-to-r from-[#ec4899] to-[#fbcfe8]',
-      badgeColor: 'bg-[#ec4899] text-white',
-      borderActive: 'border-[#ec4899] ring-2 ring-[#ec4899]/30'
+      name: 'Soft Sakura Blossom 🌸',
+      desc: 'Baby pink pastel manis & lembut',
+      previewBg: 'bg-gradient-to-r from-[#D77992] to-[#F6D3DC]',
+      badgeColor: 'bg-[#D77992] text-white',
+      borderActive: 'border-[#D77992] ring-2 ring-[#D77992]/30'
     },
     {
       id: 'ocean-blue',
-      name: 'Ocean Blue 🌊',
-      desc: 'Tenang, rapi, terpercaya & profesional',
-      previewBg: 'bg-gradient-to-r from-[#0ea5e9] to-[#bae6fd]',
-      badgeColor: 'bg-[#0ea5e9] text-white',
-      borderActive: 'border-[#0ea5e9] ring-2 ring-[#0ea5e9]/30'
+      name: 'Soft Sky Pastel ☁️',
+      desc: 'Biru langit pastel teduh & rapi',
+      previewBg: 'bg-gradient-to-r from-[#5FA5CE] to-[#C7E2F1]',
+      badgeColor: 'bg-[#5FA5CE] text-white',
+      borderActive: 'border-[#5FA5CE] ring-2 ring-[#5FA5CE]/30'
     },
     {
       id: 'lavender-cozy',
-      name: 'Lavender Cozy 💜',
-      desc: 'Santai, elegan & modern ungu lembut',
-      previewBg: 'bg-gradient-to-r from-[#8b5cf6] to-[#ddd6fe]',
-      badgeColor: 'bg-[#8b5cf6] text-white',
-      borderActive: 'border-[#8b5cf6] ring-2 ring-[#8b5cf6]/30'
+      name: 'Soft Lilac Cozy 💜',
+      desc: 'Lavender pastel santai & aesthetic',
+      previewBg: 'bg-gradient-to-r from-[#9F87DA] to-[#E0D7F5]',
+      badgeColor: 'bg-[#9F87DA] text-white',
+      borderActive: 'border-[#9F87DA] ring-2 ring-[#9F87DA]/30'
     },
     {
       id: 'mocha-latte',
-      name: 'Mocha Latte ☕',
-      desc: 'Klasik, hangat & nyaman cokelat kopi',
-      previewBg: 'bg-gradient-to-r from-[#d97706] to-[#fde68a]',
-      badgeColor: 'bg-[#d97706] text-white',
-      borderActive: 'border-[#d97706] ring-2 ring-[#d97706]/30'
+      name: 'Soft Mocha Latte ☕',
+      desc: 'Kopi susu krem & biskuit hangat',
+      previewBg: 'bg-gradient-to-r from-[#B18F6F] to-[#E7DACB]',
+      badgeColor: 'bg-[#B18F6F] text-white',
+      borderActive: 'border-[#B18F6F] ring-2 ring-[#B18F6F]/30'
     }
   ];
 
@@ -154,6 +171,44 @@ export default function SettingsPage() {
     const themeName = themeOptions.find((t) => t.id === themeId)?.name || themeId;
     setToastMessage(`Tema warna aplikasi diubah ke ${themeName}! 🎨✨`);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (newPassword.trim().length < 6) {
+      setPasswordError('Kata sandi baru minimal harus 6 karakter.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Konfirmasi kata sandi tidak cocok. Harap periksa kembali.');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    const result = changeCurrentPassword(newPassword);
+
+    // Sync ke Supabase Auth jika sedang login di cloud session
+    try {
+      await supabase.auth.updateUser({ password: newPassword.trim() });
+    } catch (err) {
+      console.warn('Supabase password update:', err);
+    }
+
+    setIsChangingPassword(false);
+
+    if (result.success) {
+      setPasswordSuccess(result.message);
+      setNewPassword('');
+      setConfirmPassword('');
+      setToastMessage(result.message);
+      setTimeout(() => setPasswordSuccess(null), 4000);
+    } else {
+      setPasswordError(result.message);
+    }
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -656,6 +711,106 @@ export default function SettingsPage() {
             onChange={(e) => setWaTemplate(e.target.value)}
             className="w-full bg-cream-50 border border-cream-200 rounded-2xl p-4 text-xs font-mono text-darkcocoa leading-relaxed focus:outline-none focus:border-peach-400 focus:bg-white"
           />
+        </motion.div>
+
+        {/* Keamanan & Ubah Kata Sandi Akun Tenant */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-3xl p-6 md:p-7 shadow-cute border border-cream-200 space-y-4"
+        >
+          <div className="flex items-center justify-between border-b border-cream-100 pb-3 flex-wrap gap-2">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-peach-50 flex items-center justify-center text-peach-500">
+                <KeyRound className="w-5 h-5" strokeWidth={1.75} />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-heading font-extrabold text-darkcocoa">
+                  Keamanan &amp; Ubah Kata Sandi Akun
+                </h2>
+                <p className="text-xs text-softgray">
+                  Atur ulang kata sandi login untuk akun pemilik kos ini
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-cream-100 rounded-full text-[11px] font-semibold text-softgray">
+              <ShieldCheck className="w-3.5 h-3.5 text-matcha-600" />
+              <span>{currentUser?.email || 'Akun Aktif'}</span>
+            </div>
+          </div>
+
+          {passwordSuccess && (
+            <div className="p-3 bg-matcha-50 border border-matcha-200 rounded-2xl text-matcha-700 text-xs font-bold flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-matcha-600 flex-shrink-0" />
+              <span>{passwordSuccess}</span>
+            </div>
+          )}
+
+          {passwordError && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-xs font-bold flex items-center gap-2">
+              <Lock className="w-4 h-4 text-red-500 flex-shrink-0" />
+              <span>{passwordError}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div>
+              <label className="font-bold text-darkcocoa block mb-1.5 text-xs">
+                Kata Sandi Baru
+              </label>
+              <div className="relative">
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  placeholder="Minimal 6 karakter"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full bg-cream-50 border border-cream-200 rounded-2xl pl-3.5 pr-10 py-2.5 text-xs text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-2.5 text-softgray hover:text-darkcocoa transition-colors"
+                >
+                  {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="font-bold text-darkcocoa block mb-1.5 text-xs">
+                Konfirmasi Kata Sandi Baru
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Ulangi kata sandi baru"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-cream-50 border border-cream-200 rounded-2xl pl-3.5 pr-10 py-2.5 text-xs text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-2.5 text-softgray hover:text-darkcocoa transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-1">
+            <button
+              type="button"
+              disabled={isChangingPassword || !newPassword}
+              onClick={handleChangePassword}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95"
+            >
+              <KeyRound className="w-4 h-4 text-peach-400" />
+              <span>{isChangingPassword ? 'Memproses...' : 'Ubah Kata Sandi 🔐'}</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* Form Actions */}
