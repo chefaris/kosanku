@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { supabase } from '../supabase';
 
 export interface UserProfile {
   id: string;
@@ -584,6 +585,7 @@ interface KosStoreState {
 
   // Super Admin SaaS Management actions
   saasAccounts: SaaSUserAccount[];
+  deletedAccountIds: string[];
   impersonatingFromAdmin: boolean;
   approveUserSubscriptionManual: (
     userId: string,
@@ -597,7 +599,8 @@ interface KosStoreState {
   stopImpersonating: () => void;
   toggleUserStatus: (userId: string, status: SaaSUserAccount['status']) => void;
   updateSaaSAccount: (accountId: string, updates: Partial<SaaSUserAccount>) => void;
-  deleteSaaSAccount: (accountId: string) => boolean;
+  deleteSaaSAccount: (accountId: string) => Promise<boolean> | boolean;
+  syncSaaSTenantsFromCloud: (cloudAccounts: SaaSUserAccount[]) => void;
 
   // Super Admin Landing Page CMS actions
   landingPageConfig: LandingPageConfig;
@@ -1390,6 +1393,7 @@ export const useKosStore = create<KosStoreState>()(
       subscription: initialSubscription,
       saasInvoices: initialSaaSInvoices,
       saasAccounts: initialSaaSAccounts,
+      deletedAccountIds: [],
       landingPageConfig: initialLandingPageConfig,
       impersonatingFromAdmin: false,
       properties: initialProperties,
@@ -1930,12 +1934,67 @@ export const useKosStore = create<KosStoreState>()(
         }));
       },
 
-      deleteSaaSAccount: (accountId) => {
+      deleteSaaSAccount: async (accountId: string) => {
         if (accountId === 'usr-admin-root') return false; // Protected superadmin
-        set((state) => ({
+        const state = get();
+        const target = state.saasAccounts.find((acc) => acc.id === accountId);
+        const targetEmail = target?.email?.toLowerCase();
+
+        // 1. Mark ID and email in deletedAccountIds blacklist
+        const updatedDeleted = Array.from(
+          new Set([
+            ...(state.deletedAccountIds || []),
+            accountId,
+            ...(targetEmail ? [targetEmail] : [])
+          ])
+        );
+
+        // 2. Remove from local store state
+        set({
+          deletedAccountIds: updatedDeleted,
           saasAccounts: state.saasAccounts.filter((acc) => acc.id !== accountId)
-        }));
+        });
+
+        // 3. Delete from Supabase PostgreSQL public.profiles
+        try {
+          await supabase.from('profiles').delete().eq('id', accountId);
+          if (targetEmail) {
+            await supabase.from('profiles').delete().eq('email', targetEmail);
+          }
+        } catch (err) {
+          console.warn('Supabase delete profile sync warning:', err);
+        }
+
         return true;
+      },
+
+      syncSaaSTenantsFromCloud: (cloudAccounts: SaaSUserAccount[]) => {
+        const state = get();
+        const deletedSet = new Set((state.deletedAccountIds || []).map((id) => id.toLowerCase()));
+
+        // Filter out any accounts that have been deleted
+        const validCloudAccounts = cloudAccounts.filter(
+          (ca) => !deletedSet.has(ca.id.toLowerCase()) && !deletedSet.has(ca.email.toLowerCase())
+        );
+
+        // Merge with existing local accounts
+        const currentAccountsMap = new Map(state.saasAccounts.map((acc) => [acc.id, acc]));
+
+        for (const ca of validCloudAccounts) {
+          if (!currentAccountsMap.has(ca.id)) {
+            // Also check by email to avoid duplicates
+            const existsByEmail = Array.from(currentAccountsMap.values()).some(
+              (acc) => acc.email.toLowerCase() === ca.email.toLowerCase()
+            );
+            if (!existsByEmail) {
+              currentAccountsMap.set(ca.id, ca);
+            }
+          }
+        }
+
+        set({
+          saasAccounts: Array.from(currentAccountsMap.values())
+        });
       },
 
       changeCurrentPassword: (newPassword: string) => {
@@ -2482,7 +2541,7 @@ export const useKosStore = create<KosStoreState>()(
     {
       name: 'pawskost_store_v9',
       storage: createJSONStorage(() => localStorage),
-      version: 9,
+      version: 10,
       migrate: (persistedState: any, version: number) => {
         const catAvatars = [
           '/cat-avatar-gamer.jpg',
@@ -2491,14 +2550,21 @@ export const useKosStore = create<KosStoreState>()(
           '/cat-avatar-laundry.jpg',
           '/cat-avatar-music.jpg'
         ];
-        const accounts = (persistedState?.saasAccounts || initialSaaSAccounts).map((acc: any) => ({
-          ...acc,
-          password: acc.password || (acc.id === 'usr-admin-root' ? 'admin123' : 'password123'),
-          proofUrl: acc.proofUrl || (acc.status === 'pending_approval' ? sampleProofReceipt : undefined),
-          proofNotes: acc.proofNotes || (acc.status === 'pending_approval' ? 'Transfer via m-BCA a/n Ratna Dewi Rp 99.000 ref: 20261031772910842' : undefined)
-        }));
+        const deletedIds = new Set((persistedState?.deletedAccountIds || []).map((id: string) => (id || '').toLowerCase()));
+        const rawAccounts = (persistedState?.saasAccounts && persistedState.saasAccounts.length > 0)
+          ? persistedState.saasAccounts
+          : initialSaaSAccounts;
+        const accounts = rawAccounts
+          .filter((acc: any) => !deletedIds.has((acc.id || '').toLowerCase()) && !deletedIds.has((acc.email || '').toLowerCase()))
+          .map((acc: any) => ({
+            ...acc,
+            password: acc.password || (acc.id === 'usr-admin-root' ? 'admin123' : 'password123'),
+            proofUrl: acc.proofUrl || (acc.status === 'pending_approval' ? sampleProofReceipt : undefined),
+            proofNotes: acc.proofNotes || (acc.status === 'pending_approval' ? 'Transfer via m-BCA a/n Ratna Dewi Rp 99.000 ref: 20261031772910842' : undefined)
+          }));
         return {
           ...persistedState,
+          deletedAccountIds: persistedState?.deletedAccountIds || [],
           currentUser: persistedState?.currentUser || defaultDemoUser,
           authMode: persistedState?.authMode || 'demo',
           subscription: persistedState?.subscription || initialSubscription,

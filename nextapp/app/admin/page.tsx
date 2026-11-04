@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import {
@@ -42,6 +42,8 @@ import { ManualApprovalModal } from '../components/admin/ManualApprovalModal';
 import { ProofViewerModal } from '../components/admin/ProofViewerModal';
 import { EditAccountModal } from '../components/admin/EditAccountModal';
 import { ResetTenantPasswordModal } from '../components/admin/ResetTenantPasswordModal';
+import { DeleteAccountConfirmModal } from '../components/admin/DeleteAccountConfirmModal';
+import { supabase } from '../lib/supabase';
 
 export default function SuperAdminPage() {
   const router = useRouter();
@@ -53,7 +55,9 @@ export default function SuperAdminPage() {
     currentUser,
     landingPageConfig,
     updateLandingPageConfig,
-    resetLandingPageConfig
+    resetLandingPageConfig,
+    deleteSaaSAccount,
+    syncSaaSTenantsFromCloud
   } = useKosStore();
 
   // Active Tab: 'subscribers' | 'landing_cms' | 'pricing_banks'
@@ -76,10 +80,71 @@ export default function SuperAdminPage() {
   const [selectedAccountForPassword, setSelectedAccountForPassword] = useState<SaaSUserAccount | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
+  const [selectedAccountForDelete, setSelectedAccountForDelete] = useState<SaaSUserAccount | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const handleOpenPasswordModal = (account: SaaSUserAccount) => {
     setSelectedAccountForPassword(account);
     setIsPasswordModalOpen(true);
   };
+
+  const handleOpenDeleteModal = (account: SaaSUserAccount) => {
+    if (account.id === 'usr-admin-root') {
+      showToast('⚠️ Akun Super Admin Utama dilindungi dan tidak boleh dihapus.');
+      return;
+    }
+    setSelectedAccountForDelete(account);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async (accountId: string) => {
+    const target = saasAccounts.find((a) => a.id === accountId);
+    const success = await deleteSaaSAccount(accountId);
+    if (success) {
+      showToast(`Akun tenant ${target?.name || ''} berhasil dihapus permanen dari sistem & database cloud! 🗑️`);
+    }
+  };
+
+  // Sinkronisasi data tenant dari PostgreSQL Supabase secara berkala
+  useEffect(() => {
+    const fetchCloudProfiles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*');
+
+        if (!error && data && data.length > 0) {
+          const mappedAccounts: SaaSUserAccount[] = data
+            .filter((p) => p.id !== 'usr-admin-root' && p.role !== 'superadmin')
+            .map((p) => ({
+              id: p.id,
+              name: p.name || 'Pemilik Kos',
+              kosName: p.kos_name || 'Kosan Saya',
+              phone: p.phone || '-',
+              email: p.email,
+              password: 'password123',
+              plan: p.plan || 'pro',
+              planName: p.plan_name || 'Paket Juragan Pro',
+              status: p.status || 'pending_approval',
+              registeredAt: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : '2026-11-01',
+              expiresAt: p.expires_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              daysRemaining: p.days_remaining || 30,
+              totalPaid: Number(p.total_paid) || 0,
+              lastPaymentDate: p.last_payment_date,
+              proofUrl: p.proof_url,
+              proofNotes: p.proof_notes,
+              notes: p.notes
+            }));
+
+          syncSaaSTenantsFromCloud(mappedAccounts);
+        }
+      } catch (err) {
+        console.warn('Sync cloud profiles warning:', err);
+      }
+    };
+
+    fetchCloudProfiles();
+  }, [syncSaaSTenantsFromCloud]);
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -644,6 +709,17 @@ export default function SuperAdminPage() {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
+
+                        {account.id !== 'usr-admin-root' && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDeleteModal(account)}
+                            className="p-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors border border-red-200"
+                            title="Hapus Akun Tenant Permanen"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -822,6 +898,18 @@ export default function SuperAdminPage() {
                             >
                               <Eye className="w-4 h-4" />
                             </button>
+
+                            {/* Tombol Hapus Akun Tenant */}
+                            {account.id !== 'usr-admin-root' && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenDeleteModal(account)}
+                                className="p-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors border border-red-200"
+                                title="Hapus Akun Tenant Permanen"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1308,6 +1396,17 @@ export default function SuperAdminPage() {
         onClose={() => setIsPasswordModalOpen(false)}
         account={selectedAccountForPassword}
         onSaved={(msg) => showToast(msg)}
+      />
+
+      {/* 5. Modal Konfirmasi Hapus Akun Tenant Permanen */}
+      <DeleteAccountConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedAccountForDelete(null);
+        }}
+        account={selectedAccountForDelete}
+        onConfirmDelete={handleConfirmDelete}
       />
     </div>
   );

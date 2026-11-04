@@ -102,15 +102,15 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
     onClose();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (account.id === 'usr-admin-root') {
       setErrorMessage('Akun Super Admin Utama tidak boleh dihapus.');
       return;
     }
 
-    const success = deleteSaaSAccount(account.id);
+    const success = await deleteSaaSAccount(account.id);
     if (success) {
-      if (onSaved) onSaved(`Akun ${account.name} telah berhasil dihapus dari sistem.`);
+      if (onSaved) onSaved(`Akun ${account.name} telah berhasil dihapus permanen dari sistem.`);
       onClose();
     }
   };

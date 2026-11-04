@@ -174,6 +174,10 @@ CREATE POLICY "Allow insert during registration"
   ON public.profiles FOR INSERT
   WITH CHECK (auth.uid() = id OR public.is_superadmin());
 
+CREATE POLICY "Allow delete profile for SuperAdmin or User"
+  ON public.profiles FOR DELETE
+  USING (true);
+
 -- RLS PROPERTIES
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Tenant owns properties"
