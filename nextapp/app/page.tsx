@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useKosStore, initialLandingPageConfig } from './lib/store/useKosStore';
 import { RegisterModal } from './components/ui/RegisterModal';
+import { KosCatalogSection } from './components/catalog/KosCatalogSection';
 import {
   Gamepad2,
   Sparkles,
@@ -80,7 +81,10 @@ export default function LandingPage() {
           </Link>
 
           {/* Desktop Navigation Links (Proportional & Elegant) */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-semibold text-softgray tracking-normal">
+          <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-semibold text-softgray tracking-normal">
+            <a href="#katalog" className="text-peach-600 hover:text-peach-700 font-extrabold flex items-center gap-1 py-1">
+              <span>Cari Kost 🔍</span>
+            </a>
             <a href="#solusi" className="hover:text-peach-500 transition-colors py-1">Masalah vs Solusi</a>
             <a href="#fitur" className="hover:text-peach-500 transition-colors py-1">Fitur Unggulan</a>
             <a href="#harga" className="hover:text-peach-500 transition-colors py-1">Paket Harga</a>
@@ -127,6 +131,13 @@ export default function LandingPage() {
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white border-b border-cream-200 px-4 py-4 space-y-3 text-xs font-bold text-softgray animate-in slide-in-from-top-2 duration-150">
+            <a
+              href="#katalog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block py-1 text-peach-600 font-extrabold"
+            >
+              Cari Kost 🔍
+            </a>
             <a
               href="#solusi"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -236,6 +247,13 @@ export default function LandingPage() {
               <Sparkles className="w-4 h-4 text-peach-500" />
               <span>{cfg.heroCtaSecondaryText}</span>
             </button>
+
+            <a
+              href="#katalog"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-3xl bg-cream-100 hover:bg-cream-200 text-darkcocoa font-bold text-sm border border-cream-200 shadow-xs flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all"
+            >
+              <span>Jelajahi Kosan 🔍</span>
+            </a>
           </div>
 
           <p className="text-[11px] text-softgray flex items-center justify-center gap-4 flex-wrap">
@@ -292,6 +310,11 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ======================================================== */}
+      {/* 2.5 KATALOG KOS PILIHAN (MAMIKOS-STYLE MARKETPLACE)      */}
+      {/* ======================================================== */}
+      <KosCatalogSection onOpenRegister={() => setIsRegisterModalOpen(true)} />
 
       {/* ======================================================== */}
       {/* 3. MASALAH VS SOLUSI                                     */}

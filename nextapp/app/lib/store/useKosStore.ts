@@ -382,6 +382,7 @@ export interface Property {
   id: string;
   name: string;
   address: string;
+  city?: string;
   type: 'Putri' | 'Putra' | 'Campur' | 'Pasutri';
   floors: number;
   managerName?: string;
@@ -389,7 +390,45 @@ export interface Property {
   bankName?: string;
   accountNumber?: string;
   accountHolder?: string;
+
+  // Katalog Promosi & Publikasi Mamikos-Style
+  photos?: string[];
+  coverPhoto?: string;
+  description?: string;
+  rules?: string[];
+  facilities?: string[];
+  isPublished?: boolean;
+  googleMapsUrl?: string;
 }
+
+export const defaultKosPhotoPresets = [
+  { id: 'ph-1', name: 'Kamar Minimalis Modern', url: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80' },
+  { id: 'ph-2', name: 'Kamar Meja Belajar Aesthetic', url: 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80' },
+  { id: 'ph-3', name: 'Kamar Cerah Skandinavia', url: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80' },
+  { id: 'ph-4', name: 'Kamar Warm Cozy Kayu', url: 'https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=800&q=80' },
+  { id: 'ph-5', name: 'Studio Kos Luas', url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80' },
+  { id: 'ph-6', name: 'Gedung Kos Tampak Depan', url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80' }
+];
+
+export const defaultKosRules = [
+  'Akses 24 Jam dengan Kunci Gerbang Mandiri 🔑',
+  'Tamu Lawan Jenis Dilarang Masuk Kamar (Ruang Tamu Disediakan) 🚫',
+  'Dilarang Merokok di Dalam Kamar Ber-AC 🚭',
+  'Menjaga Ketenangan & Jam Istirahat Pukul 22:00 - 06:00 🤫',
+  'Hewan Peliharaan Tidak Diperbolehkan 🐾',
+  'Wajib Mematikan AC & Listrik Saat Meninggalkan Kamar ⚡'
+];
+
+export const defaultCommonKosFacilities = [
+  'WiFi Cepat 100 Mbps',
+  'Dapur Bersama & Kulkas',
+  'Parkir Motor Luas & Aman',
+  'Parkir Mobil Tersedia',
+  'CCTV Keamanan 24 Jam',
+  'Mesin Cuci Bersama & Jemuran',
+  'Ruang Tamu & Bersantai',
+  'Dispenser Air Minum Gratis'
+];
 
 export interface RoomFacilities {
   ac: boolean;
@@ -694,28 +733,153 @@ export const initialProperties: Property[] = [
   {
     id: 'prop-1',
     name: 'KosanKu Paviliun Dago',
-    address: 'Jl. Dago Asri No. 12, Coblong, Bandung',
+    address: 'Jl. Dago Asri No. 12, Coblong',
+    city: 'Bandung',
     type: 'Campur',
     floors: 2,
-    managerName: 'Pak Asep',
+    managerName: 'Pak Asep (Pengelola)',
     managerPhone: '0812-3456-7890',
     bankName: 'BCA',
     accountNumber: '8420-1928-31',
-    accountHolder: 'Rumah KosanKu Dago'
+    accountHolder: 'Rumah KosanKu Dago',
+    coverPhoto: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Kos eksklusif paviliun di kawasan Dago yang asri, sejuk, dan tenang. Hanya 5 menit ke Kampus ITB & Unpad Dipatiukur. Dilengkapi parkir motor & mobil aman, WiFi kencang 100 Mbps, serta akses 24 jam mandiri.',
+    rules: [
+      'Akses gerbang 24 jam mandiri',
+      'Tamu lawan jenis dilarang masuk ke dalam kamar',
+      'Dilarang merokok di dalam kamar ber-AC',
+      'Menjaga ketenangan jam istirahat malam'
+    ],
+    facilities: [
+      'WiFi Cepat 100 Mbps',
+      'Dapur Bersama & Kulkas',
+      'Parkir Mobil & Motor Luas',
+      'CCTV Keamanan 24 Jam',
+      'Water Heater Kamar Mandi'
+    ],
+    isPublished: true,
+    googleMapsUrl: 'https://maps.google.com/?q=Dago+Bandung'
   },
   {
     id: 'prop-2',
     name: 'KosanKu Putri Sukajadi',
-    address: 'Jl. Sukajadi No. 88, Sukajadi, Bandung',
+    address: 'Jl. Sukajadi No. 88, Sukajadi',
+    city: 'Bandung',
     type: 'Putri',
     floors: 2,
-    managerName: 'Bu Eni',
+    managerName: 'Bu Eni (Ibu Kos)',
     managerPhone: '0813-9876-5432',
     bankName: 'Mandiri',
     accountNumber: '131-00-9876543-2',
-    accountHolder: 'KosanKu Sukajadi Putri'
+    accountHolder: 'KosanKu Sukajadi Putri',
+    coverPhoto: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Kosan khusus putri yang sangat nyaman, bersih, dan aman dengan penjagaan security. Lokasi strategis dekat PVJ Mall, RS Hasan Sadikin, dan Universitas Kristen Maranatha. Suasana kekeluargaan dan ramah muslimah.',
+    rules: [
+      'Khusus Mahasiswi & Karyawati Putri',
+      'Jam malam gerbang pukul 23:00 WIB',
+      'Tamu pria hanya boleh di ruang tamu depan',
+      'Bebas rokok dan alkohol'
+    ],
+    facilities: [
+      'WiFi Super Cepat',
+      'Dapur Lengkap & Dispenser',
+      'Mesin Cuci Bersama',
+      'Security & CCTV 24 Jam',
+      'Kamar Mandi Dalam'
+    ],
+    isPublished: true,
+    googleMapsUrl: 'https://maps.google.com/?q=Sukajadi+Bandung'
   }
 ];
+
+export interface PropertyEligibilityResult {
+  isEligible: boolean;
+  score: number; // 0 - 100
+  completedCount: number;
+  totalCount: number;
+  checks: {
+    hasName: boolean;
+    hasAddressAndCity: boolean;
+    hasPhone: boolean;
+    hasPhotos: boolean;
+    hasFacilities: boolean;
+    hasRoomsAndPrice: boolean;
+    isPublished: boolean;
+  };
+  missingDetails: string[];
+}
+
+export function checkPropertyEligibility(
+  property: Property,
+  rooms: Room[]
+): PropertyEligibilityResult {
+  const propRooms = rooms.filter((r) => r.propertyId === property.id);
+  const hasName = Boolean(property.name && property.name.trim().length >= 3);
+  const hasAddressAndCity = Boolean(
+    property.address && property.address.trim().length >= 4 && (property.city || property.address.toLowerCase().includes('bandung') || property.address.toLowerCase().includes('jakarta'))
+  );
+  const cleanPhone = (property.managerPhone || '').replace(/\D/g, '');
+  const hasPhone = cleanPhone.length >= 9;
+  const hasPhotos = Boolean((property.photos && property.photos.length > 0) || property.coverPhoto);
+  const hasFacilities = Boolean(
+    (property.facilities && property.facilities.length > 0) ||
+      propRooms.some((r) => (r.facilities.custom && r.facilities.custom.length > 0) || r.facilities.ac || r.facilities.wifi || r.facilities.bath)
+  );
+  const hasRoomsAndPrice = propRooms.length > 0 && propRooms.some((r) => r.price > 0);
+  const isPublished = property.isPublished !== false;
+
+  const checks = {
+    hasName,
+    hasAddressAndCity,
+    hasPhone,
+    hasPhotos,
+    hasFacilities,
+    hasRoomsAndPrice,
+    isPublished
+  };
+
+  const missingDetails: string[] = [];
+  if (!hasName) missingDetails.push('Nama kost belum diisi');
+  if (!hasAddressAndCity) missingDetails.push('Alamat dan Kota kost belum lengkap');
+  if (!hasPhone) missingDetails.push('Nomor WhatsApp pengelola belum valid (min. 9 digit)');
+  if (!hasPhotos) missingDetails.push('Belum mengunggah foto kamar/bangunan kos');
+  if (!hasFacilities) missingDetails.push('Fasilitas kost belum dipilih');
+  if (!hasRoomsAndPrice) missingDetails.push('Belum memiliki unit kamar dengan tarif sewa terdaftar');
+  if (!isPublished) missingDetails.push('Status promosi dinonaktifkan (centang Tampilkan di Katalog)');
+
+  const keys: (keyof typeof checks)[] = [
+    'hasName',
+    'hasAddressAndCity',
+    'hasPhone',
+    'hasPhotos',
+    'hasFacilities',
+    'hasRoomsAndPrice',
+    'isPublished'
+  ];
+  const completedCount = keys.filter((k) => checks[k]).length;
+  const totalCount = keys.length;
+  const score = Math.round((completedCount / totalCount) * 100);
+  const isEligible = completedCount === totalCount;
+
+  return {
+    isEligible,
+    score,
+    completedCount,
+    totalCount,
+    checks,
+    missingDetails
+  };
+}
 
 // Initial Seed Rooms
 const initialRooms: Room[] = [

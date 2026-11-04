@@ -36,10 +36,19 @@ import {
   Wrench,
   Crown,
   ShieldAlert,
-  Dice5
+  Dice5,
+  Globe,
+  AlertCircle
 } from 'lucide-react';
 import Image from 'next/image';
-import { useKosStore, Property, AppTheme, TenantStaffUser, TenantStaffRole } from '../lib/store/useKosStore';
+import {
+  useKosStore,
+  Property,
+  AppTheme,
+  TenantStaffUser,
+  TenantStaffRole,
+  checkPropertyEligibility
+} from '../lib/store/useKosStore';
 import { PropertyModal } from '../components/ui/PropertyModal';
 import { PlanLimitModal } from '../components/ui/PlanLimitModal';
 import { ManageRoomTypesModal } from '../components/ui/ManageRoomTypesModal';
@@ -524,6 +533,8 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
           {properties.map((prop) => {
             const propRooms = rooms.filter((r) => r.propertyId === prop.id);
+            const eligibility = checkPropertyEligibility(prop, rooms);
+
             return (
               <div
                 key={prop.id}
@@ -532,7 +543,14 @@ export default function SettingsPage() {
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-heading font-bold text-sm text-darkcocoa">{prop.name}</h3>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h3 className="font-heading font-bold text-sm text-darkcocoa">{prop.name}</h3>
+                        {prop.city && (
+                          <span className="text-[10px] font-bold text-softgray bg-white px-2 py-0.5 rounded-md border border-cream-200">
+                            📍 {prop.city}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-softgray flex items-center gap-1 mt-0.5">
                         <MapPin className="w-3 h-3 text-peach-500 flex-shrink-0" />
                         <span className="line-clamp-1">{prop.address}</span>
@@ -543,14 +561,40 @@ export default function SettingsPage() {
                     </span>
                   </div>
 
+                  {/* Auto-listing catalog status badge */}
+                  <div className="mt-2.5 flex items-center justify-between gap-2 text-xs">
+                    {eligibility.isEligible ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-matcha-50 text-matcha-700 border border-matcha-200 text-[10px] font-bold shadow-2xs">
+                        <Globe className="w-3 h-3 text-matcha-600" />
+                        <span>Tayang di Katalog Promosi 🌐</span>
+                      </span>
+                    ) : (
+                      <span
+                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-peach-50 text-peach-700 border border-peach-200 text-[10px] font-bold"
+                        title={eligibility.missingDetails.join(', ')}
+                      >
+                        <AlertCircle className="w-3 h-3 text-peach-500" />
+                        <span>Belum Tayang ({eligibility.completedCount}/{eligibility.totalCount} Syarat)</span>
+                      </span>
+                    )}
+
+                    <span className="text-[11px] text-softgray font-medium">
+                      {propRooms.length} Kamar
+                    </span>
+                  </div>
+
                   <div className="flex items-center gap-3 text-xs text-softgray mt-2 pt-2 border-t border-cream-200">
-                    <span>{propRooms.length} Kamar</span>
-                    <span>•</span>
                     <span>{prop.floors || 2} Lantai</span>
                     {prop.managerName && (
                       <>
                         <span>•</span>
                         <span>PJ: {prop.managerName}</span>
+                      </>
+                    )}
+                    {prop.managerPhone && (
+                      <>
+                        <span>•</span>
+                        <span className="text-peach-600 font-semibold">WA: {prop.managerPhone}</span>
                       </>
                     )}
                   </div>

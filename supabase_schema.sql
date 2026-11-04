@@ -28,16 +28,24 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. TABEL PROPERTIES (Cabang / Properti Kos)
+-- 3. TABEL PROPERTIES (Cabang / Properti Kos & Katalog Promosi)
 CREATE TABLE IF NOT EXISTS public.properties (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   address TEXT NOT NULL DEFAULT 'Alamat Belum Diatur',
+  city TEXT DEFAULT 'Bandung',
   type TEXT DEFAULT 'Campur',
   floors INTEGER DEFAULT 1,
   manager_name TEXT,
   manager_phone TEXT,
+  cover_photo TEXT,
+  photos JSONB DEFAULT '[]'::jsonb,
+  description TEXT,
+  rules JSONB DEFAULT '[]'::jsonb,
+  facilities JSONB DEFAULT '[]'::jsonb,
+  is_published BOOLEAN DEFAULT TRUE,
+  google_maps_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
