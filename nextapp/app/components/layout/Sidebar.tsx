@@ -52,8 +52,10 @@ export interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegisterModal }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, subscription, logout, impersonatingFromAdmin, stopImpersonating } = useKosStore();
+  const { currentUser, subscription, logout, impersonatingFromAdmin, stopImpersonating, getActiveRole } = useKosStore();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const activeRole = getActiveRole();
 
   const toggleMobile = () => setIsMobileOpen((prev) => !prev);
   const closeMobile = () => setIsMobileOpen(false);
@@ -62,6 +64,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
     if (href === '/dashboard' && pathname === '/') return true;
     return pathname === href || (href !== '/' && pathname.startsWith(href));
   };
+
+  const filteredNavItems = navItems.filter((item) => {
+    if (activeRole === 'owner') return true;
+    if (activeRole === 'cashier') {
+      return ['/dashboard', '/rooms', '/billing', '/tenants'].includes(item.href);
+    }
+    if (activeRole === 'staff_ops') {
+      return ['/dashboard', '/rooms', '/maintenance'].includes(item.href);
+    }
+    if (activeRole === 'manager') {
+      return !['/finance', '/subscription'].includes(item.href);
+    }
+    return true;
+  });
 
   const navContent = (
     <div className="flex flex-col h-full justify-between">
@@ -96,30 +112,46 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             </div>
           </Link>
 
-          {/* Logo Status Tenant (Jenis Paket yang Dibeli & Tulisan Jenis Langganan) */}
-          <div className="mt-3.5 p-2.5 rounded-2xl bg-gradient-to-r from-peach-50/90 to-sakura-50/80 border border-peach-200/70 shadow-xs flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-peach-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                <Crown className="w-4 h-4" />
+          {/* Status Tenant / Role Indicator */}
+          {activeRole === 'owner' ? (
+            <div className="mt-3.5 p-2.5 rounded-2xl bg-gradient-to-r from-peach-50/90 to-sakura-50/80 border border-peach-200/70 shadow-xs flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-peach-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                  <Crown className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[9px] uppercase tracking-wider font-extrabold text-softgray block leading-none">
+                    Jenis Langganan
+                  </span>
+                  <span className="font-heading font-extrabold text-xs text-darkcocoa truncate block mt-0.5">
+                    {subscription?.planName || 'Paket Juragan Pro'}
+                  </span>
+                </div>
+              </div>
+              <Link
+                href="/subscription"
+                onClick={closeMobile}
+                className="px-2 py-1 rounded-lg bg-white/90 hover:bg-white text-[10px] font-bold text-peach-600 border border-peach-200 shadow-2xs flex-shrink-0 transition-colors"
+                title="Kelola Paket Langganan"
+              >
+                <span>{subscription?.status === 'trial' ? 'Trial' : 'Aktif'}</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-3.5 p-2.5 rounded-2xl bg-cream-50 border border-cream-200 shadow-xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-600 flex items-center justify-center flex-shrink-0 text-sm">
+                {activeRole === 'cashier' ? '💳' : activeRole === 'staff_ops' ? '🛠️' : '👔'}
               </div>
               <div className="min-w-0">
                 <span className="text-[9px] uppercase tracking-wider font-extrabold text-softgray block leading-none">
-                  Jenis Langganan
+                  Hak Akses Staf
                 </span>
                 <span className="font-heading font-extrabold text-xs text-darkcocoa truncate block mt-0.5">
-                  {subscription?.planName || 'Paket Juragan Pro'}
+                  {activeRole === 'cashier' ? 'Staf Kasir' : activeRole === 'staff_ops' ? 'Penjaga Kos' : 'Manajer Kos'}
                 </span>
               </div>
             </div>
-            <Link
-              href="/subscription"
-              onClick={closeMobile}
-              className="px-2 py-1 rounded-lg bg-white/90 hover:bg-white text-[10px] font-bold text-peach-600 border border-peach-200 shadow-2xs flex-shrink-0 transition-colors"
-              title="Kelola Paket Langganan"
-            >
-              <span>{subscription?.status === 'trial' ? 'Trial' : 'Aktif'}</span>
-            </Link>
-          </div>
+          )}
         </div>
 
         {/* Multi-Property Switcher */}
@@ -127,7 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
 
         {/* Navigation Items */}
         <nav className="px-3 space-y-1.5 mt-2" aria-label="Menu Utama">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const active = isLinkActive(item.href);
 
@@ -179,7 +211,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             </p>
             <p className="font-body text-[10px] text-softgray flex items-center gap-1 truncate">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-peach-400" />
-              <span>{currentUser?.isDemo ? 'Mode Sandbox' : (currentUser?.kosName || 'Pemilik Kos')}</span>
+              <span>
+                {activeRole === 'cashier'
+                  ? '💳 Staf Kasir'
+                  : activeRole === 'staff_ops'
+                  ? '🛠️ Penjaga Kos'
+                  : activeRole === 'manager'
+                  ? '👔 Manajer Kos'
+                  : currentUser?.isDemo
+                  ? 'Mode Sandbox'
+                  : '👑 Pemilik Kos'}
+              </span>
             </p>
           </div>
         </div>

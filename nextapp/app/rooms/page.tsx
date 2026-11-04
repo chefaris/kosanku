@@ -58,8 +58,13 @@ export default function RoomsPage() {
     deleteRoom,
     checkInTenant,
     checkOutTenant,
-    canAddRoom
+    canAddRoom,
+    hasPermission,
+    getActiveRole
   } = useKosStore();
+
+  const canManageRooms = hasPermission('manage_rooms');
+  const activeRole = getActiveRole();
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -512,35 +517,42 @@ export default function RoomsPage() {
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={handleAddFloor}
-            className="flex-1 sm:flex-none justify-center bg-cream-100 hover:bg-cream-200 text-darkcocoa px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 transition-all flex items-center gap-1.5"
-            title="Tambah Lantai Baru pada Cabang Ini"
-          >
-            <Layers className="w-4 h-4 text-peach-500 flex-shrink-0" strokeWidth={2} />
-            <span className="whitespace-nowrap">+ Lantai</span>
-          </button>
-
-          {currentMaxFloor > 1 && (
+        {canManageRooms ? (
+          <div className="flex items-center gap-2 flex-wrap">
             <button
-              onClick={() => handleInitiateDeleteFloor(currentMaxFloor)}
-              className="bg-white hover:bg-red-50 text-softgray hover:text-red-500 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 hover:border-red-200 transition-all flex items-center gap-1.5"
-              title={`Hapus Lantai Teratas (Lantai ${currentMaxFloor})`}
+              onClick={handleAddFloor}
+              className="flex-1 sm:flex-none justify-center bg-cream-100 hover:bg-cream-200 text-darkcocoa px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 transition-all flex items-center gap-1.5"
+              title="Tambah Lantai Baru pada Cabang Ini"
             >
-              <Trash2 className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
-              <span className="whitespace-nowrap">- Hapus L{currentMaxFloor}</span>
+              <Layers className="w-4 h-4 text-peach-500 flex-shrink-0" strokeWidth={2} />
+              <span className="whitespace-nowrap">+ Lantai</span>
             </button>
-          )}
 
-          <button
-            onClick={() => handleOpenAddModal(1)}
-            className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
-          >
-            <Plus className="w-4 h-4 flex-shrink-0" strokeWidth={2.5} />
-            <span>+ Tambah Kamar</span>
-          </button>
-        </div>
+            {currentMaxFloor > 1 && (
+              <button
+                onClick={() => handleInitiateDeleteFloor(currentMaxFloor)}
+                className="bg-white hover:bg-red-50 text-softgray hover:text-red-500 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 hover:border-red-200 transition-all flex items-center gap-1.5"
+                title={`Hapus Lantai Teratas (Lantai ${currentMaxFloor})`}
+              >
+                <Trash2 className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
+                <span className="whitespace-nowrap">- Hapus L{currentMaxFloor}</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => handleOpenAddModal(1)}
+              className="w-full sm:w-auto justify-center bg-peach-500 hover:bg-peach-400 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <Plus className="w-4 h-4 flex-shrink-0" strokeWidth={2.5} />
+              <span>+ Tambah Kamar</span>
+            </button>
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-cream-100 border border-cream-200 text-xs font-bold text-softgray">
+            <Eye className="w-4 h-4 text-peach-500" />
+            <span>Mode Pantau Ketersediaan Kamar ({activeRole === 'cashier' ? 'Kasir' : 'Penjaga'})</span>
+          </div>
+        )}
       </div>
 
       {/* Filter Chips Row */}
@@ -610,25 +622,27 @@ export default function RoomsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleOpenAddModal(floorNum)}
-                    className="text-xs font-bold text-peach-500 hover:text-peach-600 flex items-center gap-1 hover:underline"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span className="hidden xs:inline">Kamar di Lantai {floorNum}</span>
-                    <span className="xs:hidden">+ Kamar L{floorNum}</span>
-                  </button>
+                {canManageRooms && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenAddModal(floorNum)}
+                      className="text-xs font-bold text-peach-500 hover:text-peach-600 flex items-center gap-1 hover:underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span className="hidden xs:inline">Kamar di Lantai {floorNum}</span>
+                      <span className="xs:hidden">+ Kamar L{floorNum}</span>
+                    </button>
 
-                  <button
-                    onClick={() => handleInitiateDeleteFloor(floorNum)}
-                    className="text-xs font-semibold text-softgray hover:text-red-500 hover:bg-red-50 px-2 py-1 rounded-xl flex items-center gap-1 transition-colors border border-transparent hover:border-red-200"
-                    title={`Hapus Lantai ${floorNum}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Hapus Lantai</span>
-                  </button>
-                </div>
+                    <button
+                      onClick={() => handleInitiateDeleteFloor(floorNum)}
+                      className="text-xs font-semibold text-softgray hover:text-red-500 hover:bg-red-50 px-2 py-1 rounded-xl flex items-center gap-1 transition-colors border border-transparent hover:border-red-200"
+                      title={`Hapus Lantai ${floorNum}`}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Hapus Lantai</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Grid of Room Cards */}
@@ -906,47 +920,64 @@ export default function RoomsPage() {
 
             {/* Modal Actions */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-cream-200">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleOpenEditModal(selectedRoom)}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-darkcocoa bg-cream-100 hover:bg-cream-200 flex items-center gap-1.5 transition-colors"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  <span>Edit Data Kamar</span>
-                </button>
-                <button
-                  onClick={() => handleDeleteRoom(selectedRoom)}
-                  disabled={selectedRoom.status === 'occupied'}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-colors ${
-                    selectedRoom.status === 'occupied'
-                      ? 'opacity-40 cursor-not-allowed text-softgray'
-                      : 'text-red-500 hover:bg-red-50'
-                  }`}
-                  title={selectedRoom.status === 'occupied' ? 'Kamar terisi tidak dapat dihapus' : 'Hapus kamar'}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              {canManageRooms ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenEditModal(selectedRoom)}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-darkcocoa bg-cream-100 hover:bg-cream-200 flex items-center gap-1.5 transition-colors"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Edit Data Kamar</span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteRoom(selectedRoom)}
+                      disabled={selectedRoom.status === 'occupied'}
+                      className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-colors ${
+                        selectedRoom.status === 'occupied'
+                          ? 'opacity-40 cursor-not-allowed text-softgray'
+                          : 'text-red-500 hover:bg-red-50'
+                      }`}
+                      title={selectedRoom.status === 'occupied' ? 'Kamar terisi tidak dapat dihapus' : 'Hapus kamar'}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
-              <div>
-                {selectedRoom.status === 'vacant' ? (
+                  <div>
+                    {selectedRoom.status === 'vacant' ? (
+                      <button
+                        onClick={() => handleOpenCheckInModal(selectedRoom)}
+                        className="bg-matcha-500 hover:bg-matcha-400 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-cute flex items-center gap-1.5 transition-all"
+                      >
+                        <UserCheck className="w-4 h-4" />
+                        <span>Check-In Penghuni</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setIsCheckOutModalOpen(true)}
+                        className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Check-Out</span>
+                      </button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="w-full flex items-center justify-between gap-3">
+                  <span className="text-[11px] text-softgray italic">
+                    ℹ️ Anda masuk dengan hak akses staf ({activeRole === 'cashier' ? 'Kasir' : 'Penjaga Kos'}). Pengubahan kamar & check-in dikelola oleh Pemilik atau Manajer.
+                  </span>
                   <button
-                    onClick={() => handleOpenCheckInModal(selectedRoom)}
-                    className="bg-matcha-500 hover:bg-matcha-400 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-cute flex items-center gap-1.5 transition-all"
+                    type="button"
+                    onClick={() => setSelectedRoom(null)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-darkcocoa bg-cream-100 hover:bg-cream-200 transition-colors flex-shrink-0"
                   >
-                    <UserCheck className="w-4 h-4" />
-                    <span>Check-In Penghuni</span>
+                    Tutup
                   </button>
-                ) : (
-                  <button
-                    onClick={() => setIsCheckOutModalOpen(true)}
-                    className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Check-Out</span>
-                  </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

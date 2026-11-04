@@ -142,6 +142,22 @@ CREATE TABLE IF NOT EXISTS public.settings (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 10. TABEL STAFF USERS (Manajemen Tim & Hak Akses Staf Kos)
+CREATE TABLE IF NOT EXISTS public.staff_users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT DEFAULT '-',
+  role TEXT NOT NULL DEFAULT 'cashier' CHECK (role IN ('manager', 'cashier', 'staff_ops')),
+  password TEXT NOT NULL,
+  assigned_property_id TEXT DEFAULT 'all',
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT uq_staff_email_per_owner UNIQUE(owner_id, email)
+);
+
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- Standar Keamanan: Setiap tenant HANYA bisa mengakses data miliknya sendiri.
@@ -226,6 +242,13 @@ CREATE POLICY "Tenant owns settings"
   ON public.settings FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
   WITH CHECK (auth.uid() = user_id OR public.is_superadmin());
+
+-- RLS STAFF USERS
+ALTER TABLE public.staff_users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Owner owns staff users"
+  ON public.staff_users FOR ALL
+  USING (auth.uid() = owner_id OR public.is_superadmin())
+  WITH CHECK (auth.uid() = owner_id OR public.is_superadmin());
 
 -- =========================================================================
 -- TRIGGER: Otomatis buat Profile saat User mendaftar via Supabase Auth

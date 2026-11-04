@@ -18,6 +18,8 @@ import {
   Crown,
 } from 'lucide-react';
 
+import { useKosStore } from '../../lib/store/useKosStore';
+
 interface MobileNavItem {
   label: string;
   href: string;
@@ -41,9 +43,43 @@ const moreNavItems: MobileNavItem[] = [
 
 export const MobileNav: React.FC = () => {
   const pathname = usePathname();
+  const { getActiveRole } = useKosStore();
+  const activeRole = getActiveRole();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
-  const isMoreActive = moreNavItems.some(
+  // Filter based on active role
+  let filteredMainNav = mainNavItems;
+  let filteredMoreNav = moreNavItems;
+
+  if (activeRole === 'cashier') {
+    filteredMainNav = [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, matchPrefix: '/dashboard' },
+      { label: 'Kamar', href: '/rooms', icon: DoorOpen, matchPrefix: '/rooms' },
+      { label: 'Tagihan', href: '/billing', icon: Receipt, matchPrefix: '/billing' },
+      { label: 'Penghuni', href: '/tenants', icon: Users, matchPrefix: '/tenants' },
+    ];
+    filteredMoreNav = [];
+  } else if (activeRole === 'staff_ops') {
+    filteredMainNav = [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, matchPrefix: '/dashboard' },
+      { label: 'Kamar', href: '/rooms', icon: DoorOpen, matchPrefix: '/rooms' },
+      { label: 'Perawatan', href: '/maintenance', icon: Wrench, matchPrefix: '/maintenance' },
+    ];
+    filteredMoreNav = [];
+  } else if (activeRole === 'manager') {
+    filteredMainNav = [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, matchPrefix: '/dashboard' },
+      { label: 'Kamar', href: '/rooms', icon: DoorOpen, matchPrefix: '/rooms' },
+      { label: 'Tagihan', href: '/billing', icon: Receipt, matchPrefix: '/billing' },
+      { label: 'Penghuni', href: '/tenants', icon: Users, matchPrefix: '/tenants' },
+    ];
+    filteredMoreNav = [
+      { label: 'Perawatan', href: '/maintenance', icon: Wrench, matchPrefix: '/maintenance' },
+      { label: 'Pengaturan', href: '/settings', icon: Settings, matchPrefix: '/settings' },
+    ];
+  }
+
+  const isMoreActive = filteredMoreNav.some(
     (item) => item.matchPrefix && pathname.startsWith(item.matchPrefix)
   );
 
@@ -89,7 +125,7 @@ export const MobileNav: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-2">
-                {moreNavItems.map((item) => {
+                {filteredMoreNav.map((item) => {
                   const Icon = item.icon;
                   const active = isItemActive(item);
 
@@ -134,7 +170,7 @@ export const MobileNav: React.FC = () => {
         "
       >
         <div className="flex items-center justify-around max-w-lg mx-auto">
-          {mainNavItems.map((item) => {
+          {filteredMainNav.map((item) => {
             const Icon = item.icon;
             const active = isItemActive(item);
 
@@ -174,36 +210,38 @@ export const MobileNav: React.FC = () => {
           })}
 
           {/* More (...) Button */}
-          <button
-            type="button"
-            onClick={() => setShowMoreMenu((prev) => !prev)}
-            className={`
-              flex flex-col items-center justify-center
-              min-w-[56px] py-1 px-2 rounded-xl transition-all
-              ${
-                isMoreActive || showMoreMenu
-                  ? 'text-peach-500 font-bold'
-                  : 'text-softgray hover:text-darkcocoa'
-              }
-            `}
-            aria-label="Menu lainnya"
-          >
-            <div className="relative">
-              <MoreHorizontal
-                className={`w-5 h-5 transition-transform ${
-                  isMoreActive || showMoreMenu ? 'scale-110 text-peach-500' : 'text-softgray'
-                }`}
-                strokeWidth={1.75}
-              />
-              {isMoreActive && (
-                <motion.div
-                  layoutId="mobileNavDot"
-                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-peach-500 rounded-full"
+          {filteredMoreNav.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowMoreMenu((prev) => !prev)}
+              className={`
+                flex flex-col items-center justify-center
+                min-w-[56px] py-1 px-2 rounded-xl transition-all
+                ${
+                  isMoreActive || showMoreMenu
+                    ? 'text-peach-500 font-bold'
+                    : 'text-softgray hover:text-darkcocoa'
+                }
+              `}
+              aria-label="Menu lainnya"
+            >
+              <div className="relative">
+                <MoreHorizontal
+                  className={`w-5 h-5 transition-transform ${
+                    isMoreActive || showMoreMenu ? 'scale-110 text-peach-500' : 'text-softgray'
+                  }`}
+                  strokeWidth={1.75}
                 />
-              )}
-            </div>
-            <span className="text-[10px] mt-1 tracking-tight">Lainnya</span>
-          </button>
+                {isMoreActive && (
+                  <motion.div
+                    layoutId="mobileNavDot"
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-peach-500 rounded-full"
+                  />
+                )}
+              </div>
+              <span className="text-[10px] mt-1 tracking-tight">Lainnya</span>
+            </button>
+          )}
         </div>
       </nav>
     </>

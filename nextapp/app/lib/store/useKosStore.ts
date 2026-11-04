@@ -2,12 +2,58 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { supabase } from '../supabase';
 
+export type TenantStaffRole = 'owner' | 'manager' | 'cashier' | 'staff_ops';
+
+export interface TenantStaffUser {
+  id: string;
+  ownerId: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: TenantStaffRole;
+  password: string;
+  assignedPropertyId: string; // 'all' or property id
+  isActive: boolean;
+  createdAt: string;
+  lastLogin?: string;
+}
+
+export const initialStaffUsers: TenantStaffUser[] = [
+  {
+    id: 'stf-1',
+    ownerId: 'usr-acct-1',
+    name: 'Budi Santoso',
+    email: 'kasir@pawskost.id',
+    phone: '0812-9988-1122',
+    role: 'cashier',
+    password: 'password123',
+    assignedPropertyId: 'all',
+    isActive: true,
+    createdAt: '2026-11-01'
+  },
+  {
+    id: 'stf-2',
+    ownerId: 'usr-acct-1',
+    name: 'Ahmad Fauzi',
+    email: 'penjaga@pawskost.id',
+    phone: '0857-4433-2211',
+    role: 'staff_ops',
+    password: 'password123',
+    assignedPropertyId: 'all',
+    isActive: true,
+    createdAt: '2026-11-01'
+  }
+];
+
 export interface UserProfile {
   id: string;
   name: string;
   email: string;
   kosName: string;
-  role: 'owner' | 'manager' | 'demo' | 'superadmin';
+  role: 'owner' | 'manager' | 'demo' | 'superadmin' | 'cashier' | 'staff_ops';
+  staffRole?: TenantStaffRole;
+  ownerId?: string;
+  assignedPropertyId?: string;
   plan: 'demo_sandbox' | 'trial_14_days' | 'starter' | 'pro' | 'enterprise';
   trialDaysRemaining?: number;
   isDemo: boolean;
@@ -505,7 +551,7 @@ interface KosStoreState {
     password: string
   ) => {
     success: boolean;
-    role?: 'superadmin' | 'owner' | 'demo';
+    role?: 'superadmin' | 'owner' | 'demo' | TenantStaffRole;
     user?: SaaSUserAccount;
     error?: 'not_found' | 'wrong_password' | 'pending_approval' | 'suspended' | 'expired';
     message: string;
@@ -630,6 +676,17 @@ interface KosStoreState {
   // Budget Actions
   setMonthlyBudget: (categoryId: string, amount: number) => void;
   clearMonthlyBudget: (categoryId: string) => void;
+
+  // Tenant Multi-User Staff Management Actions
+  staffUsers: TenantStaffUser[];
+  previewRole: TenantStaffRole | null;
+  addStaffUser: (staff: Omit<TenantStaffUser, 'id' | 'createdAt'>) => TenantStaffUser;
+  updateStaffUser: (id: string, updates: Partial<TenantStaffUser>) => void;
+  deleteStaffUser: (id: string) => void;
+  toggleStaffStatus: (id: string) => void;
+  setPreviewRole: (role: TenantStaffRole | null) => void;
+  getActiveRole: () => TenantStaffRole;
+  hasPermission: (permission: 'view_finance' | 'manage_rooms' | 'update_billing' | 'manage_maintenance' | 'manage_settings' | 'manage_staff') => boolean;
 }
 
 // Initial Seed Properties
@@ -1394,6 +1451,8 @@ export const useKosStore = create<KosStoreState>()(
       saasInvoices: initialSaaSInvoices,
       saasAccounts: initialSaaSAccounts,
       deletedAccountIds: [],
+      staffUsers: initialStaffUsers,
+      previewRole: null,
       landingPageConfig: initialLandingPageConfig,
       impersonatingFromAdmin: false,
       properties: initialProperties,
@@ -1475,6 +1534,50 @@ export const useKosStore = create<KosStoreState>()(
             success: true,
             role: 'superadmin',
             message: 'Login Super Admin Berhasil!'
+          };
+        }
+
+        // 1.b Check Tenant Staff User credentials
+        const staff = (get().staffUsers || []).find((s) => s.email.toLowerCase() === cleanEmail);
+        if (staff) {
+          if (!staff.isActive) {
+            return {
+              success: false,
+              error: 'suspended',
+              message: 'Akun staf Anda sedang dinonaktifkan oleh pemilik kos. Silakan hubungi pemilik kos.'
+            };
+          }
+          if (cleanPass !== staff.password) {
+            return {
+              success: false,
+              error: 'wrong_password',
+              message: 'Kata sandi salah. Harap periksa kembali kata sandi staf Anda.'
+            };
+          }
+          // Find owner info if any
+          const owner = get().saasAccounts.find((a) => a.id === staff.ownerId) || get().currentUser;
+          const staffUser: UserProfile = {
+            id: staff.id,
+            name: staff.name,
+            email: staff.email,
+            kosName: owner?.kosName || 'pawskost Living',
+            role: staff.role,
+            staffRole: staff.role,
+            ownerId: staff.ownerId,
+            assignedPropertyId: staff.assignedPropertyId,
+            plan: 'pro',
+            isDemo: false
+          };
+          set({
+            currentUser: staffUser,
+            authMode: 'user',
+            previewRole: null,
+            impersonatingFromAdmin: false
+          });
+          return {
+            success: true,
+            role: staff.role,
+            message: `Login berhasil sebagai ${staff.role === 'cashier' ? 'Staf Kasir' : staff.role === 'manager' ? 'Manajer Kos' : 'Penjaga Kos'}! ✨`
           };
         }
 
@@ -2516,6 +2619,63 @@ export const useKosStore = create<KosStoreState>()(
         });
       },
 
+      // --- TENANT MULTI-USER STAFF ACTIONS ---
+      addStaffUser: (staffData) => {
+        const newStaff: TenantStaffUser = {
+          id: 'stf-' + Date.now().toString(36),
+          createdAt: new Date().toISOString().split('T')[0],
+          ...staffData
+        };
+        set((state) => ({
+          staffUsers: [newStaff, ...(state.staffUsers || [])]
+        }));
+        return newStaff;
+      },
+
+      updateStaffUser: (id, updates) => {
+        set((state) => ({
+          staffUsers: (state.staffUsers || []).map((s) => (s.id === id ? { ...s, ...updates } : s))
+        }));
+      },
+
+      deleteStaffUser: (id) => {
+        set((state) => ({
+          staffUsers: (state.staffUsers || []).filter((s) => s.id !== id)
+        }));
+      },
+
+      toggleStaffStatus: (id) => {
+        set((state) => ({
+          staffUsers: (state.staffUsers || []).map((s) => (s.id === id ? { ...s, isActive: !s.isActive } : s))
+        }));
+      },
+
+      setPreviewRole: (role) => {
+        set({ previewRole: role });
+      },
+
+      getActiveRole: () => {
+        const state = get();
+        if (state.previewRole) return state.previewRole;
+        if (state.currentUser?.staffRole) return state.currentUser.staffRole;
+        if (state.currentUser?.role === 'manager') return 'manager';
+        if (state.currentUser?.role === 'cashier') return 'cashier';
+        if (state.currentUser?.role === 'staff_ops') return 'staff_ops';
+        return 'owner';
+      },
+
+      hasPermission: (permission) => {
+        const role = get().getActiveRole();
+        if (role === 'owner') return true;
+        if (permission === 'view_finance') return false;
+        if (permission === 'manage_settings') return false;
+        if (permission === 'manage_staff') return false;
+        if (permission === 'manage_rooms') return role === 'manager';
+        if (permission === 'update_billing') return role === 'manager' || role === 'cashier';
+        if (permission === 'manage_maintenance') return role === 'manager' || role === 'staff_ops';
+        return false;
+      },
+
       // --- RESET TO DEMO ---
       resetToDefaultData: () => {
         set({
@@ -2541,7 +2701,7 @@ export const useKosStore = create<KosStoreState>()(
     {
       name: 'pawskost_store_v9',
       storage: createJSONStorage(() => localStorage),
-      version: 10,
+      version: 11,
       migrate: (persistedState: any, version: number) => {
         const catAvatars = [
           '/cat-avatar-gamer.jpg',
@@ -2565,6 +2725,8 @@ export const useKosStore = create<KosStoreState>()(
         return {
           ...persistedState,
           deletedAccountIds: persistedState?.deletedAccountIds || [],
+          staffUsers: persistedState?.staffUsers && persistedState.staffUsers.length > 0 ? persistedState.staffUsers : initialStaffUsers,
+          previewRole: null,
           currentUser: persistedState?.currentUser || defaultDemoUser,
           authMode: persistedState?.authMode || 'demo',
           subscription: persistedState?.subscription || initialSubscription,

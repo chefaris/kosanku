@@ -10,6 +10,7 @@ import { MobileNav } from './MobileNav';
 import { DemoBanner } from '../ui/DemoBanner';
 import { RegisterModal } from '../ui/RegisterModal';
 import { VideoBumperOverlay } from '../ui/VideoBumperOverlay';
+import { RolePreviewBanner } from '../ui/RolePreviewBanner';
 import { useKosStore } from '../../lib/store/useKosStore';
 
 interface AppShellProps {
@@ -167,6 +168,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:pl-64 min-w-0 w-full print:pl-0 print:block">
+        {/* Banner Simulasi Peran Staf Kos */}
+        <RolePreviewBanner />
+
         {/* Top Banner when Super Admin is viewing tenant app */}
         {isSuperAdminViewingTenant && (
           <div className="print:hidden bg-peach-500 text-white px-3 sm:px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 shadow-sm">
