@@ -1876,7 +1876,10 @@ export const useKosStore = create<KosStoreState>()(
         const cleanPass = password.trim();
 
         // 1. Check Super Admin credentials
-        if (cleanEmail === 'admin@kosanku.id' && cleanPass === 'admin123') {
+        if (
+          (cleanEmail === 'admin@pawskost.id' || cleanEmail === 'admin@kosanku.id') &&
+          cleanPass === 'admin123'
+        ) {
           set({
             currentUser: defaultSuperAdmin,
             authMode: 'user',

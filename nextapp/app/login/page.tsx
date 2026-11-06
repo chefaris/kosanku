@@ -117,7 +117,30 @@ export default function LoginPage() {
 
         // Set session cookie untuk middleware
         if (typeof document !== 'undefined') {
-          document.cookie = 'sb-access-token=active; path=/; max-age=86400; SameSite=Lax';
+          if (profile?.role === 'superadmin') {
+            document.cookie = 'pawskost_admin_session=active; path=/; max-age=86400; SameSite=Lax';
+          } else {
+            document.cookie = 'sb-access-token=active; path=/; max-age=86400; SameSite=Lax';
+          }
+        }
+
+        if (profile?.role === 'superadmin') {
+          useKosStore.setState({
+            currentUser: {
+              id: profile.id || 'usr-admin-root',
+              name: profile.name || 'Super Admin pawskost',
+              email: supaAuth.user.email || 'admin@pawskost.id',
+              kosName: profile.kos_name || 'pawskost Platform',
+              role: 'superadmin',
+              plan: 'enterprise',
+              isDemo: false
+            },
+            authMode: 'user',
+            impersonatingFromAdmin: false
+          });
+          setIsSubmitting(false);
+          router.push('/admin');
+          return;
         }
 
         loginAsUser({
@@ -340,6 +363,22 @@ export default function LoginPage() {
                 <span>{isSubmitting ? 'Memeriksa Kredensial...' : 'Masuk ke Akun Saya'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
+
+              <div className="pt-1 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('admin@pawskost.id');
+                    setPassword('admin123');
+                    setErrorMessage(null);
+                  }}
+                  className="text-[11px] text-softgray hover:text-darkcocoa transition-colors inline-flex items-center gap-1.5 p-1 rounded-lg hover:bg-cream-100"
+                  title="Klik untuk mengisi akun Super Admin SaaS otomatis"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-peach-500" />
+                  <span>Isi Otomatis Kredensial Super Admin</span>
+                </button>
+              </div>
             </form>
 
             {/* Footer: Register Trigger */}
