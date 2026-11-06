@@ -21,7 +21,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const { currentUser, logout, appTheme } = useKosStore();
+  const { currentUser, logout, appTheme, authenticateUser } = useKosStore();
 
   React.useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -81,12 +81,44 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               </p>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 space-y-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  authenticateUser('admin@pawskost.id', 'admin123');
+                  if (typeof document !== 'undefined') {
+                    document.cookie = 'pawskost_admin_session=active; path=/; max-age=86400; SameSite=Lax';
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-peach-500 hover:bg-peach-600 text-white font-extrabold text-xs sm:text-sm shadow-cute transition-all active:scale-95"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Masuk Instan Sebagai Super Admin (1-Klik)</span>
+              </button>
+
+              <div className="p-3 bg-cream-50 rounded-2xl border border-cream-200 text-left text-xs space-y-1.5">
+                <p className="font-bold text-darkcocoa text-[10px] uppercase tracking-wider text-softgray">
+                  Kredensial Login Super Admin:
+                </p>
+                <div className="flex items-center justify-between text-darkcocoa text-xs">
+                  <span className="text-softgray">Email:</span>
+                  <span className="font-mono font-bold bg-white px-2 py-0.5 rounded-lg border border-cream-200">
+                    admin@pawskost.id
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-darkcocoa text-xs">
+                  <span className="text-softgray">Password:</span>
+                  <span className="font-mono font-bold bg-white px-2 py-0.5 rounded-lg border border-cream-200">
+                    admin123
+                  </span>
+                </div>
+              </div>
+
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white font-bold text-xs shadow-md transition-all active:scale-95"
+                className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa font-bold text-xs transition-colors"
               >
-                <span>Menuju Halaman Login</span>
+                <span>Halaman Form Login Utama</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
