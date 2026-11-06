@@ -2325,6 +2325,31 @@ export const useKosStore = create<KosStoreState>()(
             saasInvoices: updatedInvoices
           };
         });
+
+        // Sync to Supabase PostgreSQL profiles table
+        try {
+          const expiresDate = new Date();
+          expiresDate.setDate(expiresDate.getDate() + durationDays);
+          const expiresAtStr = expiresDate.toISOString().split('T')[0];
+
+          supabase
+            .from('profiles')
+            .update({
+              status: 'active',
+              plan,
+              plan_name: planNames[plan],
+              expires_at: expiresAtStr,
+              days_remaining: durationDays,
+              last_payment_date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+              notes: notes || `Disetujui manual oleh Admin (${paymentMethod}).`
+            })
+            .eq('id', userId)
+            .then(({ error }) => {
+              if (error) console.warn('Supabase profile approval sync error:', error);
+            });
+        } catch (err) {
+          console.warn('Supabase approval sync warning:', err);
+        }
       },
 
       impersonateUser: (userId) => {
