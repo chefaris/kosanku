@@ -23,12 +23,27 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const { currentUser, logout, appTheme, authenticateUser } = useKosStore();
 
-  React.useEffect(() => {
+  const isSuperAdmin = Boolean(
+    currentUser?.role === 'superadmin' ||
+    currentUser?.email?.toLowerCase() === 'admin@pawskost.id' ||
+    currentUser?.email?.toLowerCase() === 'admin@kosanku.id' ||
+    currentUser?.id === 'usr-admin-root'
+  );
+
+  useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', appTheme || 'paw-peach');
       document.body.setAttribute('data-theme', appTheme || 'paw-peach');
     }
   }, [appTheme]);
+
+  useEffect(() => {
+    if (isSuperAdmin && currentUser && currentUser.role !== 'superadmin') {
+      useKosStore.setState({
+        currentUser: { ...currentUser, role: 'superadmin' }
+      });
+    }
+  }, [isSuperAdmin, currentUser]);
 
   const isPublicPage =
     pathname === '/' ||
@@ -48,21 +63,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   }
 
   // 2. Halaman Super Admin (Console Terpisah Khusus Pemilik Platform)
-  const isSuperAdmin = Boolean(
-    currentUser?.role === 'superadmin' ||
-    currentUser?.email?.toLowerCase() === 'admin@pawskost.id' ||
-    currentUser?.email?.toLowerCase() === 'admin@kosanku.id' ||
-    currentUser?.id === 'usr-admin-root'
-  );
-
-  useEffect(() => {
-    if (isSuperAdmin && currentUser && currentUser.role !== 'superadmin') {
-      useKosStore.setState({
-        currentUser: { ...currentUser, role: 'superadmin' }
-      });
-    }
-  }, [isSuperAdmin, currentUser]);
-
   if (isAdminPage) {
     if (!isSuperAdmin) {
       return (
