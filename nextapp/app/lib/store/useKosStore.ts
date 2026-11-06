@@ -583,6 +583,7 @@ interface KosStoreState {
   tenants: Tenant[];
   invoices: Invoice[];
   expenses: Expense[];
+  maintenanceTickets: MaintenanceTicket[];
   incomeCategories: TransactionCategoryItem[];
   expenseCategories: TransactionCategoryItem[];
   cashAccounts: CashAccountItem[];

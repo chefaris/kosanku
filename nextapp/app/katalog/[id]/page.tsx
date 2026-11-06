@@ -169,8 +169,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title,
     description,
     keywords: [
-      `kost ${property.city.toLowerCase()}`,
-      `kos ${property.type.toLowerCase()} ${property.city.toLowerCase()}`,
+      `kost ${(property.city || '').toLowerCase()}`,
+      `kos ${(property.type || '').toLowerCase()} ${(property.city || '').toLowerCase()}`,
       property.name.toLowerCase(),
       'sewa kost murah',
       'katalog pawskost'
