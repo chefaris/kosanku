@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import {
   Search,
   MapPin,
@@ -15,9 +14,7 @@ import {
   Building2,
   Heart,
   RotateCcw,
-  ArrowRight,
-  Compass,
-  Gamepad2
+  ArrowRight
 } from 'lucide-react';
 import { useKosStore, Property } from '../../lib/store/useKosStore';
 import { useCatalogFilter, PRICE_PRESETS } from '../../hooks/useCatalogFilter';
@@ -107,39 +104,15 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
       {/* ======================================================== */}
       {/* 1. TRAVELOKA & MAMIKOS STYLE HERO SEARCH CONSOLE        */}
       {/* ======================================================== */}
-      <section className="relative pt-10 pb-12 sm:pt-16 sm:pb-16 bg-gradient-to-b from-cream-50 via-peach-50/40 to-white overflow-hidden border-b border-cream-200/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          {/* Persona Switcher Badge / Bridge */}
-          <div className="inline-flex items-center gap-1.5 p-1 rounded-2xl bg-white/90 backdrop-blur-md border border-cream-200/90 shadow-2xs text-xs font-bold text-darkcocoa">
-            <span className="px-3 py-1 rounded-xl bg-peach-500 text-white shadow-xs flex items-center gap-1.5">
-              <Compass className="w-3.5 h-3.5" />
-              <span>Portal Pencari Kos</span>
-            </span>
-            <Link
-              href="/mitra"
-              className="px-3 py-1 rounded-xl text-softgray hover:text-darkcocoa hover:bg-cream-100 transition-colors flex items-center gap-1.5"
-            >
-              <Building2 className="w-3.5 h-3.5 text-peach-500" />
-              <span>Software Pemilik Kos</span>
-            </Link>
-            <Link
-              href="/login?tab=demo"
-              className="px-3 py-1 rounded-xl text-softgray hover:text-darkcocoa hover:bg-cream-100 transition-colors flex items-center gap-1.5 hidden sm:flex"
-            >
-              <Gamepad2 className="w-3.5 h-3.5 text-peach-500" />
-              <span>Coba Demo Sandbox</span>
-            </Link>
-          </div>
-
+      <section className="relative pt-6 pb-8 sm:pt-9 sm:pb-10 bg-gradient-to-b from-cream-50 via-peach-50/40 to-white overflow-hidden border-b border-cream-200/80">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4 sm:space-y-5">
           {/* Main Headline */}
-          <div className="max-w-4xl mx-auto space-y-3">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-black text-darkcocoa tracking-tight leading-tight">
-              Cari &amp; Sewa Kos Nyaman <br className="hidden sm:inline" />
-              <span className="text-peach-600">Langsung dari Pemilik Resmi</span>
+          <div className="max-w-3xl mx-auto space-y-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading font-black text-darkcocoa tracking-tight leading-tight">
+              Cari Kos Idaman, <span className="text-peach-500">Langsung Chat Pemilik</span>
             </h1>
-            <p className="text-xs sm:text-sm md:text-base text-darkcocoa/80 max-w-2xl mx-auto leading-relaxed font-medium">
-              Jelajahi ribuan kamar kos terverifikasi di berbagai kota. Cek ketersediaan kamar
-              real-time dan hubungi WhatsApp pengelola kos tanpa biaya perantara.
+            <p className="text-xs sm:text-sm md:text-base text-darkcocoa/75 max-w-xl mx-auto leading-relaxed font-medium">
+              Kamar kos terverifikasi, status ketersediaan real-time, bebas calo &amp; tanpa biaya perantara.
             </p>
           </div>
 
@@ -306,35 +279,35 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
             </div>
           </div>
 
-          {/* 3 Main Trust Badges */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 max-w-4xl mx-auto">
-            <div className="p-4 rounded-2xl bg-white border border-cream-200 shadow-sm flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-peach-100 text-peach-700 flex items-center justify-center flex-shrink-0">
-                <PhoneCall className="w-5 h-5" />
+          {/* 3 Main Trust Badges (Compact & Sleek) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 max-w-4xl mx-auto">
+            <div className="py-2.5 px-3.5 rounded-2xl bg-white/95 border border-cream-200/90 shadow-2xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-600 flex items-center justify-center flex-shrink-0">
+                <PhoneCall className="w-4 h-4" />
               </div>
-              <div className="text-left">
-                <h4 className="font-heading font-extrabold text-xs text-darkcocoa">100% Kontak Pemilik</h4>
-                <p className="text-[11px] text-darkcocoa/70 font-medium">Tanpa perantara &amp; bebas calo</p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white border border-cream-200 shadow-sm flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <h4 className="font-heading font-extrabold text-xs text-darkcocoa">Kamar Kosong Real-Time</h4>
-                <p className="text-[11px] text-darkcocoa/70 font-medium">Sinkron dengan software juragan</p>
+              <div className="text-left min-w-0">
+                <h4 className="font-heading font-extrabold text-xs text-darkcocoa leading-tight">100% Kontak Pemilik</h4>
+                <p className="text-[10px] text-darkcocoa/70 font-medium truncate">Tanpa perantara &amp; bebas calo</p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-cream-200 shadow-sm flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-peach-100 text-peach-700 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+            <div className="py-2.5 px-3.5 rounded-2xl bg-white/95 border border-cream-200/90 shadow-2xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-4 h-4" />
               </div>
-              <div className="text-left">
-                <h4 className="font-heading font-extrabold text-xs text-darkcocoa">Foto Asli Terverifikasi</h4>
-                <p className="text-[11px] text-darkcocoa/70 font-medium">Kondisi kamar sesuai kenyataan</p>
+              <div className="text-left min-w-0">
+                <h4 className="font-heading font-extrabold text-xs text-darkcocoa leading-tight">Kamar Kosong Real-Time</h4>
+                <p className="text-[10px] text-darkcocoa/70 font-medium truncate">Sinkron data software juragan</p>
+              </div>
+            </div>
+
+            <div className="py-2.5 px-3.5 rounded-2xl bg-white/95 border border-cream-200/90 shadow-2xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-600 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div className="text-left min-w-0">
+                <h4 className="font-heading font-extrabold text-xs text-darkcocoa leading-tight">Foto Asli Terverifikasi</h4>
+                <p className="text-[10px] text-darkcocoa/70 font-medium truncate">Kondisi kamar sesuai kenyataan</p>
               </div>
             </div>
           </div>

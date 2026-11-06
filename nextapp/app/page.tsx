@@ -48,34 +48,24 @@ export default function PublicMarketplacePage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <Link
-              href="/login?tab=demo"
-              className="hidden sm:inline-flex items-center gap-1 font-bold text-peach-300 hover:text-white transition-colors hover:underline"
-            >
-              <Gamepad2 className="w-3.5 h-3.5" />
-              <span>Coba Demo Sandbox</span>
-            </Link>
-            <span className="text-white/30 hidden sm:inline">•</span>
-            <Link
-              href="/mitra"
-              className="font-bold text-peach-300 hover:text-white flex items-center gap-1 transition-colors hover:underline"
-            >
-              <span>Software Pemilik Kos</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+          <Link
+            href="/mitra"
+            className="flex-shrink-0 font-bold text-peach-300 hover:text-white flex items-center gap-1 transition-colors hover:underline"
+          >
+            <span>Pelajari Selengkapnya</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 
       {/* ======================================================== */}
       {/* 2. PUBLIC MARKETPLACE NAVBAR                             */}
       {/* ======================================================== */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-cream-200/90 shadow-xs py-3.5 sm:py-4 transition-all">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-cream-200/90 shadow-xs py-3 sm:py-3.5 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-400 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl overflow-hidden ring-2 ring-peach-400 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/app-logo.jpg"
                 alt="Logo pawskost"
@@ -92,7 +82,7 @@ export default function PublicMarketplacePage() {
                 </span>
               </div>
               <p className="text-[11px] text-darkcocoa/70 font-semibold -mt-0.5">
-                Katalog Kosan Indonesia
+                Cari Kos Mudah &amp; Cepat
               </p>
             </div>
           </Link>
@@ -109,35 +99,25 @@ export default function PublicMarketplacePage() {
             <a href="#keunggulan" className="hover:text-peach-600 transition-colors">
               Keunggulan
             </a>
-            <a href="#tentang" className="hover:text-peach-600 transition-colors">
-              Untuk Pemilik Kos
-            </a>
           </nav>
 
-          {/* Action Buttons */}
-          <div className="hidden sm:flex items-center gap-2">
-            <Link
-              href="/login?tab=demo"
-              className="px-3.5 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs sm:text-sm font-bold border border-cream-200 shadow-2xs flex items-center gap-1.5 transition-all hover:scale-105"
-            >
-              <Gamepad2 className="w-4 h-4 text-peach-500" />
-              <span>Coba Demo</span>
-            </Link>
-
-            {/* Tombol ke Landing Page Merchant / Pemilik Kos */}
+          {/* Action Buttons: 2 Tombol Menonjol untuk Mitra */}
+          <div className="hidden sm:flex items-center gap-2.5">
+            {/* Tombol Menonjol 1: Mitra Juragan (Peach Solid) */}
             <Link
               href="/mitra"
-              className="px-4 py-2.5 rounded-2xl bg-peach-600 hover:bg-peach-700 text-white text-xs sm:text-sm font-heading font-extrabold shadow-sm flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+              className="px-4 py-2 rounded-2xl bg-peach-500 hover:bg-peach-600 text-white text-xs sm:text-sm font-heading font-extrabold shadow-cute flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
             >
               <Building2 className="w-4 h-4" />
-              <span>Untuk Pemilik Kos</span>
+              <span>Mitra Juragan</span>
             </Link>
 
+            {/* Tombol Menonjol 2: Login Mitra (Dark Cocoa Solid) */}
             <Link
               href="/login"
-              className="px-3.5 py-2.5 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors"
+              className="px-4 py-2 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white text-xs sm:text-sm font-bold shadow-2xs transition-all hover:scale-105 active:scale-95"
             >
-              Masuk
+              Login Mitra
             </Link>
           </div>
 
@@ -176,37 +156,22 @@ export default function PublicMarketplacePage() {
             >
               Keunggulan pawskost
             </a>
-            <a
-              href="#tentang"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-600"
-            >
-              Tentang pawskost
-            </a>
 
             <div className="pt-3 border-t border-cream-100 flex flex-col gap-2">
               <Link
-                href="/login?tab=demo"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-peach-50 text-peach-600 border border-peach-200 font-bold text-xs flex items-center justify-center gap-1.5 text-center"
-              >
-                <Gamepad2 className="w-4 h-4" />
-                <span>🎮 Coba Demo Sandbox (Tanpa Daftar)</span>
-              </Link>
-              <Link
                 href="/mitra"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-peach-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm text-center"
+                className="w-full py-2.5 rounded-xl bg-peach-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-cute text-center"
               >
                 <Building2 className="w-4 h-4" />
-                <span>Halaman Pemilik Kos</span>
+                <span>Mitra Juragan</span>
               </Link>
               <Link
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full py-2.5 rounded-xl bg-darkcocoa text-white font-bold text-xs text-center"
               >
-                Masuk Akun Pemilik
+                Login Mitra
               </Link>
             </div>
           </div>
