@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useKosStore } from '../../lib/store/useKosStore';
-import { RotateCcw, UserPlus, ChevronUp, ChevronDown, Gamepad2 } from 'lucide-react';
+import { RotateCcw, UserPlus, ChevronUp, ChevronDown, Gamepad2, Compass, LogIn } from 'lucide-react';
 
 interface DemoBannerProps {
   onOpenRegisterModal: () => void;
@@ -32,7 +33,7 @@ export const DemoBanner: React.FC<DemoBannerProps> = ({ onOpenRegisterModal }) =
           className="bg-gradient-to-r from-peach-500 to-sakura-400 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-xs font-bold hover:scale-105 active:scale-95 transition-all"
         >
           <Gamepad2 className="w-4 h-4" />
-          <span>Mode Demo Aktif</span>
+          <span>Mode Demo Sandbox</span>
           <ChevronUp className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -50,20 +51,29 @@ export const DemoBanner: React.FC<DemoBannerProps> = ({ onOpenRegisterModal }) =
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="bg-peach-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full tracking-wide uppercase shadow-sm">
-                Akun Demo Interaktif
+                Demo Sandbox pawskost
               </span>
               <span className="text-xs text-softgray font-medium">
-                • Mode Sandbox
+                • Data Simulasi Lokal
               </span>
             </div>
             <p className="text-xs font-body text-darkcocoa/90 mt-1 leading-snug">
-              Hai Kak! Anda sedang menjelajahi simulasi KosanKu. Bebas coba tambah kamar, ubah tagihan, hingga hapus lantai tanpa batas.
+              Hai Kak! Anda sedang menjelajahi simulasi aplikasi <strong>pawskost</strong>. Seluruh data di bawah adalah simulasi lokal: bebas coba tambah kamar, ubah tagihan sewa, hingga kirim pengingat WhatsApp tanpa risiko.
             </p>
           </div>
         </div>
 
         {/* Right Side: Action Buttons */}
         <div className="flex items-center gap-2 flex-wrap self-end md:self-auto flex-shrink-0">
+          <Link
+            href="/"
+            className="px-3 py-2 rounded-2xl bg-white/80 hover:bg-white text-darkcocoa text-xs font-bold border border-cream-200 shadow-2xs flex items-center gap-1.5 transition-all"
+            title="Buka katalog pencari kos publik"
+          >
+            <Compass className="w-3.5 h-3.5 text-peach-500" />
+            <span className="hidden sm:inline">Katalog</span>
+          </Link>
+
           <button
             type="button"
             onClick={handleReset}
@@ -80,13 +90,21 @@ export const DemoBanner: React.FC<DemoBannerProps> = ({ onOpenRegisterModal }) =
             className="px-4 py-2 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white text-xs font-bold shadow-cute flex items-center gap-1.5 transition-all hover:scale-[1.02] active:scale-95"
           >
             <UserPlus className="w-3.5 h-3.5" />
-            <span>Buat Akun Kos Saya</span>
+            <span>Daftar Akun Riil</span>
           </button>
+
+          <Link
+            href="/login"
+            className="px-3 py-2 rounded-2xl bg-white hover:bg-cream-100 text-softgray hover:text-darkcocoa text-xs font-bold border border-cream-200 transition-colors"
+            title="Keluar dari mode demo dan buka halaman login"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+          </Link>
 
           <button
             type="button"
             onClick={() => setIsMinimized(true)}
-            className="p-1.5 rounded-xl text-softgray hover:text-darkcocoa hover:bg-white/60 transition-colors ml-1"
+            className="p-1.5 rounded-xl text-softgray hover:text-darkcocoa hover:bg-white/60 transition-colors"
             title="Ciutkan banner ini"
           >
             <ChevronDown className="w-4 h-4" />

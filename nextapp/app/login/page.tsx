@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,12 +22,18 @@ import {
   MessageCircle,
   X,
   AlertCircle,
-  UserCheck
+  UserCheck,
+  Building2,
+  Compass,
+  Sparkles
 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const { loginAsDemo, authenticateUser, loginAsUser } = useKosStore();
+
+  // Active persona tab: 'owner' | 'demo' | 'superadmin'
+  const [activeTab, setActiveTab] = useState<'owner' | 'demo' | 'superadmin'>('owner');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,9 +45,40 @@ export default function LoginPage() {
   const [pendingAccount, setPendingAccount] = useState<SaaSUserAccount | null>(null);
   const [showPendingModal, setShowPendingModal] = useState(false);
 
+  // Auto-switch tab based on URL query parameter ?tab=demo or ?tab=admin
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam === 'demo') {
+        setActiveTab('demo');
+      } else if (tabParam === 'admin' || tabParam === 'superadmin') {
+        setActiveTab('superadmin');
+      } else if (tabParam === 'owner') {
+        setActiveTab('owner');
+      }
+    }
+  }, []);
+
   const handleDemoLogin = () => {
     loginAsDemo();
     router.push('/dashboard');
+  };
+
+  const handleSuperAdminInstantLogin = () => {
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    const authResult = authenticateUser('admin@pawskost.id', 'admin123');
+    if (authResult.success) {
+      if (typeof document !== 'undefined') {
+        document.cookie = 'pawskost_admin_session=active; path=/; max-age=86400; SameSite=Lax';
+      }
+      setIsSubmitting(false);
+      router.push('/admin');
+    } else {
+      setIsSubmitting(false);
+      setErrorMessage('Gagal masuk ke akun Super Admin.');
+    }
   };
 
   const handleUserLogin = async (e: React.FormEvent) => {
@@ -185,12 +222,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-100/90 via-peach-50/40 to-sakura-50/50 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-10 font-body text-darkcocoa selection:bg-peach-100 selection:text-peach-500">
-      <div className="w-full max-w-5xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-auto">
+    <div className="min-h-screen bg-gradient-to-br from-cream-100/90 via-peach-50/40 to-sakura-50/50 flex flex-col justify-between p-4 sm:p-6 lg:p-10 font-body text-darkcocoa selection:bg-peach-100 selection:text-peach-500">
+      {/* Top Banner: Persona Clarification for Renters vs Owners */}
+      <div className="w-full max-w-5xl lg:max-w-6xl mx-auto mb-4">
+        <div className="bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-cream-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs">
+          <div className="flex items-center gap-2 text-darkcocoa/80 text-center sm:text-left">
+            <span className="w-2 h-2 rounded-full bg-peach-500 flex-shrink-0" />
+            <span>
+              Sedang mencari sewa kamar kos? Halaman ini khusus untuk pengelola &amp; pemilik kos.
+            </span>
+          </div>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-peach-50 hover:bg-peach-100 text-peach-600 font-bold transition-colors border border-peach-200/80 flex-shrink-0"
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>Buka Katalog Pencari Kos</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Grid */}
+      <div className="w-full max-w-5xl lg:max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-auto">
         {/* Left Side: Branding & Feature Highlights */}
         <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
           {/* Logo & Mimi Mascot */}
-          <div className="inline-flex items-center gap-3.5 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-cream-200">
+          <Link href="/" className="inline-flex items-center gap-3.5 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-cream-200 hover:scale-[1.02] transition-transform">
             <div className="w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0">
               <Image
                 src="/app-logo.jpg"
@@ -209,14 +267,14 @@ export default function LoginPage() {
                 Kelola Kos Jadi Menyenangkan 🐾
               </p>
             </div>
-          </div>
+          </Link>
 
           <div className="space-y-3">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-heading font-extrabold text-darkcocoa tracking-tight leading-[1.2]">
-              Aplikasi Manajemen Kos <span className="text-peach-500">Paling Imut &amp; Praktis</span>
+              Portal Masuk Pengelola <span className="text-peach-500">pawskost</span>
             </h2>
             <p className="text-xs sm:text-sm lg:text-base text-softgray leading-relaxed max-w-xl mx-auto lg:mx-0">
-              Tinggalkan pencatatan buku manual yang melelahkan. Pantau okupansi kamar, tagihan sewa bulanan, dan arsip dokumen KTP dalam satu dashboard terpadu yang praktis.
+              Pilih portal akses sesuai peran Anda: login sebagai pemilik kos terdaftar, coba fitur simulasi di mode demo sandbox, atau akses konsol super admin platform.
             </p>
           </div>
 
@@ -250,8 +308,8 @@ export default function LoginPage() {
               <div className="w-8 h-8 rounded-xl bg-lavender-100 text-lavender-500 flex items-center justify-center">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <h4 className="font-heading font-bold text-sm text-darkcocoa">Akses Mandiri &amp; Terproteksi</h4>
-              <p className="text-xs text-softgray leading-relaxed">Keamanan data terisolasi mandiri untuk setiap pemilik kost.</p>
+              <h4 className="font-heading font-bold text-sm text-darkcocoa">Multi-Device Cloud Sync</h4>
+              <p className="text-xs text-softgray leading-relaxed">Akses tersinkronisasi mulus di HP, laptop, dan tablet juragan.</p>
             </div>
           </div>
 
@@ -273,127 +331,243 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Side: Auth Card (Demo + Login) */}
+        {/* Right Side: Tabbed Auth Card */}
         <div className="lg:col-span-5 w-full">
-          <div className="bg-white rounded-3xl shadow-xl border border-cream-200 p-6 sm:p-8 space-y-5 relative overflow-hidden">
-            {/* Top Badge: 1-Click Interactive Demo */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-peach-100/90 to-sakura-100/90 border border-peach-200/80 shadow-sm space-y-2.5">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-peach-500 animate-ping" />
-                <span className="font-heading font-extrabold text-xs text-peach-700 uppercase tracking-wider">
-                  Coba Dulu Tanpa Daftar
-                </span>
-              </div>
-              <p className="text-xs text-darkcocoa/80 leading-snug">
-                Langsung coba seluruh fitur aplikasi dengan data sampel kosan nyata secara instan!
-              </p>
+          <div className="bg-white rounded-3xl shadow-xl border border-cream-200 p-6 sm:p-7 space-y-5 relative overflow-hidden">
+            {/* Persona Switcher Tabs */}
+            <div className="p-1 bg-cream-100 rounded-2xl grid grid-cols-3 gap-1 text-xs font-bold">
               <button
                 type="button"
-                onClick={handleDemoLogin}
-                className="w-full py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-bold text-xs sm:text-sm shadow-cute flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all"
+                onClick={() => {
+                  setActiveTab('owner');
+                  setErrorMessage(null);
+                }}
+                className={`py-2 px-1.5 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+                  activeTab === 'owner'
+                    ? 'bg-white text-darkcocoa shadow-xs font-extrabold'
+                    : 'text-softgray hover:text-darkcocoa'
+                }`}
               >
-                <Gamepad2 className="w-4 h-4" />
-                <span>Masuk Sebagai Akun Demo (1-Klik)</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
+                <Building2 className={`w-3.5 h-3.5 ${activeTab === 'owner' ? 'text-peach-500' : ''}`} />
+                <span className="truncate">Pemilik Kos</span>
               </button>
-            </div>
-
-            {/* Divider */}
-            <div className="relative flex items-center justify-center">
-              <div className="border-t border-cream-200 w-full" />
-              <span className="bg-white px-3 text-[11px] font-bold text-softgray uppercase tracking-wider">
-                atau masuk dengan akun terdaftar
-              </span>
-            </div>
-
-            {/* Login Form */}
-            <form onSubmit={handleUserLogin} className="space-y-4 text-xs">
-              {errorMessage && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs font-semibold flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="font-bold text-darkcocoa block mb-1.5">
-                  Alamat Email Terdaftar
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-softgray absolute left-3.5 top-3.5" />
-                  <input
-                    type="email"
-                    required
-                    placeholder="nama@email.com"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setErrorMessage(null);
-                    }}
-                    className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="font-bold text-darkcocoa block mb-1.5">
-                  Kata Sandi
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-softgray absolute left-3.5 top-3.5" />
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setErrorMessage(null);
-                    }}
-                    className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white transition-colors"
-                  />
-                </div>
-              </div>
 
               <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 mt-2"
+                type="button"
+                onClick={() => {
+                  setActiveTab('demo');
+                  setErrorMessage(null);
+                }}
+                className={`py-2 px-1.5 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+                  activeTab === 'demo'
+                    ? 'bg-white text-darkcocoa shadow-xs font-extrabold'
+                    : 'text-softgray hover:text-darkcocoa'
+                }`}
               >
-                <span>{isSubmitting ? 'Memeriksa Kredensial...' : 'Masuk ke Akun Saya'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <Gamepad2 className={`w-3.5 h-3.5 ${activeTab === 'demo' ? 'text-peach-500' : ''}`} />
+                <span className="truncate">Coba Demo</span>
               </button>
 
-              <div className="pt-1 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail('admin@pawskost.id');
-                    setPassword('admin123');
-                    setErrorMessage(null);
-                  }}
-                  className="text-[11px] text-softgray hover:text-darkcocoa transition-colors inline-flex items-center gap-1.5 p-1 rounded-lg hover:bg-cream-100"
-                  title="Klik untuk mengisi akun Super Admin SaaS otomatis"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-peach-500" />
-                  <span>Isi Otomatis Kredensial Super Admin</span>
-                </button>
-              </div>
-            </form>
-
-            {/* Footer: Register Trigger */}
-            <div className="pt-3 border-t border-cream-100 text-center">
-              <p className="text-xs text-softgray">
-                Belum punya akun pawskost?{' '}
-                <button
-                  type="button"
-                  onClick={() => setIsRegisterModalOpen(true)}
-                  className="font-bold text-peach-500 hover:text-peach-600 underline"
-                >
-                  Daftar Akun Baru (Transfer Manual)
-                </button>
-              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('superadmin');
+                  setErrorMessage(null);
+                }}
+                className={`py-2 px-1.5 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+                  activeTab === 'superadmin'
+                    ? 'bg-white text-darkcocoa shadow-xs font-extrabold'
+                    : 'text-softgray hover:text-darkcocoa'
+                }`}
+              >
+                <ShieldCheck className={`w-3.5 h-3.5 ${activeTab === 'superadmin' ? 'text-peach-500' : ''}`} />
+                <span className="truncate">Super Admin</span>
+              </button>
             </div>
+
+            {/* TAB 1: PEMILIK KOS & TIM */}
+            {activeTab === 'owner' && (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="space-y-1">
+                  <h3 className="font-heading font-extrabold text-base sm:text-lg text-darkcocoa">
+                    Masuk Akun Juragan / Staf
+                  </h3>
+                  <p className="text-xs text-softgray">
+                    Untuk pemilik kos, manajer, kasir, dan pengelola kos terdaftar.
+                  </p>
+                </div>
+
+                <form onSubmit={handleUserLogin} className="space-y-3.5 text-xs">
+                  {errorMessage && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs font-semibold flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="font-bold text-darkcocoa block mb-1">
+                      Alamat Email Terdaftar
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 text-softgray absolute left-3.5 top-3" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="juragan@email.com"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setErrorMessage(null);
+                        }}
+                        className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-darkcocoa block mb-1">
+                      Kata Sandi
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-softgray absolute left-3.5 top-3" />
+                      <input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setErrorMessage(null);
+                        }}
+                        className="w-full bg-cream-50 border border-cream-200 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-darkcocoa focus:outline-none focus:border-peach-400 focus:bg-white transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 mt-1"
+                  >
+                    <span>{isSubmitting ? 'Memeriksa Kredensial...' : 'Masuk ke Dashboard Kos'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </form>
+
+                <div className="pt-3 border-t border-cream-100 text-center">
+                  <p className="text-xs text-softgray">
+                    Belum punya akun pawskost?{' '}
+                    <button
+                      type="button"
+                      onClick={() => setIsRegisterModalOpen(true)}
+                      className="font-bold text-peach-500 hover:text-peach-600 underline"
+                    >
+                      Daftar Uji Coba 14 Hari
+                    </button>
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: COBA DEMO SANDBOX */}
+            {activeTab === 'demo' && (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-peach-100 text-peach-700 text-[10px] font-extrabold uppercase tracking-wide">
+                    <Sparkles className="w-3 h-3 text-peach-500" />
+                    <span>Mode Sandbox Instan</span>
+                  </div>
+                  <h3 className="font-heading font-extrabold text-base sm:text-lg text-darkcocoa">
+                    Coba Bebas Tanpa Perlu Daftar
+                  </h3>
+                  <p className="text-xs text-softgray leading-relaxed">
+                    Rasakan langsung kemudahan kelola kos dengan data simulasi yang telah disiapkan secara lengkap.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-cream-50/90 border border-cream-200 text-xs space-y-2 text-darkcocoa/90">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-matcha-500 flex-shrink-0" />
+                    <span>2 Properti Kos Sampel Siap Pakai (Dago &amp; Sukajadi)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-matcha-500 flex-shrink-0" />
+                    <span>20 Kamar dengan visual denah interaktif</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-matcha-500 flex-shrink-0" />
+                    <span>Kirim pengingat tagihan sewa ke WhatsApp</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-matcha-500 flex-shrink-0" />
+                    <span>Tombol reset data demo kapan saja</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleDemoLogin}
+                  className="w-full py-3.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-extrabold text-xs sm:text-sm shadow-cute flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all"
+                >
+                  <Gamepad2 className="w-4 h-4" />
+                  <span>Mulai Demo Sandbox Sekarang (1-Klik)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <p className="text-[11px] text-softgray text-center leading-relaxed">
+                  Data simulasi demo disimpan di browser lokal Anda. Tidak ada biaya atau kewajiban apapun.
+                </p>
+              </div>
+            )}
+
+            {/* TAB 3: SUPER ADMIN SAAS */}
+            {activeTab === 'superadmin' && (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-darkcocoa text-peach-300 text-[10px] font-extrabold uppercase tracking-wide">
+                    <ShieldCheck className="w-3 h-3 text-peach-400" />
+                    <span>Portal Pemilik Platform</span>
+                  </div>
+                  <h3 className="font-heading font-extrabold text-base sm:text-lg text-darkcocoa">
+                    Konsol Super Admin SaaS
+                  </h3>
+                  <p className="text-xs text-softgray leading-relaxed">
+                    Khusus manajemen platform: verifikasi pendaftaran akun, approval bukti transfer, dan pengaturan CMS.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-softgray font-medium">Email Root:</span>
+                    <span className="font-mono font-bold text-darkcocoa bg-white px-2 py-0.5 rounded-lg border border-cream-200">
+                      admin@pawskost.id
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-softgray font-medium">Kata Sandi:</span>
+                    <span className="font-mono font-bold text-darkcocoa bg-white px-2 py-0.5 rounded-lg border border-cream-200">
+                      admin123
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSuperAdminInstantLogin}
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-peach-500 to-sakura-500 hover:from-peach-600 hover:to-sakura-600 text-white font-extrabold text-xs sm:text-sm shadow-cute flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Masuk Sebagai Super Admin (1-Klik)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <p className="text-[11px] text-softgray text-center leading-relaxed">
+                  Akan langsung membuka dashboard kendali Super Admin di tautan <code className="bg-cream-100 px-1 py-0.5 rounded text-darkcocoa font-mono">/admin</code>.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

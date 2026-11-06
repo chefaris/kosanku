@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Search,
   MapPin,
@@ -14,7 +15,9 @@ import {
   Building2,
   Heart,
   RotateCcw,
-  ArrowRight
+  ArrowRight,
+  Compass,
+  Gamepad2
 } from 'lucide-react';
 import { useKosStore, Property } from '../../lib/store/useKosStore';
 import { useCatalogFilter, PRICE_PRESETS } from '../../hooks/useCatalogFilter';
@@ -106,6 +109,28 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
       {/* ======================================================== */}
       <section className="relative pt-10 pb-12 sm:pt-16 sm:pb-16 bg-gradient-to-b from-cream-50 via-peach-50/40 to-white overflow-hidden border-b border-cream-200/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          {/* Persona Switcher Badge / Bridge */}
+          <div className="inline-flex items-center gap-1.5 p-1 rounded-2xl bg-white/90 backdrop-blur-md border border-cream-200/90 shadow-2xs text-xs font-bold text-darkcocoa">
+            <span className="px-3 py-1 rounded-xl bg-peach-500 text-white shadow-xs flex items-center gap-1.5">
+              <Compass className="w-3.5 h-3.5" />
+              <span>Portal Pencari Kos</span>
+            </span>
+            <Link
+              href="/mitra"
+              className="px-3 py-1 rounded-xl text-softgray hover:text-darkcocoa hover:bg-cream-100 transition-colors flex items-center gap-1.5"
+            >
+              <Building2 className="w-3.5 h-3.5 text-peach-500" />
+              <span>Software Pemilik Kos</span>
+            </Link>
+            <Link
+              href="/login?tab=demo"
+              className="px-3 py-1 rounded-xl text-softgray hover:text-darkcocoa hover:bg-cream-100 transition-colors flex items-center gap-1.5 hidden sm:flex"
+            >
+              <Gamepad2 className="w-3.5 h-3.5 text-peach-500" />
+              <span>Coba Demo Sandbox</span>
+            </Link>
+          </div>
+
           {/* Main Headline */}
           <div className="max-w-4xl mx-auto space-y-3">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-black text-darkcocoa tracking-tight leading-tight">

@@ -22,7 +22,8 @@ import {
   ClipboardCheck,
   Receipt,
   HeartHandshake,
-  CalendarCheck
+  CalendarCheck,
+  Gamepad2
 } from 'lucide-react';
 import { KosCatalogSection } from './components/catalog/KosCatalogSection';
 import { RegisterModal } from './components/ui/RegisterModal';
@@ -47,13 +48,23 @@ export default function PublicMarketplacePage() {
             </span>
           </div>
 
-          <Link
-            href="/mitra"
-            className="flex-shrink-0 font-bold text-peach-300 hover:text-white flex items-center gap-1 transition-colors hover:underline"
-          >
-            <span>Pelajari Software pawskost</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <Link
+              href="/login?tab=demo"
+              className="hidden sm:inline-flex items-center gap-1 font-bold text-peach-300 hover:text-white transition-colors hover:underline"
+            >
+              <Gamepad2 className="w-3.5 h-3.5" />
+              <span>Coba Demo Sandbox</span>
+            </Link>
+            <span className="text-white/30 hidden sm:inline">•</span>
+            <Link
+              href="/mitra"
+              className="font-bold text-peach-300 hover:text-white flex items-center gap-1 transition-colors hover:underline"
+            >
+              <span>Software Pemilik Kos</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -104,7 +115,15 @@ export default function PublicMarketplacePage() {
           </nav>
 
           {/* Action Buttons */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          <div className="hidden sm:flex items-center gap-2">
+            <Link
+              href="/login?tab=demo"
+              className="px-3.5 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs sm:text-sm font-bold border border-cream-200 shadow-2xs flex items-center gap-1.5 transition-all hover:scale-105"
+            >
+              <Gamepad2 className="w-4 h-4 text-peach-500" />
+              <span>Coba Demo</span>
+            </Link>
+
             {/* Tombol ke Landing Page Merchant / Pemilik Kos */}
             <Link
               href="/mitra"
@@ -116,9 +135,9 @@ export default function PublicMarketplacePage() {
 
             <Link
               href="/login"
-              className="px-4 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs sm:text-sm font-bold border border-cream-200 transition-colors"
+              className="px-3.5 py-2.5 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors"
             >
-              Masuk Pemilik
+              Masuk
             </Link>
           </div>
 
@@ -166,6 +185,14 @@ export default function PublicMarketplacePage() {
             </a>
 
             <div className="pt-3 border-t border-cream-100 flex flex-col gap-2">
+              <Link
+                href="/login?tab=demo"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full py-2.5 rounded-xl bg-peach-50 text-peach-600 border border-peach-200 font-bold text-xs flex items-center justify-center gap-1.5 text-center"
+              >
+                <Gamepad2 className="w-4 h-4" />
+                <span>🎮 Coba Demo Sandbox (Tanpa Daftar)</span>
+              </Link>
               <Link
                 href="/mitra"
                 onClick={() => setIsMobileMenuOpen(false)}

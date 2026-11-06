@@ -23,6 +23,7 @@ import {
   Gamepad2,
   Crown,
   ShieldCheck,
+  Compass,
 } from 'lucide-react';
 import { PropertySelector } from '../ui/PropertySelector';
 import { useKosStore } from '../../lib/store/useKosStore';
@@ -216,6 +217,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
               </Link>
             );
           })}
+
+          <div className="pt-2 mt-2 border-t border-cream-200/80">
+            <Link
+              href="/"
+              onClick={closeMobile}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-semibold text-softgray hover:text-darkcocoa hover:bg-cream-100 transition-colors"
+            >
+              <Compass className="w-4 h-4 text-peach-500" />
+              <span>Lihat Katalog Publik</span>
+            </Link>
+          </div>
         </nav>
       </div>
 
@@ -353,7 +365,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
           <div className="relative w-8 h-8 rounded-xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
             <Image
               src="/app-logo.jpg"
-              alt="Logo KosanKu"
+              alt="Logo pawskost"
               width={32}
               height={32}
               className="w-full h-full object-cover"
@@ -361,7 +373,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
           </div>
           <div className="flex flex-col min-w-0">
             <span className="font-heading font-extrabold text-base sm:text-lg leading-tight text-peach-500">
-              KosanKu
+              pawskost
             </span>
             <span className="text-[9px] sm:text-[10px] text-softgray font-medium hidden xs:inline truncate">Mimi si Kucing Kos</span>
           </div>
