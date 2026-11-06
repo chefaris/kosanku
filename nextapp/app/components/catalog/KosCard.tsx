@@ -3,12 +3,7 @@
 import React, { memo } from 'react';
 import {
   MapPin,
-  Star,
-  Snowflake,
-  Wifi,
-  ShowerHead,
   MessageCircle,
-  Eye,
   Heart
 } from 'lucide-react';
 import { Property, Room } from '../../lib/store/useKosStore';
@@ -49,7 +44,7 @@ export const KosCard: React.FC<KosCardProps> = memo(({
   const handleQuickWa = (e: React.MouseEvent) => {
     e.stopPropagation();
     const textMsg = encodeURIComponent(
-      `Halo Kak! Saya tertarik dengan kos "${property.name}" di katalog pawskost. Apakah masih ada kamar kosong? Bisa info jadwal survei lokasi? Terima kasih!`
+      `Halo Kak! Saya tertarik dengan kos "${property.name}" di katalog pawskost. Apakah masih ada kamar kosong? Terima kasih!`
     );
     window.open(`https://wa.me/${waTarget}?text=${textMsg}`, '_blank');
   };
@@ -57,11 +52,11 @@ export const KosCard: React.FC<KosCardProps> = memo(({
   return (
     <div
       onClick={() => onOpenDetail(property)}
-      className="group cursor-pointer rounded-3xl bg-white border border-cream-200 shadow-sm hover:shadow-cute hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col justify-between"
+      className="group cursor-pointer rounded-2xl bg-white border border-cream-200 shadow-2xs hover:shadow-cute hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col justify-between"
     >
       <div>
-        {/* Image Thumbnail with Badges */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-cream-100">
+        {/* Compact Image Thumbnail with Badges */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-cream-100">
           <img
             src={coverImg}
             alt={property.name}
@@ -69,125 +64,90 @@ export const KosCard: React.FC<KosCardProps> = memo(({
           />
 
           {/* Top Badges */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+          <div className="absolute top-1.5 left-1.5 flex items-center gap-1 flex-wrap">
             <span
-              className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-xs border ${
+              className={`text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs ${
                 property.type === 'Putri'
-                  ? 'bg-rose-50 text-rose-700 border-rose-300'
+                  ? 'bg-rose-500 text-white'
                   : property.type === 'Putra'
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                  : 'bg-amber-50 text-amber-900 border-amber-300'
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-amber-500 text-white'
               }`}
             >
               {property.type === 'Putri'
-                ? 'Khusus Putri'
+                ? 'Putri'
                 : property.type === 'Putra'
-                ? 'Khusus Putra'
+                ? 'Putra'
                 : 'Campur'}
             </span>
 
             {vacantCount > 0 ? (
-              <span className="bg-emerald-600/95 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                <span>Sisa {vacantCount} Kamar</span>
+              <span className="bg-darkcocoa/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                Sisa {vacantCount}
               </span>
             ) : (
-              <span className="bg-darkcocoa/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs">
-                Kamar Penuh
+              <span className="bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+                Penuh
               </span>
             )}
           </div>
 
-          {/* Top-Right Wishlist Heart Button */}
+          {/* Top-Right Wishlist Heart */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onToggleWishlist(property.id);
             }}
-            aria-label={isWishlisted ? 'Hapus dari favorit' : 'Tambah ke favorit'}
-            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md shadow-xs transition-all duration-200 z-10 ${
+            aria-label={isWishlisted ? 'Hapus favorit' : 'Tambah favorit'}
+            className={`absolute top-1.5 right-1.5 w-6 h-6 rounded-full backdrop-blur-md shadow-xs flex items-center justify-center transition-all ${
               isWishlisted
-                ? 'bg-rose-500 text-white hover:bg-rose-600 scale-105'
-                : 'bg-white/85 text-darkcocoa/70 hover:bg-white hover:text-rose-500 hover:scale-105'
+                ? 'bg-rose-500 text-white scale-105'
+                : 'bg-white/85 text-darkcocoa/70 hover:bg-white hover:text-rose-500'
             }`}
           >
-            <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
+            <Heart className={`w-3 h-3 ${isWishlisted ? 'fill-current' : ''}`} />
           </button>
 
-          {/* Bottom-right City Badge */}
+          {/* Bottom City Badge */}
           {property.city && (
-            <span className="absolute bottom-2.5 right-2.5 bg-darkcocoa/80 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-xl flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-peach-400" />
+            <span className="absolute bottom-1 left-1.5 bg-black/60 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <MapPin className="w-2.5 h-2.5 text-peach-300" />
               <span>{property.city}</span>
             </span>
           )}
         </div>
 
-        {/* Card Content */}
-        <div className="p-4 sm:p-5 space-y-3">
-          <div>
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-500 mb-1">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-darkcocoa font-extrabold">4.9</span>
-              <span className="text-darkcocoa/70 font-semibold">• Terverifikasi pawskost</span>
-            </div>
+        {/* Card Body (Tight & Simple) */}
+        <div className="p-2 sm:p-2.5">
+          <h3 className="font-heading font-extrabold text-xs sm:text-sm text-darkcocoa group-hover:text-peach-600 transition-colors line-clamp-1 leading-snug">
+            {property.name}
+          </h3>
 
-            <h3 className="font-heading font-extrabold text-base text-darkcocoa group-hover:text-peach-600 transition-colors line-clamp-1">
-              {property.name}
-            </h3>
-
-            <p className="text-xs text-softgray line-clamp-1 mt-0.5 flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-peach-600 flex-shrink-0" />
-              <span>{property.address}</span>
-            </p>
-          </div>
-
-          {/* Key Facilities Icons */}
-          <div className="flex items-center gap-3 pt-2 border-t border-cream-100 text-xs text-softgray">
-            <span className="inline-flex items-center gap-1" title="AC Dingin">
-              <Snowflake className="w-3.5 h-3.5 text-peach-500" /> AC
-            </span>
-            <span className="inline-flex items-center gap-1" title="WiFi Cepat">
-              <Wifi className="w-3.5 h-3.5 text-peach-500" /> WiFi
-            </span>
-            <span className="inline-flex items-center gap-1" title="Kamar Mandi Dalam">
-              <ShowerHead className="w-3.5 h-3.5 text-peach-500" /> KM Dalam
-            </span>
-          </div>
+          <p className="text-[10px] sm:text-[11px] text-softgray line-clamp-1 mt-0.5">
+            {property.address}
+          </p>
         </div>
       </div>
 
-      {/* Card Bottom: Price & Action Buttons */}
-      <div className="p-4 sm:p-5 pt-0 border-t border-cream-100 flex items-center justify-between gap-2 mt-2">
-        <div>
-          <span className="text-[10px] text-softgray block">Mulai dari</span>
-          <p className="font-heading font-black text-sm sm:text-base text-peach-700">
+      {/* Card Footer: Price & Compact WA Action */}
+      <div className="p-2 sm:p-2.5 pt-0 flex items-center justify-between gap-1 border-t border-cream-100/60 mt-1">
+        <div className="min-w-0">
+          <p className="font-heading font-black text-xs sm:text-sm text-peach-600 truncate">
             {formatRupiah(minPrice)}
-            <span className="text-[10px] text-darkcocoa/60 font-semibold">/bln</span>
+            <span className="text-[9px] text-darkcocoa/60 font-medium">/bln</span>
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={handleQuickWa}
-            className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center gap-1.5 border border-emerald-300 transition-colors shadow-2xs"
-            title="Chat WhatsApp Pemilik"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>Chat WA</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onOpenDetail(property)}
-            className="px-3 py-2 rounded-xl bg-peach-600 hover:bg-peach-700 active:bg-peach-800 text-white font-extrabold text-xs shadow-md shadow-peach-600/20 flex items-center gap-1 transition-all"
-          >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Detail</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleQuickWa}
+          className="p-1 sm:px-2 sm:py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] flex items-center gap-1 border border-emerald-200 transition-colors flex-shrink-0"
+          title="Chat WhatsApp"
+        >
+          <MessageCircle className="w-3 h-3 text-emerald-600" />
+          <span className="hidden sm:inline">WA</span>
+        </button>
       </div>
     </div>
   );

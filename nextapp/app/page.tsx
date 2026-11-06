@@ -182,73 +182,46 @@ export default function PublicMarketplacePage() {
         {/* ======================================================== */}
         {/* 4. CARA MUDAH SEWA KOS DI PAWSKOST (3 LANGKAH CEPAT)    */}
         {/* ======================================================== */}
-        <section id="cara-sewa" className="py-16 md:py-20 bg-white border-t border-cream-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-bold text-peach-600 uppercase tracking-wider">
-                Panduan Praktis
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-darkcocoa">
-                3 Langkah Mudah Sewa Kos di pawskost
+        <section id="cara-sewa" className="py-6 sm:py-8 bg-white border-t border-cream-200">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <div className="text-center space-y-0.5">
+              <h2 className="text-base sm:text-xl font-heading font-extrabold text-darkcocoa">
+                3 Langkah Mudah Sewa Kos
               </h2>
-              <p className="text-xs sm:text-sm text-softgray">
-                Tak perlu bingung mencari tempat tinggal idaman. Prosesnya simpel, aman, dan tanpa biaya perantara!
+              <p className="text-xs text-softgray">
+                Cepat, aman, dan langsung terhubung dengan pemilik kos.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-              {/* Step 1 */}
-              <div className="relative p-6 sm:p-8 bg-cream-50/70 rounded-3xl border border-cream-200 shadow-2xs space-y-4 hover:shadow-cute hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-peach-100 text-peach-600 flex items-center justify-center font-heading font-extrabold text-lg shadow-2xs">
-                    01
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-white text-darkcocoa text-[11px] font-bold border border-cream-200">
-                    Pilih &amp; Cek
-                  </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div className="p-3 sm:p-3.5 bg-cream-50/70 rounded-2xl border border-cream-200 flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-xl bg-peach-100 text-peach-600 font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                  01
+                </span>
+                <div className="text-left min-w-0">
+                  <h3 className="font-heading font-bold text-xs text-darkcocoa">Cari &amp; Pilih Kos</h3>
+                  <p className="text-[11px] text-softgray truncate">Filter kota, fasilitas &amp; budget</p>
                 </div>
-                <h3 className="font-heading font-bold text-base text-darkcocoa">
-                  Cari &amp; Bandingkan Kos
-                </h3>
-                <p className="text-xs text-softgray leading-relaxed">
-                  Gunakan filter kota, kategori kamar (Putri/Putra/Campur), fasilitas AC/WiFi, dan rentang budget yang paling pas buat kamu.
-                </p>
               </div>
 
-              {/* Step 2 */}
-              <div className="relative p-6 sm:p-8 bg-cream-50/70 rounded-3xl border border-cream-200 shadow-2xs space-y-4 hover:shadow-cute hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-matcha-100 text-matcha-600 flex items-center justify-center font-heading font-extrabold text-lg shadow-2xs">
-                    02
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-white text-darkcocoa text-[11px] font-bold border border-cream-200">
-                    Chat Langsung
-                  </span>
+              <div className="p-3 sm:p-3.5 bg-cream-50/70 rounded-2xl border border-cream-200 flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-xl bg-matcha-100 text-matcha-600 font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                  02
+                </span>
+                <div className="text-left min-w-0">
+                  <h3 className="font-heading font-bold text-xs text-darkcocoa">Chat WhatsApp</h3>
+                  <p className="text-[11px] text-softgray truncate">Langsung tanya kamar ke pemilik</p>
                 </div>
-                <h3 className="font-heading font-bold text-base text-darkcocoa">
-                  Hubungi Pemilik via WhatsApp
-                </h3>
-                <p className="text-xs text-softgray leading-relaxed">
-                  Klik tombol <strong>Chat WA</strong> untuk langsung terhubung dengan pengelola resmi. Tanyakan ketersediaan kamar dan atur jadwal survei lokasi.
-                </p>
               </div>
 
-              {/* Step 3 */}
-              <div className="relative p-6 sm:p-8 bg-cream-50/70 rounded-3xl border border-cream-200 shadow-2xs space-y-4 hover:shadow-cute hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-sakura-100 text-sakura-600 flex items-center justify-center font-heading font-extrabold text-lg shadow-2xs">
-                    03
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-white text-darkcocoa text-[11px] font-bold border border-cream-200">
-                    Resmi &amp; Nyaman
-                  </span>
+              <div className="p-3 sm:p-3.5 bg-cream-50/70 rounded-2xl border border-cream-200 flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-xl bg-sakura-100 text-sakura-600 font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                  03
+                </span>
+                <div className="text-left min-w-0">
+                  <h3 className="font-heading font-bold text-xs text-darkcocoa">Siap Huni Resmi</h3>
+                  <p className="text-[11px] text-softgray truncate">Bayar sewa &amp; kuitansi otomatis</p>
                 </div>
-                <h3 className="font-heading font-bold text-base text-darkcocoa">
-                  Siap Huni &amp; Kwitansi Digital
-                </h3>
-                <p className="text-xs text-softgray leading-relaxed">
-                  Bayar sewa secara transparan langsung ke rekening pengelola kos. Dapatkan bukti pembayaran dan kwitansi sewa resmi dari sistem pawskost!
-                </p>
               </div>
             </div>
           </div>
@@ -257,52 +230,43 @@ export default function PublicMarketplacePage() {
         {/* ======================================================== */}
         {/* 5. KEUNGGULAN CARI KOS DI PAWSKOST                       */}
         {/* ======================================================== */}
-        <section id="keunggulan" className="py-16 md:py-20 bg-cream-50/70 border-t border-cream-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-bold text-peach-500 uppercase tracking-wider">
-                Kenapa Cari Kos di pawskost?
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-darkcocoa">
-                Pengalaman Sewa Kos yang Mudah, Cepat, dan Aman
+        <section id="keunggulan" className="py-6 sm:py-8 bg-cream-50/50 border-t border-cream-200">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <div className="text-center">
+              <h2 className="text-base sm:text-xl font-heading font-extrabold text-darkcocoa">
+                Keunggulan pawskost
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 sm:p-7 bg-white rounded-3xl border border-cream-200 shadow-sm space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-matcha-100 text-matcha-600 flex items-center justify-center">
-                  <ShieldCheck className="w-6 h-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div className="p-3 sm:p-3.5 bg-white rounded-2xl border border-cream-200 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-matcha-100 text-matcha-600 flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
-                <h3 className="font-heading font-bold text-base text-darkcocoa">
-                  100% Terverifikasi Langsung Pemilik
-                </h3>
-                <p className="text-xs text-softgray leading-relaxed">
-                  Setiap kosan yang tayang dikelola langsung oleh mitra pemilik kos terdaftar di software pawskost. Bebas dari calo atau iklan palsu.
-                </p>
+                <div className="text-left min-w-0">
+                  <h3 className="font-heading font-bold text-xs text-darkcocoa">Kontak Pemilik Langsung</h3>
+                  <p className="text-[11px] text-softgray truncate">Tanpa calo &amp; bebas perantara</p>
+                </div>
               </div>
 
-              <div className="p-6 sm:p-7 bg-white rounded-3xl border border-cream-200 shadow-sm space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-peach-100 text-peach-500 flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6" />
+              <div className="p-3 sm:p-3.5 bg-white rounded-2xl border border-cream-200 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-500 flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-4 h-4" />
                 </div>
-                <h3 className="font-heading font-bold text-base text-darkcocoa">
-                  Direct WhatsApp Tanpa Biaya Calo
-                </h3>
-                <p className="text-xs text-softgray leading-relaxed">
-                  Hubungi pengelola kos langsung lewat nomor WhatsApp resmi. Jadwalkan survei dan tanyakan ketersediaan kamar tanpa perantara.
-                </p>
+                <div className="text-left min-w-0">
+                  <h3 className="font-heading font-bold text-xs text-darkcocoa">WhatsApp 1-Klik</h3>
+                  <p className="text-[11px] text-softgray truncate">Tanya &amp; survei lokasi cepat</p>
+                </div>
               </div>
 
-              <div className="p-6 sm:p-7 bg-white rounded-3xl border border-cream-200 shadow-sm space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6" />
+              <div className="p-3 sm:p-3.5 bg-white rounded-2xl border border-cream-200 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-sakura-100 text-sakura-500 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-4 h-4" />
                 </div>
-                <h3 className="font-heading font-bold text-base text-darkcocoa">
-                  Status Kamar Kosong Real-Time
-                </h3>
-                <p className="text-xs text-softgray leading-relaxed">
-                  Katalog terhubung langsung ke sistem database kamar pemilik kos, sehingga jumlah sisa kamar kosong selalu akurat dan terbarui.
-                </p>
+                <div className="text-left min-w-0">
+                  <h3 className="font-heading font-bold text-xs text-darkcocoa">Kamar Kosong Akurat</h3>
+                  <p className="text-[11px] text-softgray truncate">Sinkron sistem software juragan</p>
+                </div>
               </div>
             </div>
           </div>
@@ -311,35 +275,35 @@ export default function PublicMarketplacePage() {
         {/* ======================================================== */}
         {/* 6. CALLOUT UNTUK PEMILIK KOS (MERCHANT PROMOTION)        */}
         {/* ======================================================== */}
-        <section id="tentang" className="py-16 md:py-20 bg-gradient-to-r from-darkcocoa via-[#321e14] to-darkcocoa text-white">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-peach-300 text-xs font-bold border border-white/10">
-              <Crown className="w-3.5 h-3.5" />
-              <span>Khusus Juragan &amp; Pemilik Kos Indonesia</span>
-            </div>
+        <section id="tentang" className="py-6 sm:py-8 bg-gradient-to-r from-darkcocoa via-[#321e14] to-darkcocoa text-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2.5">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 text-peach-300 text-[10px] font-bold">
+              <Crown className="w-3 h-3" />
+              <span>Khusus Pemilik Kos</span>
+            </span>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold tracking-tight">
-              Punya Kosan? Kelola Lebih Praktis &amp; Promosikan di Sini!
+            <h2 className="text-lg sm:text-2xl font-heading font-extrabold tracking-tight">
+              Punya Kosan? Kelola Otomatis &amp; Promosikan di Sini!
             </h2>
 
-            <p className="text-xs sm:text-sm text-cream-200/80 max-w-xl mx-auto leading-relaxed">
-              Tinggalkan buku tulis manual. Gunakan software pawskost untuk denah kamar visual, pengingat tagihan sewa WhatsApp 1-klik, dan properti Anda otomatis tampil di katalog ini!
+            <p className="text-[11px] sm:text-xs text-cream-200/80 max-w-md mx-auto">
+              Denah kamar visual, pengingat tagihan sewa WhatsApp otomatis, dan listing kos gratis tanpa potongan komisi.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1">
               <Link
                 href="/mitra"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-3xl bg-peach-500 hover:bg-peach-400 text-white font-heading font-bold text-xs sm:text-sm shadow-cute flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all"
+                className="w-full sm:w-auto px-5 py-2 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-heading font-bold text-xs shadow-cute flex items-center justify-center gap-1.5 transition-all"
               >
-                <span>Pelajari Software Manajemen Kos pawskost</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Pelajari Software pawskost</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
 
               <button
                 onClick={() => setIsRegisterModalOpen(true)}
-                className="w-full sm:w-auto px-7 py-3.5 rounded-3xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 shadow-sm flex items-center justify-center gap-2 transition-all"
+                className="w-full sm:w-auto px-5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all"
               >
-                Daftar Uji Coba Gratis 14 Hari
+                Coba Gratis 14 Hari
               </button>
             </div>
           </div>

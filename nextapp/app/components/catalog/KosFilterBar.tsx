@@ -76,20 +76,20 @@ export const KosFilterBar: React.FC<KosFilterBarProps> = ({
   }, []);
 
   return (
-    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border-2 border-cream-200 shadow-sm space-y-3">
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 scrollbar-none">
+    <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-cream-200 shadow-2xs space-y-2">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 scrollbar-none">
         {/* 1. TOMBOL SEMUA FILTER (FILTER LENGKAP) */}
         <button
           type="button"
           onClick={onOpenFilterModal}
-          className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 whitespace-nowrap transition-all flex-shrink-0 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 whitespace-nowrap transition-all flex-shrink-0 ${
             activeFilterCount > 0
-              ? 'bg-peach-600 text-white shadow-sm border-2 border-peach-600'
-              : 'bg-white hover:bg-cream-100 text-darkcocoa border-2 border-cream-200'
+              ? 'bg-peach-600 text-white shadow-sm border border-peach-600'
+              : 'bg-white hover:bg-cream-100 text-darkcocoa border border-cream-200'
           }`}
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>Filter Lengkap</span>
+          <span>Filter</span>
           {activeFilterCount > 0 && (
             <span className="w-4 h-4 rounded-full bg-white text-peach-700 text-[10px] font-black flex items-center justify-center">
               {activeFilterCount}
@@ -101,14 +101,14 @@ export const KosFilterBar: React.FC<KosFilterBarProps> = ({
         <button
           type="button"
           onClick={onToggleOnlyWishlist}
-          className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 whitespace-nowrap transition-all flex-shrink-0 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 whitespace-nowrap transition-all flex-shrink-0 ${
             onlyWishlist
-              ? 'bg-rose-500 text-white shadow-sm border-2 border-rose-500'
-              : 'bg-white hover:bg-rose-50 text-darkcocoa border-2 border-cream-200'
+              ? 'bg-rose-500 text-white shadow-sm border border-rose-500'
+              : 'bg-white hover:bg-rose-50 text-darkcocoa border border-cream-200'
           }`}
         >
           <Heart className={`w-3.5 h-3.5 ${onlyWishlist ? 'fill-current text-white' : 'text-rose-500'}`} />
-          <span>Favorit Saya</span>
+          <span>Favorit</span>
           {wishlistCount > 0 && (
             <span
               className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${

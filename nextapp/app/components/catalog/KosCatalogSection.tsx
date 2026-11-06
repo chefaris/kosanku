@@ -104,15 +104,15 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
       {/* ======================================================== */}
       {/* 1. TRAVELOKA & MAMIKOS STYLE HERO SEARCH CONSOLE        */}
       {/* ======================================================== */}
-      <section className="relative pt-6 pb-8 sm:pt-9 sm:pb-10 bg-gradient-to-b from-cream-50 via-peach-50/40 to-white overflow-hidden border-b border-cream-200/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4 sm:space-y-5">
+      <section className="relative pt-4 pb-5 sm:pt-7 sm:pb-8 bg-gradient-to-b from-cream-50 via-peach-50/30 to-white overflow-hidden border-b border-cream-200/80">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
           {/* Main Headline */}
-          <div className="max-w-3xl mx-auto space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading font-black text-darkcocoa tracking-tight leading-tight">
+          <div className="max-w-3xl mx-auto space-y-1 sm:space-y-1.5">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-heading font-black text-darkcocoa tracking-tight leading-tight">
               Cari Kos Idaman, <span className="text-peach-500">Langsung Chat Pemilik</span>
             </h1>
-            <p className="text-xs sm:text-sm md:text-base text-darkcocoa/75 max-w-xl mx-auto leading-relaxed font-medium">
-              Kamar kos terverifikasi, status ketersediaan real-time, bebas calo &amp; tanpa biaya perantara.
+            <p className="text-[11px] sm:text-xs md:text-sm text-darkcocoa/75 max-w-lg mx-auto font-medium">
+              Kamar kos terverifikasi, status ketersediaan real-time &amp; tanpa biaya calo.
             </p>
           </div>
 
@@ -279,37 +279,20 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
             </div>
           </div>
 
-          {/* 3 Main Trust Badges (Compact & Sleek) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 max-w-4xl mx-auto">
-            <div className="py-2.5 px-3.5 rounded-2xl bg-white/95 border border-cream-200/90 shadow-2xs flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-600 flex items-center justify-center flex-shrink-0">
-                <PhoneCall className="w-4 h-4" />
-              </div>
-              <div className="text-left min-w-0">
-                <h4 className="font-heading font-extrabold text-xs text-darkcocoa leading-tight">100% Kontak Pemilik</h4>
-                <p className="text-[10px] text-darkcocoa/70 font-medium truncate">Tanpa perantara &amp; bebas calo</p>
-              </div>
-            </div>
-
-            <div className="py-2.5 px-3.5 rounded-2xl bg-white/95 border border-cream-200/90 shadow-2xs flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                <CheckCircle2 className="w-4 h-4" />
-              </div>
-              <div className="text-left min-w-0">
-                <h4 className="font-heading font-extrabold text-xs text-darkcocoa leading-tight">Kamar Kosong Real-Time</h4>
-                <p className="text-[10px] text-darkcocoa/70 font-medium truncate">Sinkron data software juragan</p>
-              </div>
-            </div>
-
-            <div className="py-2.5 px-3.5 rounded-2xl bg-white/95 border border-cream-200/90 shadow-2xs flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-peach-100 text-peach-600 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div className="text-left min-w-0">
-                <h4 className="font-heading font-extrabold text-xs text-darkcocoa leading-tight">Foto Asli Terverifikasi</h4>
-                <p className="text-[10px] text-darkcocoa/70 font-medium truncate">Kondisi kamar sesuai kenyataan</p>
-              </div>
-            </div>
+          {/* Micro Trust Indicators (Single Line) */}
+          <div className="flex items-center justify-center gap-3 sm:gap-6 pt-1 text-[11px] text-darkcocoa/70 font-semibold flex-wrap">
+            <span className="inline-flex items-center gap-1">
+              <PhoneCall className="w-3.5 h-3.5 text-peach-500" />
+              <span>Kontak Langsung Pemilik</span>
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Sisa Kamar Real-Time</span>
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-peach-500" />
+              <span>Bebas Calo</span>
+            </span>
           </div>
         </div>
       </section>
@@ -317,7 +300,7 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
       {/* ======================================================== */}
       {/* 2. CATALOG RESULTS SECTION                               */}
       {/* ======================================================== */}
-      <section id="hasil-katalog" className="py-10 sm:py-14 bg-cream-50/40 relative">
+      <section id="hasil-katalog" className="py-5 sm:py-8 bg-cream-50/40 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Header & Results Info */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -386,7 +369,7 @@ export const KosCatalogSection: React.FC<KosCatalogSectionProps> = ({
           {/* PROPERTIES GRID / EMPTY STATE                            */}
           {/* ======================================================== */}
           {filteredProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
               {filteredProperties.map((prop) => (
                 <KosCard
                   key={prop.id}
