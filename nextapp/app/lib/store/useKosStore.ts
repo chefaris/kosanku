@@ -1985,12 +1985,17 @@ export const useKosStore = create<KosStoreState>()(
         const maxRoomsMap: Record<string, number> = { starter: 10, pro: 50, enterprise: 999, trial_14_days: 50 };
         const maxPropsMap: Record<string, number> = { starter: 1, pro: 3, enterprise: 999, trial_14_days: 3 };
 
+        const isSuperAdminAccount =
+          account.id === 'usr-admin-root' ||
+          account.email.toLowerCase() === 'admin@pawskost.id' ||
+          account.email.toLowerCase() === 'admin@kosanku.id';
+
         const loggedUser: UserProfile = {
           id: account.id,
           name: account.name,
           email: account.email,
           kosName: account.kosName,
-          role: 'owner',
+          role: isSuperAdminAccount ? 'superadmin' : 'owner',
           plan: account.plan,
           trialDaysRemaining: account.daysRemaining,
           isDemo: false
@@ -2017,9 +2022,11 @@ export const useKosStore = create<KosStoreState>()(
 
         return {
           success: true,
-          role: 'owner',
+          role: isSuperAdminAccount ? 'superadmin' : 'owner',
           user: account,
-          message: `Selamat datang kembali, ${account.name}!`
+          message: isSuperAdminAccount
+            ? 'Login Super Admin Berhasil!'
+            : `Selamat datang kembali, ${account.name}!`
         };
       },
 

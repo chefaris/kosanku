@@ -56,6 +56,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const activeRole = getActiveRole();
+  const isSuperAdmin = Boolean(
+    currentUser?.role === 'superadmin' ||
+    currentUser?.email?.toLowerCase() === 'admin@pawskost.id' ||
+    currentUser?.email?.toLowerCase() === 'admin@kosanku.id' ||
+    currentUser?.id === 'usr-admin-root'
+  );
 
   const toggleMobile = () => setIsMobileOpen((prev) => !prev);
   const closeMobile = () => setIsMobileOpen(false);
@@ -158,6 +164,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
 
         {/* Navigation Items */}
         <nav className="px-3 space-y-1.5 mt-2" aria-label="Menu Utama">
+          {isSuperAdmin && (
+            <Link
+              href="/admin"
+              onClick={closeMobile}
+              className="flex items-center justify-between gap-2.5 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-peach-500 to-sakura-500 text-white font-bold text-xs shadow-cute hover:shadow-md hover:scale-[1.01] active:scale-95 transition-all mb-2.5 border border-peach-400/50"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">Konsol Super Admin</span>
+              </div>
+              <span className="text-[9px] bg-white/25 px-1.5 py-0.5 rounded-md uppercase font-black tracking-wider flex-shrink-0">
+                SaaS
+              </span>
+            </Link>
+          )}
+
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const active = isLinkActive(item.href);
@@ -211,7 +233,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             <p className="font-body text-[10px] text-softgray flex items-center gap-1 truncate">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-peach-400" />
               <span>
-                {activeRole === 'cashier'
+                {isSuperAdmin
+                  ? '👑 Super Admin SaaS'
+                  : activeRole === 'cashier'
                   ? '💳 Staf Kasir'
                   : activeRole === 'staff_ops'
                   ? '🛠️ Penjaga Kos'
@@ -286,6 +310,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             </>
           )}
         </div>
+
+        {/* Direct Button to Super Admin Console */}
+        {isSuperAdmin && (
+          <div className="pt-2 border-t border-peach-200/80">
+            <Link
+              href="/admin"
+              onClick={closeMobile}
+              className="w-full py-2 px-3 rounded-xl bg-peach-500 hover:bg-peach-600 text-white font-extrabold text-[11px] flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-95"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Buka Konsol Super Admin</span>
+            </Link>
+          </div>
+        )}
 
         {/* Impersonation Indicator if active */}
         {impersonatingFromAdmin && (
