@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useKosStore, Invoice } from '../lib/store/useKosStore';
 import { CatPawStamp } from '../components/ui/CatPawStamp';
+import { PawskostLogo } from '../components/ui/PawskostLogo';
 
 export default function BillingPage() {
   const {
@@ -1117,15 +1118,7 @@ export default function BillingPage() {
                   {/* Header Dokumen Kuitansi / Invoice */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-dashed border-cream-200 pb-3 print:flex-row print:items-start">
                     <div className="flex items-center gap-3">
-                      <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
-                        <Image
-                          src="/mimi-mascot.jpg"
-                          alt="Mimi si Kucing Kos"
-                          width={48}
-                          height={48}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                      <PawskostLogo size="md" />
                       <div>
                         <h3 className="font-heading font-extrabold text-base sm:text-lg text-peach-500 leading-tight">
                           {selectedInvoiceForView.status === 'paid'
@@ -1224,7 +1217,7 @@ export default function BillingPage() {
                           date={selectedInvoiceForView.paidAt || 'Hari Ini'}
                           variant="emerald"
                           size="md"
-                          subtext="PAWSKOST • MIMI 🐾"
+                          subtext="PAWSKOST • RESMI"
                         />
                       </div>
                     )}
@@ -1241,7 +1234,7 @@ export default function BillingPage() {
                           PEMBAYARAN RESMI DIVERIFIKASI LUNAS
                         </span>
                         <p className="text-[10px] text-softgray">
-                          Dicap sah dengan segel stempel kaki kucing pawskost &amp; Mimi si Kucing Kos.
+                          Dicap sah dengan verifikasi resmi sistem penagihan digital pawskost.
                         </p>
                       </div>
                     </div>

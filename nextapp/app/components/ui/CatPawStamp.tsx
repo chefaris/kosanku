@@ -16,7 +16,7 @@ export const CatPawStamp: React.FC<CatPawStampProps> = ({
   variant = 'emerald',
   size = 'md',
   className = '',
-  subtext = 'KOSANKU • MIMI 🐾'
+  subtext = 'PAWSKOST • RESMI'
 }) => {
   // Color configuration matching official stamp ink
   const colors = {

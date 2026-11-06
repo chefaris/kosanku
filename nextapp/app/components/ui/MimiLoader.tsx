@@ -9,7 +9,7 @@ interface MimiLoaderProps {
 }
 
 export const MimiLoader: React.FC<MimiLoaderProps> = ({
-  message = 'Mimi sedang menyiapkan data... 🐾',
+  message = 'Memuat data pawskost...',
   className = '',
   fullscreen = false,
 }) => {

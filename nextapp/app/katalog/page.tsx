@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Home, Sparkles, Gamepad2, ShieldCheck } from 'lucide-react';
 import { KosCatalogSection } from '../components/catalog/KosCatalogSection';
 import { RegisterModal } from '../components/ui/RegisterModal';
+import { PawskostLogo } from '../components/ui/PawskostLogo';
 import { useKosStore } from '../lib/store/useKosStore';
 import { useRouter } from 'next/navigation';
 
@@ -25,16 +26,7 @@ export default function KatalogPage() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-cream-200/90 shadow-xs py-3.5 sm:py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
-              <Image
-                src="/app-logo.jpg"
-                alt="Logo pawskost"
-                width={40}
-                height={40}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
+            <PawskostLogo size="md" />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-peach-600">

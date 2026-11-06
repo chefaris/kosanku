@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useKosStore, SaaSUserAccount } from '../lib/store/useKosStore';
 import { supabase } from '../lib/supabase';
 import { RegisterModal } from '../components/ui/RegisterModal';
+import { PawskostLogo } from '../components/ui/PawskostLogo';
 import {
   Gamepad2,
   Star,
@@ -247,24 +248,15 @@ export default function LoginPage() {
       <div className="w-full max-w-5xl lg:max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-auto">
         {/* Left Side: Branding & Feature Highlights */}
         <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-          {/* Logo & Mimi Mascot */}
-          <Link href="/" className="inline-flex items-center gap-3.5 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-cream-200 hover:scale-[1.02] transition-transform">
-            <div className="w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0">
-              <Image
-                src="/app-logo.jpg"
-                alt="Logo pawskost"
-                width={44}
-                height={44}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
+          {/* Logo & Brand */}
+          <Link href="/" className="inline-flex items-center gap-3.5 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-sm border border-cream-200 hover:scale-[1.02] transition-transform">
+            <PawskostLogo size="md" />
             <div className="text-left">
               <h1 className="font-heading font-black text-xl text-peach-500 tracking-tight leading-none">
                 pawskost
               </h1>
               <p className="text-xs text-softgray font-medium mt-1">
-                Kelola Kos Jadi Menyenangkan 🐾
+                Sistem Manajemen Kos Modern
               </p>
             </div>
           </Link>
@@ -321,7 +313,8 @@ export default function LoginPage() {
             </span>
             <span>•</span>
             <span className="inline-flex items-center gap-1.5">
-              <strong className="text-darkcocoa">Mimi</strong> Maskot Resmi
+              <ShieldCheck className="w-3.5 h-3.5 text-peach-500" />
+              <strong className="text-darkcocoa">Terverifikasi</strong> Resmi
             </span>
             <span>•</span>
             <span className="inline-flex items-center gap-1.5">

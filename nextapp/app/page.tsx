@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { KosCatalogSection } from './components/catalog/KosCatalogSection';
 import { RegisterModal } from './components/ui/RegisterModal';
+import { PawskostLogo } from './components/ui/PawskostLogo';
 
 export default function PublicMarketplacePage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -65,16 +66,7 @@ export default function PublicMarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl overflow-hidden ring-2 ring-peach-400 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
-              <Image
-                src="/app-logo.jpg"
-                alt="Logo pawskost"
-                width={44}
-                height={44}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
+            <PawskostLogo size="md" />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-peach-600">
@@ -361,15 +353,7 @@ export default function PublicMarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl overflow-hidden ring-1 ring-white/30 flex-shrink-0">
-                <Image
-                  src="/app-logo.jpg"
-                  alt="Logo pawskost"
-                  width={32}
-                  height={32}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <PawskostLogo size="sm" />
               <span className="font-heading font-extrabold text-base text-white">
                 pawskost
               </span>

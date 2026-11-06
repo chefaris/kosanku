@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX, FastForward, Play, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+import { PawskostLogo } from './PawskostLogo';
 
 interface VideoBumperOverlayProps {
   forcePlay?: boolean;
@@ -156,19 +157,8 @@ export function VideoBumperOverlay({ forcePlay = false, onFinished }: VideoBumpe
 
             {/* Top Bar: Brand Watermark & Skip Button */}
             <div className="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex items-center justify-between z-20">
-              <div className="flex items-center gap-2.5 bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
-                <div className="relative w-6 h-6 rounded-lg overflow-hidden flex-shrink-0">
-                  <Image
-                    src="/app-logo.jpg"
-                    alt="pawskost logo"
-                    width={24}
-                    height={24}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="font-heading font-black text-sm text-peach-400 tracking-tight">
-                  pawskost
-                </span>
+              <div className="flex items-center gap-2.5 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/10 shadow-lg">
+                <PawskostLogo size="sm" showText={true} textClassName="!text-white" />
               </div>
 
               {/* Skip Button */}

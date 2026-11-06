@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { X, Printer, Download, Sparkles, TrendingUp, TrendingDown, Scale } from 'lucide-react';
 import { CatPawStamp } from './CatPawStamp';
+import { PawskostLogo } from './PawskostLogo';
 
 interface FinancialTransactionItem {
   id: string;
@@ -86,15 +87,7 @@ export function FinancialReportPdfModal({
         {/* Report Header */}
         <div className="flex items-center justify-between border-b-2 border-dashed border-cream-200 pb-4">
           <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
-              <Image
-                src="/mimi-mascot.jpg"
-                alt="pawskost mascot"
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <PawskostLogo size="md" />
             <div>
               <h2 className="font-heading font-extrabold text-xl text-peach-500">
                 LAPORAN KAS &amp; LABA RUGI
@@ -195,11 +188,11 @@ export function FinancialReportPdfModal({
         {/* Footer & Cat Stamp */}
         <div className="relative pt-3 border-t-2 border-dashed border-cream-200 flex justify-between items-end text-xs">
           <div>
-            <p className="text-[11px] text-softgray">
-              Dokumen laporan keuangan terverifikasi sistem pawskost 🐾
+            <p className="text-[11px] text-softgray font-medium">
+              Dokumen laporan keuangan terverifikasi sistem pawskost
             </p>
-            <p className="text-[10px] text-softgray font-semibold">
-              Kenyamanan kost &amp; ketertiban pembukuan terjamin bersama Mimi si Kucing Kos.
+            <p className="text-[10px] text-softgray">
+              Sistem manajemen operasional dan keuangan kos terintegrasi secara profesional.
             </p>
           </div>
 
@@ -208,7 +201,7 @@ export function FinancialReportPdfModal({
               date={new Date().toLocaleDateString('id-ID')}
               variant="rose"
               size="sm"
-              subtext="PAWSKOST • RESMI 🐾"
+              subtext="PAWSKOST • RESMI"
             />
           </div>
         </div>

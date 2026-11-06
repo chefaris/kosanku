@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { PawskostLogo } from './PawskostLogo';
 import { useKosStore, sampleProofReceipt, initialLandingPageConfig } from '../../lib/store/useKosStore';
 import { supabase } from '../../lib/supabase';
 import {
@@ -211,15 +212,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose })
         {/* Header */}
         <div className="p-4 sm:p-5 bg-gradient-to-r from-peach-100/80 via-sakura-100/60 to-cream-100 border-b border-cream-200 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0 bg-white">
-              <Image
-                src="/app-logo.jpg"
-                alt="Logo KosanKu"
-                width={40}
-                height={40}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <PawskostLogo size="md" />
             <div>
               <h3 className="font-heading font-extrabold text-base sm:text-lg text-darkcocoa flex items-center gap-1.5">
                 <span>Pendaftaran Pemilik Kos</span>

@@ -26,6 +26,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { PropertySelector } from '../ui/PropertySelector';
+import { PawskostLogo } from '../ui/PawskostLogo';
 import { useKosStore } from '../../lib/store/useKosStore';
 
 export interface NavItem {
@@ -96,16 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             onClick={closeMobile}
             className="group flex items-center gap-3 focus:outline-none"
           >
-            <div className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
-              <Image
-                src="/app-logo.jpg"
-                alt="Logo pawskost"
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
+            <PawskostLogo size="md" />
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-heading font-extrabold text-xl tracking-tight text-peach-600">
@@ -362,20 +354,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
       {/* Mobile Top Header with Hamburger Toggle */}
       <header className="md:hidden sticky top-0 z-40 bg-white border-b border-cream-200 px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between shadow-sm w-full">
         <Link href="/dashboard" className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-          <div className="relative w-8 h-8 rounded-xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
-            <Image
-              src="/app-logo.jpg"
-              alt="Logo pawskost"
-              width={32}
-              height={32}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <PawskostLogo size="sm" />
           <div className="flex flex-col min-w-0">
             <span className="font-heading font-extrabold text-base sm:text-lg leading-tight text-peach-500">
               pawskost
             </span>
-            <span className="text-[9px] sm:text-[10px] text-softgray font-medium hidden xs:inline truncate">Mimi si Kucing Kos</span>
+            <span className="text-[9px] sm:text-[10px] text-softgray font-medium hidden xs:inline truncate">Sistem Manajemen Kos</span>
           </div>
         </Link>
 

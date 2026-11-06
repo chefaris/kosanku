@@ -629,7 +629,7 @@ export default function SubscriptionPage() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-matcha-800">STATUS: LUNAS TERVERIFIKASI RESMI</p>
-                    <p className="text-[10px] text-matcha-600">Disahkan dengan stempel kaki kucing KosanKu &amp; Mimi si Kucing Kos! 🐾✨</p>
+                    <p className="text-[10px] text-matcha-600">Disahkan dengan verifikasi resmi sistem pembayaran digital pawskost.</p>
                   </div>
                 </div>
               </div>

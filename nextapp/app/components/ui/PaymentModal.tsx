@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { PawskostLogo } from './PawskostLogo';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   QrCode,
@@ -314,16 +315,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         <rect x="82" y="78" width="6" height="6" />
                       </svg>
 
-                      {/* Center Mascot Badge */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-11 h-11 bg-white rounded-xl shadow-md border-2 border-peach-400 p-0.5 flex items-center justify-center overflow-hidden">
-                          <Image
-                            src="/app-logo.jpg"
-                            alt="Logo"
-                            width={36}
-                            height={36}
-                            className="w-full h-full object-cover rounded-lg"
-                          />
+                      {/* Center Brand Badge */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-9 h-9 bg-white rounded-xl shadow-md border-2 border-peach-400 p-0.5 flex items-center justify-center overflow-hidden">
+                          <PawskostLogo size="sm" className="!w-full !h-full !rounded-lg" />
                         </div>
                       </div>
                     </div>
@@ -331,7 +326,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                   <div className="space-y-1">
                     <p className="text-xs font-bold text-darkcocoa">
-                      NMID: ID1020304050607 • KOSANKU SAAS
+                      NMID: ID1020304050607 • PAWSKOST SAAS
                     </p>
                     <p className="text-[11px] text-softgray">
                       Dapat dipindai melalui GoPay, OVO, Dana, ShopeePay, BCA Mobile, Livin Mandiri, BRImo, dll.

@@ -480,7 +480,7 @@ export default function RoomsPage() {
   if (!isMounted) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <MimiLoader message="Mimi sedang menata denah kamar... 🐾" />
+        <MimiLoader message="Memuat denah dan status kamar..." />
       </div>
     );
   }
@@ -870,7 +870,7 @@ export default function RoomsPage() {
               ) : (
                 <div className="py-1 text-matcha-600 font-semibold flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-matcha-500" />
-                  <span>Kamar kosong siap huni! Kunci dipegang Mimi 🔑</span>
+                  <span>Kamar kosong siap huni dan tersedia untuk disewa</span>
                 </div>
               )}
 

@@ -11,6 +11,7 @@ import { DemoBanner } from '../ui/DemoBanner';
 import { RegisterModal } from '../ui/RegisterModal';
 import { VideoBumperOverlay } from '../ui/VideoBumperOverlay';
 import { RolePreviewBanner } from '../ui/RolePreviewBanner';
+import { PawskostLogo } from '../ui/PawskostLogo';
 import { useKosStore } from '../../lib/store/useKosStore';
 
 interface AppShellProps {
@@ -135,15 +136,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             {/* Left: Brand Super Admin */}
             <div className="flex items-center gap-3">
               <Link href="/admin" className="flex items-center gap-2.5 group">
-                <div className="relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-peach-400 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/app-logo.jpg"
-                    alt="Logo pawskost"
-                    width={36}
-                    height={36}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <PawskostLogo size="sm" />
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span className="font-heading font-black text-lg text-peach-500 tracking-tight">
