@@ -12,7 +12,7 @@ interface VideoBumperOverlayProps {
 
 export function VideoBumperOverlay({ forcePlay = false, onFinished }: VideoBumperOverlayProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -29,7 +29,16 @@ export function VideoBumperOverlay({ forcePlay = false, onFinished }: VideoBumpe
         setIsVisible(true);
         if (videoRef.current) {
           videoRef.current.currentTime = 0;
-          videoRef.current.play().catch(() => {});
+          videoRef.current.muted = false;
+          videoRef.current.volume = 1.0;
+          setIsMuted(false);
+          videoRef.current.play().catch(() => {
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              setIsMuted(true);
+              videoRef.current.play().catch(() => {});
+            }
+          });
         }
       };
 
@@ -43,18 +52,52 @@ export function VideoBumperOverlay({ forcePlay = false, onFinished }: VideoBumpe
   useEffect(() => {
     if (isVisible && videoRef.current) {
       videoRef.current.currentTime = 0;
+      videoRef.current.muted = false;
+      videoRef.current.volume = 1.0;
+      setIsMuted(false);
+
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // If browser policy blocks unmuted autoplay, mute and retry
-          if (videoRef.current) {
-            videoRef.current.muted = true;
-            setIsMuted(true);
-            videoRef.current.play().catch(() => {});
-          }
-        });
+        playPromise
+          .then(() => {
+            setIsMuted(false);
+          })
+          .catch((err) => {
+            // If browser autoplay policy prevents unmuted autoplay, mute and retry, then unmute on first gesture
+            console.warn('Browser blocked unmuted autoplay, falling back to muted until first interaction:', err);
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              setIsMuted(true);
+              videoRef.current.play().catch(() => {});
+            }
+          });
       }
     }
+  }, [isVisible]);
+
+  // If the browser initially forced muted autoplay, unmute as soon as user clicks/taps anywhere
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const handleFirstInteraction = () => {
+      if (videoRef.current && videoRef.current.muted) {
+        videoRef.current.muted = false;
+        videoRef.current.volume = 1.0;
+        setIsMuted(false);
+      }
+    };
+
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: true });
+    window.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true, passive: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
   }, [isVisible]);
 
   const handleClose = () => {
@@ -124,7 +167,7 @@ export function VideoBumperOverlay({ forcePlay = false, onFinished }: VideoBumpe
                   />
                 </div>
                 <span className="font-heading font-black text-sm text-peach-400 tracking-tight">
-                  pawskost 🐾
+                  pawskost
                 </span>
               </div>
 
@@ -146,25 +189,25 @@ export function VideoBumperOverlay({ forcePlay = false, onFinished }: VideoBumpe
                 <button
                   type="button"
                   onClick={toggleSound}
-                  className="flex items-center gap-2 bg-black/50 hover:bg-black/70 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/10 text-white font-bold text-xs shadow-md transition-all active:scale-95"
+                  className="flex items-center gap-2 bg-black/60 hover:bg-black/80 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/20 text-white font-bold text-xs shadow-md transition-all active:scale-95"
                   title={isMuted ? 'Nyalakan Suara' : 'Bisukan Suara'}
                 >
                   {isMuted ? (
                     <>
-                      <VolumeX className="w-4 h-4 text-peach-400" />
-                      <span>Aktifkan Suara 🔊</span>
+                      <VolumeX className="w-4 h-4 text-peach-400 animate-pulse" />
+                      <span>Aktifkan Suara 🔇</span>
                     </>
                   ) : (
                     <>
-                      <Volume2 className="w-4 h-4 text-matcha-400" />
-                      <span>Suara Aktif 🎵</span>
+                      <Volume2 className="w-4 h-4 text-emerald-400" />
+                      <span>Suara Aktif 🔊</span>
                     </>
                   )}
                 </button>
 
                 <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-white/70 font-semibold bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
                   <Sparkles className="w-3 h-3 text-peach-400" />
-                  <span>Selamat Datang di pawskost 🐾</span>
+                  <span>Selamat Datang di pawskost</span>
                 </div>
               </div>
 

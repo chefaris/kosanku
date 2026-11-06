@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { supabase } from '../supabase';
+import { generateSafeId } from '../utils/idGenerator';
 
 export type TenantStaffRole = 'owner' | 'manager' | 'cashier' | 'staff_ops';
 
@@ -196,7 +197,7 @@ export interface LandingPageConfig {
 }
 
 export const initialLandingPageConfig: LandingPageConfig = {
-  heroBadge: 'Platform Manajemen Kos No. 1 di Indonesia 🐾✨',
+  heroBadge: 'Platform Manajemen Kos No. 1 di Indonesia',
   heroHeadline: 'Kelola Kos Jadi Menyenangkan, Kamar Penuh, Tagihan Beres!',
   heroSubheadline: 'Tinggalkan buku catatan manual yang bikin pusing. Pantau okupansi kamar, kirim pengingat tagihan sewa ke WhatsApp dalam 1 klik, dan simpan arsip KTP penghuni secara aman.',
   heroCtaText: 'Coba Demo Interaktif (1-Klik Tanpa Daftar)',
@@ -399,6 +400,14 @@ export interface Property {
   facilities?: string[];
   isPublished?: boolean;
   googleMapsUrl?: string;
+
+  // Biaya & Kebijakan Praktis (Transparansi Calon Penghuni)
+  electricityType?: 'token' | 'included' | 'meter_monthly';
+  depositAmount?: number;
+  parkingFeeCar?: number;
+  parkingFeeMotor?: number;
+  curfewPolicy?: string;
+  minimalRentMonths?: number;
 }
 
 export const defaultKosPhotoPresets = [
@@ -579,8 +588,10 @@ interface KosStoreState {
   cashAccounts: CashAccountItem[];
   monthlyBudgets: Record<string, number>;
   appTheme: AppTheme;
-  maintenanceTickets: MaintenanceTicket[];
   settings: PropertySettings;
+  guestWishlist: string[];
+  toggleWishlist: (propertyId: string) => void;
+  isWishlisted: (propertyId: string) => boolean;
 
   // Auth & Demo actions
   loginAsDemo: () => void;
@@ -763,7 +774,13 @@ export const initialProperties: Property[] = [
       'Water Heater Kamar Mandi'
     ],
     isPublished: true,
-    googleMapsUrl: 'https://maps.google.com/?q=Dago+Bandung'
+    googleMapsUrl: 'https://maps.google.com/?q=Dago+Asri+Bandung',
+    electricityType: 'included',
+    depositAmount: 500000,
+    parkingFeeCar: 0,
+    parkingFeeMotor: 0,
+    curfewPolicy: 'Akses 24 Jam Mandiri',
+    minimalRentMonths: 1
   },
   {
     id: 'prop-2',
@@ -798,7 +815,97 @@ export const initialProperties: Property[] = [
       'Kamar Mandi Dalam'
     ],
     isPublished: true,
-    googleMapsUrl: 'https://maps.google.com/?q=Sukajadi+Bandung'
+    googleMapsUrl: 'https://maps.google.com/?q=Sukajadi+Bandung',
+    electricityType: 'token',
+    depositAmount: 300000,
+    parkingFeeCar: 150000,
+    parkingFeeMotor: 0,
+    curfewPolicy: 'Jam Malam Gerbang 23.00 WIB',
+    minimalRentMonths: 1
+  },
+  {
+    id: 'prop-3',
+    name: 'KosanKu Tebet Urban Living',
+    address: 'Jl. Tebet Barat Dalam Raya No. 45, Tebet',
+    city: 'Jakarta Selatan',
+    type: 'Putra',
+    floors: 3,
+    managerName: 'Mas Danang',
+    managerPhone: '0812-8877-6655',
+    bankName: 'BCA',
+    accountNumber: '527-1188-290',
+    accountHolder: 'KosanKu Tebet Urban',
+    coverPhoto: 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Kos eksklusif khusus putra di pusat Tebet. 5 menit jalan kaki ke Stasiun Tebet dan halte Transjakarta. Dekat area kuliner hits, nyaman untuk karyawan kantoran Sudirman-Kuningan.',
+    rules: [
+      'Khusus Karyawan & Mahasiswa Putra',
+      'Akses 24 Jam dengan Smart Door Lock',
+      'Dilarang merokok di dalam kamar ber-AC',
+      'Menjaga kebersihan dapur bersama'
+    ],
+    facilities: [
+      'WiFi Cepat 100 Mbps',
+      'AC Dingin Tiap Kamar',
+      'Kamar Mandi Dalam & Water Heater',
+      'Parkir Mobil & Motor Aman',
+      'CCTV Keamanan 24 Jam',
+      'Dapur Bersama & Kulkas'
+    ],
+    isPublished: true,
+    googleMapsUrl: 'https://maps.google.com/?q=Tebet+Jakarta+Selatan',
+    electricityType: 'token',
+    depositAmount: 1000000,
+    parkingFeeCar: 250000,
+    parkingFeeMotor: 0,
+    curfewPolicy: 'Akses 24 Jam Smart Lock',
+    minimalRentMonths: 3
+  },
+  {
+    id: 'prop-4',
+    name: 'KosanKu Graha Asri Kaliurang',
+    address: 'Jl. Kaliurang KM 5, Caturtunggal, Depok',
+    city: 'Yogyakarta',
+    type: 'Putri',
+    floors: 2,
+    managerName: 'Ibu Ratna',
+    managerPhone: '0856-2233-4455',
+    bankName: 'BRI',
+    accountNumber: '0245-01-098765-50-1',
+    accountHolder: 'KosanKu Asri UGM',
+    coverPhoto: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80'
+    ],
+    description: 'Kost mahasiswi asri dan tenang di kawasan Jakal KM 5. Hanya 5 menit ke Kampus UGM dan UNY. Lingkungan aman, sejuk, dekat laundry, minimarket, dan spot makan mahasiswa.',
+    rules: [
+      'Khusus Mahasiswi Putri',
+      'Jam malam gerbang 23.00 WIB',
+      'Tamu pria hanya di pendopo tamu',
+      'Bebas rokok dan alkohol'
+    ],
+    facilities: [
+      'WiFi Fiber Optik Cepat',
+      'Kamar Mandi Dalam',
+      'Dapur Bersama Lengkap',
+      'Parkir Motor Luas Berkanopi',
+      'CCTV 24 Jam',
+      'Dispenser Air Minum Gratis'
+    ],
+    isPublished: true,
+    googleMapsUrl: 'https://maps.google.com/?q=UGM+Yogyakarta',
+    electricityType: 'included',
+    depositAmount: 0,
+    parkingFeeCar: 0,
+    parkingFeeMotor: 0,
+    curfewPolicy: 'Jam Malam Gerbang 23.00 WIB',
+    minimalRentMonths: 1
   }
 ];
 
@@ -882,7 +989,7 @@ export function checkPropertyEligibility(
 }
 
 // Initial Seed Rooms
-const initialRooms: Room[] = [
+export const initialRooms: Room[] = [
   // --- Cabang 1: KosanKu Paviliun Dago (14 kamar) ---
   // Lantai 1 Dago
   {
@@ -1165,6 +1272,86 @@ const initialRooms: Room[] = [
     dueDate: '18 Nov',
     facilities: { ac: true, wifi: true, bath: true },
     idMeteranPln: '3201-4455-2023'
+  },
+
+  // --- Cabang 3: Tebet Urban Living Jakarta Selatan ---
+  {
+    id: 'tbt-101',
+    propertyId: 'prop-3',
+    floor: 1,
+    number: 'TB-101',
+    type: 'Executive',
+    status: 'vacant',
+    price: 2400000,
+    facilities: { ac: true, wifi: true, bath: true },
+    idMeteranPln: '1288-4422-9901',
+    catatan: 'Kamar lantai 1 hadap taman, siap huni!'
+  },
+  {
+    id: 'tbt-102',
+    propertyId: 'prop-3',
+    floor: 1,
+    number: 'TB-102',
+    type: 'Deluxe',
+    status: 'occupied',
+    price: 2200000,
+    tenantId: 't31',
+    tenantName: 'Reza Rahadian',
+    dueDate: '20 Nov',
+    facilities: { ac: true, wifi: true, bath: true },
+    idMeteranPln: '1288-4422-9902'
+  },
+  {
+    id: 'tbt-201',
+    propertyId: 'prop-3',
+    floor: 2,
+    number: 'TB-201',
+    type: 'Executive',
+    status: 'vacant',
+    price: 2500000,
+    facilities: { ac: true, wifi: true, bath: true },
+    idMeteranPln: '1288-4422-9903',
+    catatan: 'Kamar lantai 2 ada balkon pribadi'
+  },
+
+  // --- Cabang 4: Graha Asri Kaliurang Yogyakarta ---
+  {
+    id: 'jkl-101',
+    propertyId: 'prop-4',
+    floor: 1,
+    number: 'JK-101',
+    type: 'Standard',
+    status: 'vacant',
+    price: 950000,
+    facilities: { ac: false, wifi: true, bath: true },
+    idMeteranPln: '9822-1133-7701',
+    catatan: 'Kamar sejuk alami dengan ventilasi asri dekat taman'
+  },
+  {
+    id: 'jkl-102',
+    propertyId: 'prop-4',
+    floor: 1,
+    number: 'JK-102',
+    type: 'Standard Plus',
+    status: 'vacant',
+    price: 1200000,
+    facilities: { ac: true, wifi: true, bath: true },
+    idMeteranPln: '9822-1133-7702',
+    catatan: 'Ada AC dan KM Dalam, view taman asri'
+  },
+  {
+    id: 'jkl-103',
+    propertyId: 'prop-4',
+    floor: 1,
+    number: 'JK-103',
+    type: 'Standard',
+    status: 'occupied',
+    price: 950000,
+    tenantId: 't41',
+    tenantName: 'Annisa Pohan',
+    dueDate: '25 Nov',
+    facilities: { ac: false, wifi: true, bath: true },
+    idMeteranPln: '9822-1133-7703'
   }
 ];
 
@@ -1520,7 +1707,7 @@ const initialSettings: PropertySettings = {
   accountNumber: '8420-1928-31',
   accountHolder: 'pawskost Indonesia',
   waTemplate:
-    'Halo Kak {nama}! 🐾 Salam manis dari pawskost & Mimi si Kucing Kos. Tagihan sewa kamar {kamar} bulan {bulan} sebesar {nominal} jatuh tempo pada {tanggal}. Pembayaran via transfer {bank}: {rekening} a.n {pemilik}. Terima kasih! 🐱✨',
+    'Halo Kak {nama}! Pemberitahuan tagihan sewa kamar {kamar} di {kosName} bulan {bulan} sebesar {nominal} akan jatuh tempo pada {tanggal}. Pembayaran via transfer {bank}: {rekening} a.n {pemilik}. Terima kasih atas kerja samanya! 🙏',
   kosName: 'pawskost Living',
   kosAddress: 'Bandung, Jawa Barat',
   kosPhone: '0812-3456-7890'
@@ -1635,6 +1822,7 @@ export const useKosStore = create<KosStoreState>()(
       appTheme: 'paw-peach',
       maintenanceTickets: initialTickets,
       settings: initialSettings,
+      guestWishlist: [],
 
       // --- AUTH & DEMO ACTIONS ---
       loginAsDemo: () => {
@@ -2351,7 +2539,7 @@ export const useKosStore = create<KosStoreState>()(
       },
 
       addProperty: (propertyData) => {
-        const id = 'prop-' + Date.now().toString(36);
+        const id = generateSafeId('prop');
         const newProperty: Property = { ...propertyData, id };
         set((state) => ({
           properties: [...state.properties, newProperty],
@@ -2378,6 +2566,7 @@ export const useKosStore = create<KosStoreState>()(
           invoices: state.invoices.filter((i) => i.propertyId !== id),
           expenses: state.expenses.filter((e) => e.propertyId !== id),
           maintenanceTickets: state.maintenanceTickets.filter((m) => m.propertyId !== id),
+          guestWishlist: (state.guestWishlist || []).filter((pid) => pid !== id),
           activePropertyId: state.activePropertyId === id ? 'all' : state.activePropertyId
         }));
         return true;
@@ -2456,7 +2645,7 @@ export const useKosStore = create<KosStoreState>()(
 
       // --- ROOM ACTIONS ---
       addRoom: (roomData) => {
-        const id = 'k-' + Date.now().toString(36);
+        const id = generateSafeId('room');
         const activeProp = get().activePropertyId;
         const defaultPropId = activeProp !== 'all' ? activeProp : (get().properties[0]?.id || 'prop-1');
         const finalPropertyId = roomData.propertyId || defaultPropId;
@@ -2860,6 +3049,20 @@ export const useKosStore = create<KosStoreState>()(
           maintenanceTickets: initialTickets,
           settings: initialSettings
         });
+      },
+
+      // Guest Wishlist Actions (Persists in localStorage without login)
+      toggleWishlist: (propertyId: string) => {
+        const current = get().guestWishlist || [];
+        if (current.includes(propertyId)) {
+          set({ guestWishlist: current.filter((id) => id !== propertyId) });
+        } else {
+          set({ guestWishlist: [...current, propertyId] });
+        }
+      },
+      isWishlisted: (propertyId: string) => {
+        const current = get().guestWishlist || [];
+        return current.includes(propertyId);
       }
     }),
     {
@@ -2888,6 +3091,7 @@ export const useKosStore = create<KosStoreState>()(
           }));
         return {
           ...persistedState,
+          guestWishlist: persistedState?.guestWishlist || [],
           deletedAccountIds: persistedState?.deletedAccountIds || [],
           staffUsers: persistedState?.staffUsers && persistedState.staffUsers.length > 0 ? persistedState.staffUsers : initialStaffUsers,
           previewRole: null,

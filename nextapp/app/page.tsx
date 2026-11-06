@@ -51,7 +51,7 @@ export default function PublicMarketplacePage() {
             href="/mitra"
             className="flex-shrink-0 font-bold text-peach-300 hover:text-white flex items-center gap-1 transition-colors hover:underline"
           >
-            <span>Pelajari Software pawskost 👑</span>
+            <span>Pelajari Software pawskost</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -64,7 +64,7 @@ export default function PublicMarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-400 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/app-logo.jpg"
                 alt="Logo pawskost"
@@ -76,30 +76,29 @@ export default function PublicMarketplacePage() {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-peach-500">
+                <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-peach-600">
                   pawskost
                 </span>
-                <span className="text-xs">🐾</span>
               </div>
-              <p className="text-[11px] text-softgray font-semibold -mt-0.5">
+              <p className="text-[11px] text-darkcocoa/70 font-semibold -mt-0.5">
                 Katalog Kosan Indonesia
               </p>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-semibold text-softgray">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-bold text-darkcocoa/75">
             <a href="#hasil-katalog" className="text-peach-600 hover:text-peach-700 font-extrabold flex items-center gap-1">
               <Compass className="w-4 h-4" />
               <span>Cari Kosan</span>
             </a>
-            <a href="#cara-sewa" className="hover:text-peach-500 transition-colors">
+            <a href="#cara-sewa" className="hover:text-peach-600 transition-colors">
               Cara Sewa
             </a>
-            <a href="#keunggulan" className="hover:text-peach-500 transition-colors">
+            <a href="#keunggulan" className="hover:text-peach-600 transition-colors">
               Keunggulan
             </a>
-            <a href="#tentang" className="hover:text-peach-500 transition-colors">
+            <a href="#tentang" className="hover:text-peach-600 transition-colors">
               Untuk Pemilik Kos
             </a>
           </nav>
@@ -109,10 +108,10 @@ export default function PublicMarketplacePage() {
             {/* Tombol ke Landing Page Merchant / Pemilik Kos */}
             <Link
               href="/mitra"
-              className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-peach-500 to-sakura-500 text-white text-xs sm:text-sm font-heading font-bold shadow-cute flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+              className="px-4 py-2.5 rounded-2xl bg-peach-600 hover:bg-peach-700 text-white text-xs sm:text-sm font-heading font-extrabold shadow-sm flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
             >
-              <Crown className="w-4 h-4" />
-              <span>👑 Untuk Pemilik Kos</span>
+              <Building2 className="w-4 h-4" />
+              <span>Untuk Pemilik Kos</span>
             </Link>
 
             <Link
@@ -142,26 +141,26 @@ export default function PublicMarketplacePage() {
               className="block py-1 text-peach-600 font-extrabold flex items-center gap-1.5"
             >
               <Compass className="w-4 h-4" />
-              <span>Cari Kosan 🔍</span>
+              <span>Cari Kosan</span>
             </a>
             <a
               href="#cara-sewa"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Cara Sewa Mudah
             </a>
             <a
               href="#keunggulan"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Keunggulan pawskost
             </a>
             <a
               href="#tentang"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Tentang pawskost
             </a>
@@ -170,10 +169,10 @@ export default function PublicMarketplacePage() {
               <Link
                 href="/mitra"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-peach-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-cute text-center"
+                className="w-full py-2.5 rounded-xl bg-peach-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm text-center"
               >
-                <Crown className="w-4 h-4" />
-                <span>👑 Halaman Pemilik Kos (SaaS)</span>
+                <Building2 className="w-4 h-4" />
+                <span>Halaman Pemilik Kos</span>
               </Link>
               <Link
                 href="/login"
@@ -202,11 +201,11 @@ export default function PublicMarketplacePage() {
         <section id="cara-sewa" className="py-16 md:py-20 bg-white border-t border-cream-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-bold text-peach-500 uppercase tracking-wider">
+              <span className="text-xs font-bold text-peach-600 uppercase tracking-wider">
                 Panduan Praktis
               </span>
               <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-darkcocoa">
-                3 Langkah Mudah Sewa Kos di pawskost 🐾
+                3 Langkah Mudah Sewa Kos di pawskost
               </h2>
               <p className="text-xs sm:text-sm text-softgray">
                 Tak perlu bingung mencari tempat tinggal idaman. Prosesnya simpel, aman, dan tanpa biaya perantara!
@@ -384,7 +383,7 @@ export default function PublicMarketplacePage() {
               </span>
             </div>
             <p className="text-[11px] text-cream-200/60 leading-relaxed">
-              Platform katalog pencarian kos dan software manajemen kos-kosan modern untuk kenyamanan juragan dan pencari kos Indonesia 🐾
+              Platform katalog pencarian kos dan software manajemen kos-kosan modern untuk kenyamanan juragan dan pencari kos Indonesia.
             </p>
           </div>
 
@@ -426,7 +425,7 @@ export default function PublicMarketplacePage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-8 border-t border-white/10 text-center text-[10px] text-white/50">
-          © {new Date().getFullYear()} pawskost • Platform Manajemen &amp; Katalog Kos Indonesia 🐾
+          © {new Date().getFullYear()} pawskost • Platform Manajemen &amp; Katalog Kos Indonesia
         </div>
       </footer>
 

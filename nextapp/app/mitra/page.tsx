@@ -31,7 +31,7 @@ import {
 
 export default function MitraLandingPage() {
   const router = useRouter();
-  const { loginAsDemo, landingPageConfig } = useKosStore();
+  const { currentUser, loginAsDemo, landingPageConfig } = useKosStore();
   const cfg = landingPageConfig || initialLandingPageConfig;
 
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -57,7 +57,7 @@ export default function MitraLandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <Link href="/mitra" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/app-logo.jpg"
                 alt="Logo pawskost"
@@ -69,12 +69,11 @@ export default function MitraLandingPage() {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-peach-500">
+                <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-peach-600">
                   pawskost
                 </span>
-                <span className="text-xs">🐾</span>
               </div>
-              <p className="text-[11px] text-softgray font-semibold -mt-0.5">
+              <p className="text-[11px] text-darkcocoa/70 font-semibold -mt-0.5">
                 Software Manajemen Kos No. 1
               </p>
             </div>
@@ -84,42 +83,57 @@ export default function MitraLandingPage() {
           <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-semibold text-softgray tracking-normal">
             <Link
               href="/"
-              className="px-3 py-1.5 rounded-full bg-cream-100 hover:bg-cream-200 text-peach-600 font-extrabold flex items-center gap-1.5 transition-colors border border-cream-200"
+              className="px-3.5 py-1.5 rounded-full bg-cream-100 hover:bg-cream-200 text-peach-600 font-extrabold flex items-center gap-1.5 transition-colors border border-cream-200"
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Buka Katalog Kos 🔍</span>
+              <span>Buka Katalog Kos</span>
             </Link>
-            <a href="#solusi" className="hover:text-peach-500 transition-colors py-1">Masalah vs Solusi</a>
-            <a href="#fitur" className="hover:text-peach-500 transition-colors py-1">Fitur Unggulan</a>
-            <a href="#harga" className="hover:text-peach-500 transition-colors py-1">Paket Harga</a>
-            <a href="#testimoni" className="hover:text-peach-500 transition-colors py-1">Testimoni</a>
-            <a href="#faq" className="hover:text-peach-500 transition-colors py-1">Tanya Jawab</a>
+            <a href="#solusi" className="hover:text-peach-600 transition-colors py-1">Masalah vs Solusi</a>
+            <a href="#fitur" className="hover:text-peach-600 transition-colors py-1">Fitur Unggulan</a>
+            <a href="#harga" className="hover:text-peach-600 transition-colors py-1">Paket Harga</a>
+            <a href="#testimoni" className="hover:text-peach-600 transition-colors py-1">Testimoni</a>
+            <a href="#faq" className="hover:text-peach-600 transition-colors py-1">Tanya Jawab</a>
           </nav>
 
           {/* Action Buttons */}
           <div className="hidden sm:flex items-center gap-2.5">
-            <button
-              onClick={handleStartDemo}
-              className="px-4 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs sm:text-sm font-bold border border-cream-200 shadow-xs flex items-center gap-1.5 transition-all hover:scale-105"
-            >
-              <Gamepad2 className="w-4 h-4 text-peach-500" />
-              <span>Coba Demo</span>
-            </button>
+            {currentUser ? (
+              <Link
+                href="/dashboard"
+                className="px-4 py-2.5 rounded-2xl bg-peach-600 hover:bg-peach-700 text-white text-xs sm:text-sm font-heading font-extrabold shadow-sm flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+              >
+                <Building2 className="w-4 h-4" />
+                <span>Ke Dashboard Saya</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleStartDemo}
+                  className="px-4 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs sm:text-sm font-bold border border-cream-200 shadow-xs flex items-center gap-1.5 transition-all hover:scale-105"
+                >
+                  <Gamepad2 className="w-4 h-4 text-peach-600" />
+                  <span>Coba Demo</span>
+                </button>
 
-            <Link
-              href="/login"
-              className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-softgray hover:text-darkcocoa transition-colors"
-            >
-              Masuk
-            </Link>
+                <Link
+                  href="/login"
+                  className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-softgray hover:text-darkcocoa transition-colors"
+                >
+                  Masuk
+                </Link>
 
-            <button
-              onClick={() => setIsRegisterModalOpen(true)}
-              className="px-5 py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white text-xs sm:text-sm font-bold shadow-cute flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
-            >
-              <span>Uji Coba 14 Hari</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+                <button
+                  type="button"
+                  onClick={() => setIsRegisterModalOpen(true)}
+                  className="px-5 py-2.5 rounded-2xl bg-peach-600 hover:bg-peach-700 text-white text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+                >
+                  <span>Uji Coba 14 Hari</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -141,71 +155,87 @@ export default function MitraLandingPage() {
               className="block py-2 text-peach-600 font-extrabold flex items-center gap-2"
             >
               <Compass className="w-4 h-4" />
-              <span>Buka Katalog Kos Publik 🔍</span>
+              <span>Buka Katalog Kos</span>
             </Link>
             <a
               href="#solusi"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Masalah vs Solusi
             </a>
             <a
               href="#fitur"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Fitur Unggulan
             </a>
             <a
               href="#harga"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Paket Harga
             </a>
             <a
               href="#testimoni"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Testimoni
             </a>
             <a
               href="#faq"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 hover:text-peach-500"
+              className="block py-1 hover:text-peach-600"
             >
               Tanya Jawab
             </a>
 
             <div className="pt-3 border-t border-cream-100 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handleStartDemo();
-                }}
-                className="w-full py-2.5 rounded-xl bg-cream-100 text-darkcocoa font-bold text-xs flex items-center justify-center gap-1.5"
-              >
-                <Gamepad2 className="w-4 h-4 text-peach-500" />
-                <span>Coba Demo Interaktif (1-Klik)</span>
-              </button>
-              <Link
-                href="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-darkcocoa text-white font-bold text-xs text-center"
-              >
-                Masuk Akun Pemilik
-              </Link>
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsRegisterModalOpen(true);
-                }}
-                className="w-full py-2.5 rounded-xl bg-peach-500 text-white font-bold text-xs text-center shadow-cute"
-              >
-                Daftar Uji Coba 14 Hari
-              </button>
+              {currentUser ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full py-2.5 rounded-xl bg-peach-600 text-white font-heading font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <Building2 className="w-4 h-4" />
+                  <span>Ke Dashboard Saya</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleStartDemo();
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-cream-100 text-darkcocoa font-bold text-xs flex items-center justify-center gap-1.5"
+                  >
+                    <Gamepad2 className="w-4 h-4 text-peach-600" />
+                    <span>Coba Demo Interaktif (1-Klik)</span>
+                  </button>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full py-2.5 rounded-xl bg-darkcocoa text-white font-bold text-xs text-center"
+                  >
+                    Masuk Akun Pemilik
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsRegisterModalOpen(true);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-peach-600 text-white font-bold text-xs text-center shadow-sm"
+                  >
+                    Daftar Uji Coba 14 Hari
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}

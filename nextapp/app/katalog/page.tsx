@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 export default function KatalogPage() {
   const router = useRouter();
-  const { loginAsDemo } = useKosStore();
+  const { currentUser, loginAsDemo } = useKosStore();
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const handleStartDemo = () => {
@@ -25,7 +25,7 @@ export default function KatalogPage() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-cream-200/90 shadow-xs py-3.5 sm:py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-cute bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="relative w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm bg-peach-50 flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/app-logo.jpg"
                 alt="Logo pawskost"
@@ -37,12 +37,11 @@ export default function KatalogPage() {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-peach-500">
+                <span className="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-peach-600">
                   pawskost
                 </span>
-                <span className="text-xs">🐾</span>
               </div>
-              <p className="text-[10px] text-softgray font-semibold -mt-0.5">
+              <p className="text-[10px] text-darkcocoa/70 font-semibold -mt-0.5">
                 Katalog Kosan Indonesia
               </p>
             </div>
@@ -58,21 +57,32 @@ export default function KatalogPage() {
               <span>Halaman Depan</span>
             </Link>
 
-            <button
-              type="button"
-              onClick={handleStartDemo}
-              className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold border border-cream-200 transition-all hover:scale-105"
-            >
-              <Gamepad2 className="w-4 h-4 text-peach-500" />
-              <span>Coba Demo Aplikasi</span>
-            </button>
+            {!currentUser && (
+              <button
+                type="button"
+                onClick={handleStartDemo}
+                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-cream-100 hover:bg-cream-200 text-darkcocoa text-xs font-bold border border-cream-200 transition-all hover:scale-105"
+              >
+                <Gamepad2 className="w-4 h-4 text-peach-600" />
+                <span>Coba Demo Aplikasi</span>
+              </button>
+            )}
 
-            <Link
-              href="/login"
-              className="px-4 py-2 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white text-xs font-bold shadow-sm transition-all hover:scale-105"
-            >
-              Masuk Pemilik
-            </Link>
+            {currentUser ? (
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 rounded-2xl bg-peach-600 hover:bg-peach-700 text-white text-xs font-bold shadow-sm transition-all hover:scale-105"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 rounded-2xl bg-darkcocoa hover:bg-darkcocoa/90 text-white text-xs font-bold shadow-sm transition-all hover:scale-105"
+              >
+                Masuk Pemilik
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -90,7 +100,7 @@ export default function KatalogPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="font-heading font-extrabold text-base text-peach-400">pawskost</span>
-            <span>• Platform Manajemen &amp; Katalog Kos Indonesia 🐾</span>
+            <span>• Platform Manajemen &amp; Katalog Kos Indonesia</span>
           </div>
           <p className="text-softgray text-center sm:text-right">
             &copy; {new Date().getFullYear()} pawskost. Seluruh hak cipta dilindungi undang-undang.

@@ -30,10 +30,14 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   }, [appTheme]);
 
-  const isPublicPage = pathname === '/login' || pathname === '/';
+  const isPublicPage =
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname.startsWith('/mitra') ||
+    pathname.startsWith('/katalog');
   const isAdminPage = pathname.startsWith('/admin');
 
-  // 1. Halaman Publik (Landing Page & Login)
+  // 1. Halaman Publik (Landing Page, Login, Mitra/Pelajari, & Katalog)
   if (isPublicPage) {
     return (
       <main className="min-h-screen w-full">

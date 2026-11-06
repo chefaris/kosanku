@@ -20,7 +20,15 @@ import {
   Trash2,
   ShieldCheck,
   FileText,
-  Compass
+  Compass,
+  Zap,
+  Car,
+  Clock,
+  Coins,
+  ExternalLink,
+  Camera,
+  Upload,
+  Loader2
 } from 'lucide-react';
 import {
   Property,
@@ -30,6 +38,7 @@ import {
   defaultCommonKosFacilities,
   checkPropertyEligibility
 } from '../../lib/store/useKosStore';
+import { ImageCompressorUploader } from '../common/ImageCompressorUploader';
 
 interface PropertyModalProps {
   isOpen: boolean;
@@ -44,7 +53,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
 }) => {
   const { addProperty, updateProperty, rooms } = useKosStore();
 
-  const [activeTab, setActiveTab] = useState<'basic' | 'promotion'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'policy' | 'promotion'>('basic');
 
   // Basic Details
   const [name, setName] = useState('');
@@ -57,6 +66,13 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [accountHolder, setAccountHolder] = useState('');
+
+  // Policy & Transparent Costs
+  const [electricityType, setElectricityType] = useState<'token' | 'included' | 'meter_monthly'>('token');
+  const [depositAmount, setDepositAmount] = useState<number | string>(0);
+  const [parkingFeeCar, setParkingFeeCar] = useState<number | string>(0);
+  const [curfewPolicy, setCurfewPolicy] = useState('Akses 24 Jam Mandiri');
+  const [minimalRentMonths, setMinimalRentMonths] = useState<number>(1);
 
   // Promotion & Catalog Details
   const [description, setDescription] = useState('');
@@ -81,6 +97,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       setAccountNumber(editingProperty.accountNumber || '');
       setAccountHolder(editingProperty.accountHolder || '');
 
+      setElectricityType(editingProperty.electricityType || 'token');
+      setDepositAmount(editingProperty.depositAmount !== undefined ? editingProperty.depositAmount : 0);
+      setParkingFeeCar(editingProperty.parkingFeeCar !== undefined ? editingProperty.parkingFeeCar : 0);
+      setCurfewPolicy(editingProperty.curfewPolicy || 'Akses 24 Jam Mandiri');
+      setMinimalRentMonths(editingProperty.minimalRentMonths || 1);
+
       setDescription(editingProperty.description || '');
       setCoverPhoto(editingProperty.coverPhoto || editingProperty.photos?.[0] || '');
       setPhotos(editingProperty.photos || []);
@@ -99,6 +121,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       setBankName('BCA');
       setAccountNumber('');
       setAccountHolder('');
+
+      setElectricityType('token');
+      setDepositAmount(0);
+      setParkingFeeCar(0);
+      setCurfewPolicy('Akses 24 Jam Mandiri');
+      setMinimalRentMonths(1);
 
       setDescription('');
       setCoverPhoto(defaultKosPhotoPresets[0].url);
@@ -126,7 +154,10 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     coverPhoto,
     photos,
     facilities,
-    isPublished
+    isPublished,
+    electricityType,
+    depositAmount: Number(depositAmount) || 0,
+    curfewPolicy
   };
 
   const eligibility = checkPropertyEligibility(tempProperty, rooms);
@@ -146,6 +177,19 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     setPhotos(updated);
     if (coverPhoto === urlToRemove) {
       setCoverPhoto(updated[0] || '');
+    }
+  };
+
+  const handleImagesUploaded = (dataUrls: string[]) => {
+    setPhotos((prev) => {
+      const next = [...prev, ...dataUrls];
+      if (!coverPhoto && next.length > 0) {
+        setCoverPhoto(next[0]);
+      }
+      return next;
+    });
+    if (!coverPhoto && dataUrls.length > 0) {
+      setCoverPhoto(dataUrls[0]);
     }
   };
 
@@ -189,7 +233,13 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       rules,
       facilities,
       isPublished,
-      googleMapsUrl: googleMapsUrl.trim() || undefined
+      googleMapsUrl: googleMapsUrl.trim() || undefined,
+      electricityType,
+      depositAmount: Number(depositAmount) || 0,
+      parkingFeeCar: Number(parkingFeeCar) || 0,
+      parkingFeeMotor: 0,
+      curfewPolicy: curfewPolicy.trim() || 'Akses 24 Jam Mandiri',
+      minimalRentMonths: Number(minimalRentMonths) || 1
     };
 
     if (editingProperty) {
@@ -223,13 +273,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           {/* Header */}
           <div className="p-4 sm:p-5 bg-gradient-to-r from-peach-100/70 via-sakura-100/60 to-cream-100/60 border-b border-cream-200 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-peach-500 text-white flex items-center justify-center shadow-cute">
+              <div className="w-10 h-10 rounded-2xl bg-peach-600 text-white flex items-center justify-center shadow-cute">
                 <Building2 className="w-5 h-5" strokeWidth={2} />
               </div>
               <div>
                 <h3 className="font-heading font-extrabold text-base sm:text-lg text-darkcocoa flex items-center gap-2">
-                  <span>{editingProperty ? 'Edit Cabang & Promosi Kos' : 'Daftarkan Cabang Kos Baru'}</span>
-                  <span className="text-sm">🐾</span>
+                  <span>{editingProperty ? 'Edit Cabang & Etalase Kos' : 'Daftarkan Cabang Kos Baru'}</span>
                 </h3>
                 <p className="font-body text-xs text-softgray">
                   Lengkapi data kos agar otomatis tayang di katalog promosi website utama
@@ -246,13 +295,13 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           </div>
 
           {/* Tab Selector */}
-          <div className="flex border-b border-cream-200 bg-cream-50/50 px-4 sm:px-6 pt-2">
+          <div className="flex border-b border-cream-200 bg-cream-50/50 px-3 sm:px-6 pt-2 overflow-x-auto scrollbar-none gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setActiveTab('basic')}
-              className={`pb-2.5 px-3 font-heading font-bold text-xs sm:text-sm border-b-2 transition-all flex items-center gap-1.5 ${
+              className={`pb-2.5 px-2.5 sm:px-3 font-heading font-bold text-xs sm:text-sm border-b-2 transition-all flex items-center gap-1.5 flex-shrink-0 ${
                 activeTab === 'basic'
-                  ? 'border-peach-500 text-peach-600'
+                  ? 'border-peach-600 text-peach-600'
                   : 'border-transparent text-softgray hover:text-darkcocoa'
               }`}
             >
@@ -262,15 +311,28 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
 
             <button
               type="button"
+              onClick={() => setActiveTab('policy')}
+              className={`pb-2.5 px-2.5 sm:px-3 font-heading font-bold text-xs sm:text-sm border-b-2 transition-all flex items-center gap-1.5 flex-shrink-0 ${
+                activeTab === 'policy'
+                  ? 'border-peach-600 text-peach-600'
+                  : 'border-transparent text-softgray hover:text-darkcocoa'
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              <span>2. Biaya &amp; Kebijakan</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveTab('promotion')}
-              className={`pb-2.5 px-3 font-heading font-bold text-xs sm:text-sm border-b-2 transition-all flex items-center gap-1.5 ${
+              className={`pb-2.5 px-2.5 sm:px-3 font-heading font-bold text-xs sm:text-sm border-b-2 transition-all flex items-center gap-1.5 flex-shrink-0 ${
                 activeTab === 'promotion'
-                  ? 'border-peach-500 text-peach-600'
+                  ? 'border-peach-600 text-peach-600'
                   : 'border-transparent text-softgray hover:text-darkcocoa'
               }`}
             >
               <Globe2 className="w-4 h-4" />
-              <span>2. Promosi &amp; Katalog Publik</span>
+              <span>3. Foto &amp; Etalase</span>
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
                   eligibility.isEligible ? 'bg-matcha-100 text-matcha-700' : 'bg-peach-100 text-peach-700'
@@ -487,7 +549,129 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
               </div>
             )}
 
-            {/* TAB 2: PROMOTION & PUBLIC CATALOG */}
+            {/* TAB 2: BIAYA & KEBIJAKAN PRAKTIS */}
+            {activeTab === 'policy' && (
+              <div className="space-y-4 animate-in fade-in duration-150">
+                {/* 1. Skema Listrik */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 text-amber-500" />
+                    <span>Skema Pembayaran Listrik Kamar</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {[
+                      { id: 'token', label: 'Token Mandiri', desc: 'Penghuni isi token listrik sendiri per kamar' },
+                      { id: 'included', label: 'Termasuk Sewa', desc: 'Listrik sudah termasuk di tarif sewa bulanan' },
+                      { id: 'meter_monthly', label: 'Meteran Pascabayar', desc: 'Dihitung per kWh sesuai pemakaian tiap bulan' }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setElectricityType(item.id as any)}
+                        className={`p-3 rounded-2xl border text-left transition-all ${
+                          electricityType === item.id
+                            ? 'border-peach-600 bg-peach-50 text-peach-900 font-bold shadow-xs'
+                            : 'border-cream-200 bg-white hover:bg-cream-50 text-darkcocoa'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-heading text-xs font-extrabold">{item.label}</span>
+                          {electricityType === item.id && <CheckCircle2 className="w-3.5 h-3.5 text-peach-600" />}
+                        </div>
+                        <p className="text-[10px] text-softgray leading-tight">{item.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. Uang Jaminan / Deposit & Biaya Parkir */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-peach-600" />
+                      <span>Uang Deposit / Jaminan (Rp)</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-softgray">
+                        Rp
+                      </span>
+                      <input
+                        type="number"
+                        placeholder="0 (Jika tanpa deposit)"
+                        value={depositAmount}
+                        onChange={(e) => setDepositAmount(e.target.value)}
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-600 text-xs font-bold"
+                      />
+                    </div>
+                    <p className="text-[10px] text-softgray mt-1">
+                      Uang jaminan yang dikembalikan saat penyewa checkout jika tidak ada kerusakan.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <Car className="w-4 h-4 text-peach-600" />
+                      <span>Biaya Parkir Mobil (Rp/Bln)</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-softgray">
+                        Rp
+                      </span>
+                      <input
+                        type="number"
+                        placeholder="0 (Jika gratis / tidak ada)"
+                        value={parkingFeeCar}
+                        onChange={(e) => setParkingFeeCar(e.target.value)}
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-600 text-xs font-bold"
+                      />
+                    </div>
+                    <p className="text-[10px] text-softgray mt-1">
+                      Isi 0 jika fasilitas parkir mobil gratis atau termasuk sewa.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Kebijakan Jam Malam & Minimal Sewa */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-peach-600" />
+                      <span>Akses Gerbang / Jam Malam</span>
+                    </label>
+                    <select
+                      value={curfewPolicy}
+                      onChange={(e) => setCurfewPolicy(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-600 text-xs font-bold"
+                    >
+                      <option value="Akses 24 Jam Mandiri">Akses 24 Jam Mandiri (Kunci Sendiri)</option>
+                      <option value="Akses 24 Jam Smart Lock">Akses 24 Jam dengan Smart Lock / Kartu</option>
+                      <option value="Jam Malam Gerbang 23.00 WIB">Jam Malam Gerbang 23.00 WIB</option>
+                      <option value="Jam Malam Gerbang 22.00 WIB">Jam Malam Gerbang 22.00 WIB</option>
+                      <option value="Bebas Jam Malam Tanpa Kunci">Bebas Jam Malam</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <Compass className="w-4 h-4 text-peach-600" />
+                      <span>Minimal Durasi Sewa</span>
+                    </label>
+                    <select
+                      value={minimalRentMonths}
+                      onChange={(e) => setMinimalRentMonths(Number(e.target.value))}
+                      className="w-full px-3.5 py-2.5 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-600 text-xs font-bold"
+                    >
+                      <option value={1}>Minimal 1 Bulan</option>
+                      <option value={3}>Minimal 3 Bulan</option>
+                      <option value={6}>Minimal 6 Bulan</option>
+                      <option value={12}>Minimal 1 Tahun</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: PROMOTION & PUBLIC CATALOG */}
             {activeTab === 'promotion' && (
               <div className="space-y-4 animate-in fade-in duration-150">
                 {/* Switch Publikasikan */}
@@ -497,7 +681,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                       Tampilkan di Katalog Promosi Website
                     </p>
                     <p className="text-[11px] text-softgray">
-                      Jika aktif dan data lengkap, kos akan otomatis dipromosikan ke calon penyewa di website utama.
+                      Jika aktif dan data lengkap, kos akan otomatis dipromosikan ke calon penyewa di website utama tanpa biaya komisi.
                     </p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
@@ -507,8 +691,39 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                       onChange={(e) => setIsPublished(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-cream-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-cream-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-peach-500"></div>
+                    <div className="w-11 h-6 bg-cream-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-cream-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-peach-600"></div>
                   </label>
+                </div>
+
+                {/* Tautan Google Maps / Titik Lokasi Peta */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-peach-600" />
+                      <span>Tautan / Titik Lokasi Google Maps</span>
+                    </label>
+                    {googleMapsUrl && (
+                      <a
+                        href={googleMapsUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] font-bold text-peach-600 hover:underline flex items-center gap-1"
+                      >
+                        <span>Uji Buka Titik Peta</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                  <input
+                    type="url"
+                    placeholder="Contoh: https://maps.google.com/?q=Nama+Kos+Jalan+Kota atau tautan bagikan Google Maps"
+                    value={googleMapsUrl}
+                    onChange={(e) => setGoogleMapsUrl(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-600 text-xs font-medium"
+                  />
+                  <p className="text-[10px] text-softgray mt-1">
+                    Calon penghuni dapat langsung mengklik tombol &ldquo;Buka di Google Maps&rdquo; pada katalog untuk melihat navigasi rute ke kos Anda.
+                  </p>
                 </div>
 
                 {/* Deskripsi Keunggulan Kost */}
@@ -521,7 +736,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                     placeholder="Contoh: Kos nyaman dekat Kampus ITB & Unpad Dipatiukur, hanya 5 menit jalan kaki. Lingkungan sejuk, tenang, bebas banjir, dekat laundry dan minimarket..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full p-3 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-400 text-xs sm:text-sm font-medium resize-none"
+                    className="w-full p-3 rounded-2xl bg-cream-50 border border-cream-200 focus:outline-none focus:border-peach-600 text-xs sm:text-sm font-medium resize-none"
                   />
                 </div>
 
@@ -529,12 +744,19 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-bold text-darkcocoa uppercase tracking-wider">
-                      Foto Kamar &amp; Kost <span className="text-peach-500">*</span>
+                      Foto Kamar &amp; Kost <span className="text-peach-600">*</span>
                     </label>
                     <span className="text-[11px] text-softgray">
                       {photos.length} foto tersimpan
                     </span>
                   </div>
+
+                  {/* Unggah Foto Asli dari HP / Komputer (Tanpa Cloud Backend) */}
+                  <ImageCompressorUploader
+                    id="property-kos-photo-uploader"
+                    onImagesCompressed={handleImagesUploaded}
+                    className="mb-3"
+                  />
 
                   {/* Foto yang Terpilih */}
                   {photos.length > 0 && (
@@ -543,7 +765,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                         <div
                           key={idx}
                           className={`relative rounded-2xl overflow-hidden aspect-video border-2 group ${
-                            coverPhoto === url ? 'border-peach-500 ring-2 ring-peach-300' : 'border-cream-200'
+                            coverPhoto === url ? 'border-peach-600 ring-2 ring-peach-300' : 'border-cream-200'
                           }`}
                         >
                           <img
@@ -555,7 +777,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                             <button
                               type="button"
                               onClick={() => setCoverPhoto(url)}
-                              className="px-2 py-1 rounded-lg bg-peach-500 text-white text-[10px] font-bold shadow-xs hover:scale-105"
+                              className="px-2 py-1 rounded-lg bg-peach-600 text-white text-[10px] font-bold shadow-xs hover:scale-105"
                             >
                               {coverPhoto === url ? '⭐ Sampul' : 'Jadikan Sampul'}
                             </button>
@@ -569,7 +791,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                             </button>
                           </div>
                           {coverPhoto === url && (
-                            <span className="absolute bottom-1.5 left-1.5 bg-peach-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shadow-xs">
+                            <span className="absolute bottom-1.5 left-1.5 bg-peach-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shadow-xs">
                               Foto Sampul Utama
                             </span>
                           )}
@@ -598,13 +820,13 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                               }
                             }}
                             className={`rounded-xl overflow-hidden border-2 aspect-square relative group transition-all ${
-                              isSelected ? 'border-peach-500 ring-2 ring-peach-300' : 'border-cream-200 opacity-70 hover:opacity-100'
+                              isSelected ? 'border-peach-600 ring-2 ring-peach-300' : 'border-cream-200 opacity-70 hover:opacity-100'
                             }`}
                             title={preset.name}
                           >
                             <img src={preset.url} alt={preset.name} className="w-full h-full object-cover" />
                             {isSelected && (
-                              <div className="absolute top-1 right-1 bg-peach-500 text-white rounded-full p-0.5 shadow-xs">
+                              <div className="absolute top-1 right-1 bg-peach-600 text-white rounded-full p-0.5 shadow-xs">
                                 <CheckCircle2 className="w-3 h-3" />
                               </div>
                             )}
@@ -621,7 +843,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                       placeholder="Atau tempel link URL foto lain (https://...)"
                       value={newPhotoUrl}
                       onChange={(e) => setNewPhotoUrl(e.target.value)}
-                      className="flex-1 px-3.5 py-2 rounded-xl bg-cream-50 border border-cream-200 text-xs focus:outline-none focus:border-peach-400 font-medium"
+                      className="flex-1 px-3.5 py-2 rounded-xl bg-cream-50 border border-cream-200 text-xs focus:outline-none focus:border-peach-600 font-medium"
                     />
                     <button
                       type="button"
@@ -649,8 +871,8 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                           onClick={() => toggleFacility(fac)}
                           className={`p-2 rounded-xl border text-left text-[11px] font-bold transition-all flex items-center gap-1.5 ${
                             isSelected
-                              ? 'bg-peach-500 text-white border-peach-500 shadow-xs'
-                              : 'bg-cream-50 text-softgray border-cream-200 hover:border-peach-300 hover:text-darkcocoa'
+                              ? 'bg-peach-600 text-white border-peach-600 shadow-xs'
+                              : 'bg-cream-50 text-darkcocoa border-cream-200 hover:border-peach-300'
                           }`}
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
@@ -676,12 +898,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                           onClick={() => toggleRule(rule)}
                           className={`p-2.5 rounded-xl border text-left text-xs font-medium transition-all flex items-center justify-between ${
                             isSelected
-                              ? 'bg-sakura-50 text-darkcocoa border-sakura-300 shadow-2xs font-bold'
+                              ? 'bg-peach-50 text-darkcocoa border-peach-400 shadow-2xs font-bold'
                               : 'bg-cream-50 text-softgray border-cream-200 hover:border-peach-300'
                           }`}
                         >
                           <span className="line-clamp-1">{rule}</span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-peach-500 flex-shrink-0 ml-1" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-peach-600 flex-shrink-0 ml-1" />}
                         </button>
                       );
                     })}
@@ -696,18 +918,26 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 {activeTab === 'basic' ? (
                   <button
                     type="button"
-                    onClick={() => setActiveTab('promotion')}
-                    className="text-peach-500 font-bold hover:underline"
+                    onClick={() => setActiveTab('policy')}
+                    className="text-peach-600 font-extrabold hover:underline"
                   >
-                    Lanjut ke Tab Promosi &rarr;
+                    Lanjut ke Biaya &amp; Kebijakan &rarr;
+                  </button>
+                ) : activeTab === 'policy' ? (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('promotion')}
+                    className="text-peach-600 font-extrabold hover:underline"
+                  >
+                    Lanjut ke Foto &amp; Etalase &rarr;
                   </button>
                 ) : (
                   <button
                     type="button"
-                    onClick={() => setActiveTab('basic')}
+                    onClick={() => setActiveTab('policy')}
                     className="text-softgray font-semibold hover:underline"
                   >
-                    &larr; Kembali ke Data Pokok
+                    &larr; Kembali ke Biaya &amp; Kebijakan
                   </button>
                 )}
               </div>
@@ -722,7 +952,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 sm:px-6 py-2.5 rounded-2xl bg-peach-500 hover:bg-peach-400 text-white font-heading font-bold text-xs sm:text-sm shadow-cute flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
+                  className="px-5 sm:px-6 py-2.5 rounded-2xl bg-peach-600 hover:bg-peach-700 active:bg-peach-800 text-white font-heading font-extrabold text-xs sm:text-sm shadow-md shadow-peach-600/30 flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
                 >
                   <Save className="w-4 h-4" strokeWidth={2} />
                   <span>{editingProperty ? 'Simpan Data Cabang' : 'Daftarkan Cabang'}</span>

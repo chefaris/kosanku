@@ -38,7 +38,8 @@ import {
   ShieldAlert,
   Dice5,
   Globe,
-  AlertCircle
+  AlertCircle,
+  ExternalLink
 } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -600,27 +601,40 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-cream-200">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingProperty(prop);
-                      setIsPropertyModalOpen(true);
-                    }}
-                    className="px-3 py-1.5 rounded-xl bg-white border border-cream-200 hover:border-peach-400 text-darkcocoa text-xs font-bold flex items-center gap-1"
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-cream-200">
+                  <a
+                    href={`/katalog?kos=${encodeURIComponent(prop.name)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-2.5 py-1.5 rounded-xl bg-peach-50 hover:bg-peach-100 text-peach-700 text-xs font-bold flex items-center gap-1 border border-peach-200 transition-colors"
+                    title="Buka live preview kos ini di katalog marketplace"
                   >
-                    <Edit2 className="w-3 h-3 text-peach-500" />
-                    <span>Edit Cabang</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeletePropertyConfirm(prop)}
-                    disabled={properties.length <= 1}
-                    className="p-1.5 rounded-xl text-softgray hover:text-red-500 hover:bg-red-50 disabled:opacity-30"
-                    title={properties.length <= 1 ? 'Minimal harus ada 1 cabang kos' : 'Hapus cabang ini'}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                    <ExternalLink className="w-3 h-3 text-peach-600" />
+                    <span>Lihat di Katalog</span>
+                  </a>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingProperty(prop);
+                        setIsPropertyModalOpen(true);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-white border border-cream-200 hover:border-peach-400 text-darkcocoa text-xs font-bold flex items-center gap-1"
+                    >
+                      <Edit2 className="w-3 h-3 text-peach-500" />
+                      <span>Edit Cabang</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePropertyConfirm(prop)}
+                      disabled={properties.length <= 1}
+                      className="p-1.5 rounded-xl text-softgray hover:text-red-500 hover:bg-red-50 disabled:opacity-30"
+                      title={properties.length <= 1 ? 'Minimal harus ada 1 cabang kos' : 'Hapus cabang ini'}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );

@@ -17,7 +17,8 @@ import {
   Send,
   X,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Phone
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -37,7 +38,8 @@ export default function DashboardPage() {
     invoices,
     expenses,
     maintenanceTickets,
-    settings
+    settings,
+    currentUser
   } = useKosStore();
 
   React.useEffect(() => {
@@ -46,6 +48,7 @@ export default function DashboardPage() {
 
   const [waModalOpen, setWaModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [recipientPhone, setRecipientPhone] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const activeProperty = properties.find((p) => p.id === activePropertyId);
@@ -100,28 +103,72 @@ export default function DashboardPage() {
     .filter((inv) => inv.status !== 'paid')
     .slice(0, 4);
 
+  const candidateInvoices = currentInvoices.filter((inv) => inv.status !== 'paid').length > 0
+    ? currentInvoices.filter((inv) => inv.status !== 'paid')
+    : currentInvoices;
+
   const handleOpenWaModal = (invoice?: Invoice) => {
-    setSelectedInvoice(invoice || upcomingInvoices[0] || invoices[0] || null);
+    const inv = invoice || upcomingInvoices[0] || candidateInvoices[0] || currentInvoices[0] || null;
+    setSelectedInvoice(inv);
+    if (inv) {
+      const tenant = tenants.find((t) => t.id === inv.tenantId || t.name === inv.tenantName);
+      setRecipientPhone(tenant?.phone || '');
+    } else {
+      setRecipientPhone('');
+    }
     setWaModalOpen(true);
+  };
+
+  const handleInvoiceChange = (invId: string) => {
+    const inv = currentInvoices.find((i) => i.id === invId) || null;
+    setSelectedInvoice(inv);
+    if (inv) {
+      const tenant = tenants.find((t) => t.id === inv.tenantId || t.name === inv.tenantName);
+      setRecipientPhone(tenant?.phone || '');
+    }
+  };
+
+  const targetProperty = selectedInvoice
+    ? properties.find((p) => p.id === selectedInvoice.propertyId)
+    : activeProperty;
+
+  const realKosName = targetProperty ? targetProperty.name : (settings.kosName || 'pawskost Living');
+  const bankName = targetProperty?.bankName || settings.bankName || 'BCA (Bank Central Asia)';
+  const accountNumber = targetProperty?.accountNumber || settings.accountNumber || '-';
+  const accountHolder = targetProperty?.accountHolder || settings.accountHolder || targetProperty?.managerName || 'Pengelola Kos';
+
+  const generateWaText = () => {
+    if (!selectedInvoice) return '';
+    return (
+      `Halo Kak ${selectedInvoice.tenantName}! 👋\n\n` +
+      `Pemberitahuan tagihan sewa kamar *${selectedInvoice.roomNumber}* di *${realKosName}*:\n\n` +
+      `📌 *Rincian Tagihan:*\n` +
+      `• Properti: *${realKosName}*\n` +
+      `• Kamar: *${selectedInvoice.roomNumber}*\n` +
+      `• Periode: *${selectedInvoice.periodMonth}*\n` +
+      `• Total Tagihan: *${formatRupiah(selectedInvoice.amount)}*\n` +
+      `• Jatuh Tempo: *${selectedInvoice.dueDate}*\n\n` +
+      `💳 *Rekening Pembayaran:*\n` +
+      `Bank: ${bankName}\n` +
+      `No. Rekening: *${accountNumber}*\n` +
+      `Atas Nama: *${accountHolder}*\n\n` +
+      `Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran telah dilakukan. Terima kasih atas kerja samanya dalam menjaga kenyamanan bersama di ${realKosName}! 🙏`
+    );
   };
 
   const handleSendWa = () => {
     if (!selectedInvoice) return;
-    setWaModalOpen(false);
-
-    // Find tenant phone
-    const tenant = tenants.find((t) => t.id === selectedInvoice.tenantId || t.name === selectedInvoice.tenantName);
-    const phone = tenant ? tenant.phone.replace(/[^0-9]/g, '').replace(/^0/, '62') : '';
-
-    const waText = encodeURIComponent(
-      `Halo Kak ${selectedInvoice.tenantName}! 👋 Salam manis dari KosanKu & Mimi si Kucing Kos 🐱✨\n\nSekadar info manis, tagihan sewa kamar ${selectedInvoice.roomNumber} sebesar ${formatRupiah(selectedInvoice.amount)} akan jatuh tempo pada ${selectedInvoice.dueDate}.\n\nPembayaran via Transfer ${settings.bankName}: ${settings.accountNumber} (a.n ${settings.accountHolder}).\n\nTerima kasih banyak sudah menjaga kenyamanan kost bersama Mimi! 🏡🌸`
-    );
-
-    if (phone) {
-      window.open(`https://wa.me/${phone}?text=${waText}`, '_blank');
+    const cleanPhone = recipientPhone.replace(/[^0-9]/g, '').replace(/^0/, '62');
+    if (!cleanPhone || cleanPhone.length < 8) {
+      alert('Mohon masukkan nomor WhatsApp penerima yang valid (minimal 8-9 digit).');
+      return;
     }
 
-    setToastMessage(`Pesan pengingat WhatsApp siap dikirim ke ${selectedInvoice.tenantName}! 💌`);
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(generateWaText())}`;
+    window.open(waUrl, '_blank');
+    setWaModalOpen(false);
+
+    setToastMessage(`Pesan pengingat WhatsApp siap dikirim ke ${selectedInvoice.tenantName} (${realKosName})!`);
     setTimeout(() => {
       setToastMessage(null);
     }, 3500);
@@ -150,7 +197,7 @@ export default function DashboardPage() {
   if (!isMounted) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <MimiLoader message="Mimi sedang menyiapkan data... 🐾" />
+        <MimiLoader message="Menyiapkan data operasional kos..." />
       </div>
     );
   }
@@ -164,28 +211,29 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-5 right-5 z-50 bg-matcha-400 text-white px-5 py-3.5 rounded-2xl shadow-cute flex items-center gap-3 font-semibold text-sm"
+            className="fixed top-5 right-5 z-50 bg-peach-600 text-white px-5 py-3.5 rounded-2xl shadow-lg flex items-center gap-3 font-semibold text-sm"
           >
-            <Sparkles className="w-5 h-5 text-matcha-50 animate-spin" strokeWidth={1.75} />
+            <Sparkles className="w-5 h-5 text-peach-100 animate-spin" strokeWidth={1.75} />
             <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Header with Mimi Mascot Hero Banner */}
+      {/* Header with Professional Property Overview Banner */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative overflow-hidden bg-gradient-to-r from-peach-100/90 via-sakura-50 to-cream-100 rounded-3xl p-4 sm:p-6 md:p-8 border border-peach-200 shadow-cute"
+        className="relative overflow-hidden bg-gradient-to-r from-peach-100/90 via-sakura-50 to-cream-100 rounded-3xl p-4 sm:p-6 md:p-8 border border-peach-200 shadow-sm"
       >
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-xl text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-peach-500 text-xs font-bold shadow-sm border border-peach-200/60">
-              <span>Maskot Resmi KosanKu: Mimi si Kucing Kos</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-peach-600 text-xs font-bold shadow-sm border border-peach-200/60">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Dashboard Operasional Properti</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-darkcocoa tracking-tight leading-snug">
-              Selamat Datang di <span className="text-peach-500">{activeProperty ? activeProperty.name : (settings.kosName || 'KosanKu')}</span>
+              Selamat Datang di <span className="text-peach-600">{activeProperty ? activeProperty.name : (settings.kosName || 'pawskost Living')}</span>
             </h1>
             <p className="text-softgray text-xs sm:text-sm md:text-base leading-relaxed">
               {activeProperty
@@ -208,21 +256,31 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* 3D Mimi Mascot Illustration */}
+          {/* Property Overview Card Widget */}
           <div className="relative group flex-shrink-0">
-            <div className="absolute -inset-2 bg-gradient-to-tr from-peach-300 to-sakura-300 rounded-3xl blur-md opacity-50 group-hover:opacity-75 transition duration-300" />
-            <div className="relative w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-3xl overflow-hidden ring-4 ring-white shadow-cute bg-white">
-              <Image
-                src="/mimi-mascot.jpg"
-                alt="Mimi si Kucing Kos - Maskot Resmi KosanKu"
-                width={176}
-                height={176}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                priority
-              />
-            </div>
-            <div className="absolute -bottom-2 -right-1 bg-white px-3 py-1 rounded-full text-xs font-bold text-peach-500 shadow-md border border-peach-100">
-              <span>Mimi</span>
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-peach-200/80 shadow-sm flex flex-col justify-between w-64 sm:w-72 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-2xl bg-peach-100 text-peach-600 flex items-center justify-center font-bold">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-matcha-100 text-matcha-700 border border-matcha-200">
+                  {activeProperty ? activeProperty.type : 'Multi-Cabang'}
+                </span>
+              </div>
+              <div>
+                <h4 className="font-heading font-extrabold text-sm text-darkcocoa truncate">
+                  {activeProperty ? activeProperty.name : (settings.kosName || 'pawskost Living')}
+                </h4>
+                <p className="text-[11px] text-softgray truncate mt-0.5">
+                  {activeProperty ? activeProperty.address : 'Konsolidasi seluruh unit kosan'}
+                </p>
+              </div>
+              <div className="pt-2 border-t border-cream-100 flex items-center justify-between text-xs">
+                <span className="text-softgray font-medium">Pengelola:</span>
+                <span className="font-bold text-darkcocoa truncate max-w-[140px]">
+                  {activeProperty?.managerName || currentUser?.name || 'Pak Hendra'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -577,87 +635,149 @@ export default function DashboardPage() {
         )}
       </motion.div>
 
-      {/* WA Modal Simulation */}
+      {/* Professional WA Reminder Modal */}
       {waModalOpen && selectedInvoice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkcocoa/50">
-          <div className="bg-white rounded-3xl shadow-cute border border-cream-200 p-6 max-w-md w-full space-y-4 font-body animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkcocoa/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl shadow-2xl border border-cream-200 p-6 max-w-lg w-full space-y-4 font-body animate-in fade-in zoom-in-95 duration-150 max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-cream-100 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="relative w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-peach-300 shadow-sm flex-shrink-0">
-                    <Image
-                      src="/mimi-mascot.jpg"
-                      alt="Mimi"
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-bold text-darkcocoa text-base leading-tight">
-                      Pengingat Manis Mimi
-                    </h3>
-                    <p className="text-[11px] text-softgray">Simulasi kirim pesan ramah via WhatsApp</p>
-                  </div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center flex-shrink-0 shadow-xs">
+                  <MessageCircle className="w-5 h-5" />
                 </div>
-                <button
-                  onClick={() => setWaModalOpen(false)}
-                  className="text-softgray hover:text-darkcocoa p-1 rounded-lg"
-                >
-                  <X className="w-5 h-5" strokeWidth={1.75} />
-                </button>
-              </div>
-
-              <div className="space-y-3 text-xs">
-                <div className="bg-cream-50 p-3 rounded-2xl border border-cream-100 space-y-1">
-                  <p className="text-softgray">Penerima Tagihan:</p>
-                  <p className="font-bold text-darkcocoa text-sm">
-                    {selectedInvoice.tenantName} ({selectedInvoice.roomNumber})
-                  </p>
-                  <p className="text-[11px] text-softgray">Periode: {selectedInvoice.periodMonth}</p>
-                </div>
-
                 <div>
-                  <label className="font-bold text-darkcocoa block mb-1">
-                    Pratinjau Pesan Santun Otomatis:
-                  </label>
-                  <div className="bg-white border border-cream-200 rounded-2xl p-3.5 text-xs text-darkcocoa leading-relaxed shadow-inner space-y-1.5">
-                    <p>
-                      Halo Kak <strong>{selectedInvoice.tenantName}</strong>! 👋 Salam manis dari KosanKu &amp; <strong>Mimi si Kucing Kos</strong> 🐱✨
-                    </p>
-                    <p>
-                      Sekadar info manis, tagihan sewa kamar <strong>{selectedInvoice.roomNumber}</strong> sebesar{' '}
-                      <span className="font-bold text-peach-600">{formatRupiah(selectedInvoice.amount)}</span> akan jatuh tempo pada{' '}
-                      <strong>{selectedInvoice.dueDate}</strong>.
-                    </p>
-                    <p className="text-softgray text-[11px] pt-1 border-t border-cream-100">
-                      💳 Pembayaran mudah via Transfer {settings.bankName}: <strong>{settings.accountNumber} (a.n {settings.accountHolder})</strong>.
-                      <br />
-                      Terima kasih sudah menjaga kenyamanan kost bersama Mimi! 🏡🌸
-                    </p>
-                  </div>
+                  <h3 className="font-heading font-extrabold text-darkcocoa text-base leading-tight">
+                    Kirim Pengingat Tagihan WhatsApp
+                  </h3>
+                  <p className="text-[11px] text-softgray">Pemberitahuan resmi dan santun untuk penyewa</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setWaModalOpen(false)}
+                className="text-softgray hover:text-darkcocoa p-1 rounded-lg transition-colors"
+                aria-label="Tutup modal"
+              >
+                <X className="w-5 h-5" strokeWidth={1.75} />
+              </button>
+            </div>
+
+            <div className="space-y-3.5 text-xs">
+              {/* Dropdown Selector: Pilih Tagihan / Penyewa */}
+              <div>
+                <label className="font-bold text-darkcocoa block mb-1">
+                  Pilih Penyewa / Tagihan:
+                </label>
+                <select
+                  value={selectedInvoice.id}
+                  onChange={(e) => handleInvoiceChange(e.target.value)}
+                  className="w-full bg-cream-50 border border-cream-200 rounded-xl px-3 py-2 text-xs font-semibold text-darkcocoa focus:outline-none focus:ring-2 focus:ring-peach-500 shadow-2xs"
+                >
+                  {candidateInvoices.map((inv) => {
+                    const invProp = properties.find((p) => p.id === inv.propertyId);
+                    return (
+                      <option key={inv.id} value={inv.id}>
+                        {inv.tenantName} — Kamar {inv.roomNumber} ({formatRupiah(inv.amount)}) • {invProp?.name || realKosName}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              {/* Info Ringkas Properti Riil & Penerima */}
+              <div className="bg-peach-50/70 p-3.5 rounded-2xl border border-peach-200/80 space-y-1.5 shadow-2xs">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-softgray font-medium">Properti Kos:</span>
+                  <span className="font-extrabold text-peach-600 flex items-center gap-1">
+                    <Building2 className="w-3.5 h-3.5" />
+                    {realKosName}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-softgray font-medium">Penyewa &amp; Unit:</span>
+                  <span className="font-bold text-darkcocoa">
+                    {selectedInvoice.tenantName} ({selectedInvoice.roomNumber})
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-softgray font-medium">Periode &amp; Jatuh Tempo:</span>
+                  <span className="font-medium text-darkcocoa">
+                    {selectedInvoice.periodMonth} • <span className="font-bold text-peach-600">{selectedInvoice.dueDate}</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-cream-100">
-                <button
-                  type="button"
-                  onClick={() => setWaModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-softgray hover:bg-cream-100 transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSendWa}
-                  className="bg-peach-500 hover:bg-peach-400 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-cute flex items-center gap-1.5 transition-all"
-                >
-                  <Send className="w-3.5 h-3.5" strokeWidth={1.75} />
-                  <span>Kirim Pesan via WA</span>
-                </button>
+              {/* Input Nomor WhatsApp Tujuan */}
+              <div>
+                <label className="font-bold text-darkcocoa block mb-1">
+                  Nomor WhatsApp Tujuan:
+                </label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    value={recipientPhone}
+                    onChange={(e) => setRecipientPhone(e.target.value)}
+                    placeholder="Contoh: 081234567890"
+                    className="w-full bg-cream-50 border border-cream-200 rounded-xl px-3.5 py-2 pl-9 text-xs font-semibold text-darkcocoa focus:outline-none focus:ring-2 focus:ring-peach-500 shadow-2xs"
+                  />
+                  <Phone className="w-4 h-4 text-softgray absolute left-3 top-2.5" />
+                </div>
+                <p className="text-[10px] text-softgray mt-1">
+                  Nomor otomatis sinkron dari database penyewa. Anda dapat menyesuaikannya bila nomor kontak berganti.
+                </p>
+              </div>
+
+              {/* Pratinjau Pesan WA Resmi */}
+              <div>
+                <label className="font-bold text-darkcocoa block mb-1">
+                  Pratinjau Pesan Santun Otomatis:
+                </label>
+                <div className="bg-white border border-cream-200 rounded-2xl p-3.5 text-xs text-darkcocoa leading-relaxed shadow-inner space-y-2 font-sans">
+                  <p>
+                    Halo Kak <strong>{selectedInvoice.tenantName}</strong>! 👋
+                  </p>
+                  <p>
+                    Pemberitahuan tagihan sewa kamar <strong>{selectedInvoice.roomNumber}</strong> di <strong>{realKosName}</strong>:
+                  </p>
+                  <div className="p-2.5 rounded-xl bg-cream-50 text-[11px] space-y-0.5 border border-cream-100">
+                    <p>• Properti: <strong>{realKosName}</strong></p>
+                    <p>• Kamar: <strong>{selectedInvoice.roomNumber}</strong></p>
+                    <p>• Periode: <strong>{selectedInvoice.periodMonth}</strong></p>
+                    <p>• Total Tagihan: <strong className="text-peach-600">{formatRupiah(selectedInvoice.amount)}</strong></p>
+                    <p>• Jatuh Tempo: <strong>{selectedInvoice.dueDate}</strong></p>
+                  </div>
+                  <div className="text-[11px] pt-1 border-t border-cream-100 text-softgray">
+                    💳 Pembayaran dapat ditransfer ke:
+                    <br />
+                    <strong>{bankName}</strong>: <strong>{accountNumber}</strong> (a.n <strong>{accountHolder}</strong>)
+                    <br />
+                    <span className="text-darkcocoa/80 italic mt-1 block">
+                      Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran telah dilakukan. Terima kasih atas kerja samanya dalam menjaga kenyamanan bersama di {realKosName}! 🙏
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-cream-100">
+              <button
+                type="button"
+                onClick={() => setWaModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-softgray hover:bg-cream-100 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSendWa}
+                className="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all"
+              >
+                <Send className="w-3.5 h-3.5" strokeWidth={1.75} />
+                <span>Buka WhatsApp &amp; Kirim</span>
+              </button>
+            </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

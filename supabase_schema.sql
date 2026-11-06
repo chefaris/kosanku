@@ -46,8 +46,39 @@ CREATE TABLE IF NOT EXISTS public.properties (
   facilities JSONB DEFAULT '[]'::jsonb,
   is_published BOOLEAN DEFAULT TRUE,
   google_maps_url TEXT,
+  electricity_type TEXT DEFAULT 'token',
+  deposit_amount NUMERIC DEFAULT 0,
+  parking_fee_car NUMERIC DEFAULT 0,
+  curfew_policy TEXT DEFAULT 'Akses 24 Jam Mandiri',
+  minimal_rent_months INTEGER DEFAULT 1,
+  bank_name TEXT,
+  account_number TEXT,
+  account_holder TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migrasi aman jika tabel sudah ada di Supabase
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS city TEXT DEFAULT 'Bandung';
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'Campur';
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS floors INTEGER DEFAULT 1;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS manager_name TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS manager_phone TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS cover_photo TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS photos JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS rules JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS facilities JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS google_maps_url TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS electricity_type TEXT DEFAULT 'token';
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS deposit_amount NUMERIC DEFAULT 0;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS parking_fee_car NUMERIC DEFAULT 0;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS parking_fee_motor NUMERIC DEFAULT 0;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS curfew_policy TEXT DEFAULT 'Akses 24 Jam Mandiri';
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS minimal_rent_months INTEGER DEFAULT 1;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS bank_name TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS account_number TEXT;
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS account_holder TEXT;
 
 -- 4. TABEL ROOMS (Kamar Kos)
 CREATE TABLE IF NOT EXISTS public.rooms (
@@ -64,6 +95,11 @@ CREATE TABLE IF NOT EXISTS public.rooms (
   catatan TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migrasi aman jika tabel rooms sudah ada di Supabase
+ALTER TABLE public.rooms ADD COLUMN IF NOT EXISTS id_meteran_pln TEXT;
+ALTER TABLE public.rooms ADD COLUMN IF NOT EXISTS catatan TEXT;
+ALTER TABLE public.rooms ADD COLUMN IF NOT EXISTS facilities JSONB DEFAULT '{}'::jsonb;
 
 -- 5. TABEL TENANTS (Penghuni Kos)
 CREATE TABLE IF NOT EXISTS public.tenants (
@@ -186,38 +222,63 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- RLS PROFILES
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own profile or SuperAdmin views all" ON public.profiles;
 CREATE POLICY "Users can view own profile or SuperAdmin views all"
   ON public.profiles FOR SELECT
   USING (auth.uid() = id OR public.is_superadmin());
 
+DROP POLICY IF EXISTS "Users can update own profile or SuperAdmin updates all" ON public.profiles;
 CREATE POLICY "Users can update own profile or SuperAdmin updates all"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id OR public.is_superadmin());
 
+DROP POLICY IF EXISTS "Allow insert during registration" ON public.profiles;
 CREATE POLICY "Allow insert during registration"
   ON public.profiles FOR INSERT
   WITH CHECK (auth.uid() = id OR public.is_superadmin());
 
+DROP POLICY IF EXISTS "Allow delete profile for SuperAdmin or User" ON public.profiles;
 CREATE POLICY "Allow delete profile for SuperAdmin or User"
   ON public.profiles FOR DELETE
   USING (true);
 
 -- RLS PROPERTIES
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns properties" ON public.properties;
 CREATE POLICY "Tenant owns properties"
   ON public.properties FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
   WITH CHECK (auth.uid() = user_id OR public.is_superadmin());
 
+DROP POLICY IF EXISTS "Public can view published properties" ON public.properties;
+CREATE POLICY "Public can view published properties"
+  ON public.properties FOR SELECT
+  USING (is_published = true);
+
 -- RLS ROOMS
 ALTER TABLE public.rooms ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns rooms" ON public.rooms;
 CREATE POLICY "Tenant owns rooms"
   ON public.rooms FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
   WITH CHECK (auth.uid() = user_id OR public.is_superadmin());
 
+DROP POLICY IF EXISTS "Public can view rooms of published properties" ON public.rooms;
+CREATE POLICY "Public can view rooms of published properties"
+  ON public.rooms FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.properties p
+      WHERE p.id = rooms.property_id AND p.is_published = true
+    )
+  );
+
 -- RLS TENANTS
 ALTER TABLE public.tenants ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns tenant list" ON public.tenants;
 CREATE POLICY "Tenant owns tenant list"
   ON public.tenants FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
@@ -225,6 +286,8 @@ CREATE POLICY "Tenant owns tenant list"
 
 -- RLS INVOICES
 ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns invoices" ON public.invoices;
 CREATE POLICY "Tenant owns invoices"
   ON public.invoices FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
@@ -232,6 +295,8 @@ CREATE POLICY "Tenant owns invoices"
 
 -- RLS EXPENSES
 ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns expenses" ON public.expenses;
 CREATE POLICY "Tenant owns expenses"
   ON public.expenses FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
@@ -239,6 +304,8 @@ CREATE POLICY "Tenant owns expenses"
 
 -- RLS MAINTENANCE TICKETS
 ALTER TABLE public.maintenance_tickets ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns maintenance tickets" ON public.maintenance_tickets;
 CREATE POLICY "Tenant owns maintenance tickets"
   ON public.maintenance_tickets FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
@@ -246,6 +313,8 @@ CREATE POLICY "Tenant owns maintenance tickets"
 
 -- RLS SETTINGS
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tenant owns settings" ON public.settings;
 CREATE POLICY "Tenant owns settings"
   ON public.settings FOR ALL
   USING (auth.uid() = user_id OR public.is_superadmin())
@@ -253,6 +322,8 @@ CREATE POLICY "Tenant owns settings"
 
 -- RLS STAFF USERS
 ALTER TABLE public.staff_users ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Owner owns staff users" ON public.staff_users;
 CREATE POLICY "Owner owns staff users"
   ON public.staff_users FOR ALL
   USING (auth.uid() = owner_id OR public.is_superadmin())
@@ -311,5 +382,30 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- =========================================================================
+-- 10. SUPABASE STORAGE BUCKET: 'kos-photos' (Penyimpanan Foto Cloud CDN)
+-- =========================================================================
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('kos-photos', 'kos-photos', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Policy agar siapapun (publik/calon penyewa) bisa melihat dan download foto kos
+DROP POLICY IF EXISTS "Public can view kos photos" ON storage.objects;
+CREATE POLICY "Public can view kos photos"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'kos-photos');
+
+-- Policy agar pengguna terautentikasi (juragan kos) bisa mengunggah foto
+DROP POLICY IF EXISTS "Authenticated users can upload kos photos" ON storage.objects;
+CREATE POLICY "Authenticated users can upload kos photos"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'kos-photos');
+
+-- Policy agar pemilik bisa mengupdate dan menghapus fotonya
+DROP POLICY IF EXISTS "Authenticated users can manage kos photos" ON storage.objects;
+CREATE POLICY "Authenticated users can manage kos photos"
+  ON storage.objects FOR ALL
+  USING (bucket_id = 'kos-photos');
 
 -- Selesai! Schema database & RLS berhasil disiapkan dengan standar keamanan SaaS.

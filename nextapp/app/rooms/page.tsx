@@ -26,7 +26,9 @@ import {
   Eye,
   Tag,
   IdCard,
-  Briefcase
+  Briefcase,
+  Globe,
+  ExternalLink
 } from 'lucide-react';
 import { useKosStore, Room, Tenant } from '../lib/store/useKosStore';
 import { MimiLoader } from '../components/ui/MimiLoader';
@@ -519,6 +521,20 @@ export default function RoomsPage() {
         {/* Quick Action Buttons */}
         {canManageRooms ? (
           <div className="flex items-center gap-2 flex-wrap">
+            {activeProperty && (
+              <a
+                href={`/katalog?kos=${encodeURIComponent(activeProperty.name)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="bg-peach-50 hover:bg-peach-100 text-peach-700 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-peach-200 transition-all flex items-center gap-1.5 shadow-2xs"
+                title="Buka live preview kos ini di katalog marketplace"
+              >
+                <Globe className="w-4 h-4 text-peach-600 flex-shrink-0" />
+                <span className="whitespace-nowrap">Lihat di Katalog</span>
+                <ExternalLink className="w-3 h-3 text-peach-600" />
+              </a>
+            )}
+
             <button
               onClick={handleAddFloor}
               className="flex-1 sm:flex-none justify-center bg-cream-100 hover:bg-cream-200 text-darkcocoa px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold border border-cream-200 transition-all flex items-center gap-1.5"

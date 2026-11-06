@@ -101,13 +101,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '', onOpenRegister
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-heading font-extrabold text-xl tracking-tight text-peach-500">
+                <span className="font-heading font-extrabold text-xl tracking-tight text-peach-600">
                   pawskost
                 </span>
-                <span className="text-xs">🐾</span>
               </div>
-              <p className="font-body text-[11px] text-softgray font-medium truncate">
-                Mimi si Kucing Kos
+              <p className="font-body text-[11px] text-darkcocoa/70 font-semibold truncate">
+                Software Manajemen Kos
               </p>
             </div>
           </Link>

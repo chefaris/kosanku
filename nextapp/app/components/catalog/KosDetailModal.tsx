@@ -24,9 +24,14 @@ import {
   Calendar,
   Building2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Zap,
+  Clock,
+  Coins,
+  ExternalLink,
+  Heart
 } from 'lucide-react';
-import { Property, Room } from '../../lib/store/useKosStore';
+import { Property, Room, useKosStore } from '../../lib/store/useKosStore';
 
 interface KosDetailModalProps {
   isOpen: boolean;
@@ -43,8 +48,15 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
 }) => {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showSurveyScheduler, setShowSurveyScheduler] = useState(false);
+  const [surveyDate, setSurveyDate] = useState('');
+  const [surveyTimeSlot, setSurveyTimeSlot] = useState('14:00 - 16:00 WIB (Sore)');
+
+  const { toggleWishlist, isWishlisted } = useKosStore();
 
   if (!isOpen || !property) return null;
+
+  const isFav = isWishlisted(property.id);
 
   const propRooms = rooms.filter((r) => r.propertyId === property.id);
   const vacantRooms = propRooms.filter((r) => r.status === 'vacant');
@@ -74,16 +86,23 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
     ? cleanPhone
     : '6281234567890';
 
-  const handleChatWhatsApp = () => {
-    const textMsg = encodeURIComponent(
-      `Halo Kak ${property.managerName || 'Pengelola'}! 🐾\nSaya melihat info kos "${property.name}" (${property.address}) di katalog pawskost.\n\nApakah saat ini masih ada kamar yang kosong? Bisa mohon informasi jadwal untuk survei lokasi dan persyaratannya? Terima kasih!`
-    );
+  const handleChatWhatsApp = (withSurvey = false) => {
+    let textMsg = '';
+    if (withSurvey && surveyDate) {
+      textMsg = encodeURIComponent(
+        `Halo Kak ${property.managerName || 'Pengelola'}!\nSaya melihat info kos "${property.name}" (${property.address}) di katalog pawskost.\n\nSaya tertarik dan ingin menjadwalkan SURVEI LOKASI pada:\n📅 Hari/Tanggal: ${surveyDate}\n⏰ Waktu: ${surveyTimeSlot}\n\nApakah jadwal tersebut diperbolehkan dan ada yang bertugas di lokasi? Terima kasih!`
+      );
+    } else {
+      textMsg = encodeURIComponent(
+        `Halo Kak ${property.managerName || 'Pengelola'}!\nSaya melihat info kos "${property.name}" (${property.address}) di katalog pawskost.\n\nApakah saat ini masih ada kamar yang kosong? Bisa mohon informasi jadwal untuk survei lokasi dan persyaratannya? Terima kasih!`
+      );
+    }
     window.open(`https://wa.me/${waTarget}?text=${textMsg}`, '_blank');
   };
 
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
-      const shareUrl = `${window.location.origin}/katalog?kos=${encodeURIComponent(property.name)}`;
+      const shareUrl = `${window.location.origin}/katalog/${property.id}`;
       navigator.clipboard.writeText(shareUrl);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2500);
@@ -93,13 +112,13 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
   const getGenderBadge = (type: Property['type']) => {
     switch (type) {
       case 'Putri':
-        return { label: 'Khusus Putri 🌸', bg: 'bg-sakura-100 text-sakura-600 border-sakura-200' };
+        return { label: 'Khusus Putri', bg: 'bg-rose-50 text-rose-700 border-rose-200' };
       case 'Putra':
-        return { label: 'Khusus Putra 🌿', bg: 'bg-matcha-100 text-matcha-700 border-matcha-200' };
+        return { label: 'Khusus Putra', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
       case 'Pasutri':
-        return { label: 'Pasutri 💍', bg: 'bg-lavender-100 text-lavender-600 border-lavender-200' };
+        return { label: 'Pasutri', bg: 'bg-purple-50 text-purple-700 border-purple-200' };
       default:
-        return { label: 'Campur ⚡', bg: 'bg-peach-100 text-peach-600 border-peach-200' };
+        return { label: 'Campur', bg: 'bg-amber-50 text-amber-800 border-amber-200' };
     }
   };
 
@@ -138,6 +157,20 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 type="button"
+                onClick={() => property && toggleWishlist(property.id)}
+                className={`p-2 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold border ${
+                  isFav
+                    ? 'bg-rose-50 border-rose-300 text-rose-600'
+                    : 'text-softgray hover:text-darkcocoa hover:bg-cream-100 border-cream-200'
+                }`}
+                title={isFav ? 'Hapus dari Favorit' : 'Simpan ke Favorit'}
+              >
+                <Heart className={`w-4 h-4 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+                <span className="hidden sm:inline">{isFav ? 'Tersimpan' : 'Favorit'}</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={handleCopyLink}
                 className="p-2 rounded-xl text-softgray hover:text-darkcocoa hover:bg-cream-100 border border-cream-200 transition-colors flex items-center gap-1.5 text-xs font-bold"
                 title="Salin Tautan Kos"
@@ -145,6 +178,17 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
                 {copiedLink ? <Check className="w-4 h-4 text-matcha-500" /> : <Share2 className="w-4 h-4" />}
                 <span className="hidden sm:inline">{copiedLink ? 'Tersalin!' : 'Bagikan'}</span>
               </button>
+
+              <a
+                href={`/katalog/${property.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-xl text-softgray hover:text-primary hover:bg-cream-100 border border-cream-200 transition-colors flex items-center gap-1.5 text-xs font-bold"
+                title="Buka Halaman Publik (SEO)"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span className="hidden md:inline">Halaman Penuh</span>
+              </a>
               <button
                 type="button"
                 onClick={onClose}
@@ -251,6 +295,181 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
                     : `${formatRupiah(minPrice)} - ${formatRupiah(maxPrice)}`}
                   <span className="text-xs text-softgray font-normal"> /bln</span>
                 </p>
+              </div>
+            </div>
+
+            {/* 2B. GOOGLE MAPS & TRANSPARANSI BIAYA KOST */}
+            <div className="space-y-3 pb-2">
+              {/* Google Maps Route Button */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <a
+                  href={
+                    property.googleMapsUrl ||
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${property.name} ${property.address} ${property.city || ''}`)}`
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-peach-50 hover:bg-peach-100 text-peach-700 border border-peach-200 text-xs font-extrabold transition-all shadow-2xs hover:scale-[1.02]"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-peach-600" />
+                  <span>Buka di Google Maps &amp; Navigasi Rute</span>
+                  <ExternalLink className="w-3 h-3 text-peach-600" />
+                </a>
+
+                <span className="text-[11px] text-softgray font-medium">
+                  {property.city ? `Area ${property.city}` : 'Lokasi Terdaftar'}
+                </span>
+              </div>
+
+              {/* Transparansi Biaya & Kebijakan Grid */}
+              <div className="p-4 rounded-2xl bg-cream-50/80 border border-cream-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-heading font-extrabold text-xs text-darkcocoa uppercase tracking-wider flex items-center gap-1.5">
+                    <Coins className="w-4 h-4 text-peach-600" />
+                    <span>Transparansi Biaya &amp; Kebijakan Sewa</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-softgray">
+                    Informasi Lengkap
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  {/* 1. Listrik */}
+                  <div className="p-2.5 rounded-xl bg-white border border-cream-200 space-y-1">
+                    <span className="text-[10px] text-softgray font-semibold flex items-center gap-1">
+                      <Zap className="w-3 h-3 text-amber-500" /> Listrik
+                    </span>
+                    <p className="font-bold text-darkcocoa text-[11px] leading-tight">
+                      {property.electricityType === 'included'
+                        ? 'Termasuk Sewa'
+                        : property.electricityType === 'meter_monthly'
+                        ? 'Meteran Bulanan'
+                        : 'Token Mandiri (PLN)'}
+                    </p>
+                  </div>
+
+                  {/* 2. Uang Jaminan / Deposit */}
+                  <div className="p-2.5 rounded-xl bg-white border border-cream-200 space-y-1">
+                    <span className="text-[10px] text-softgray font-semibold flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-emerald-600" /> Uang Jaminan
+                    </span>
+                    <p className="font-bold text-darkcocoa text-[11px] leading-tight">
+                      {property.depositAmount && property.depositAmount > 0
+                        ? `${formatRupiah(property.depositAmount)} (Refundable)`
+                        : 'Bebas Deposit'}
+                    </p>
+                  </div>
+
+                  {/* 3. Parkir Mobil */}
+                  <div className="p-2.5 rounded-xl bg-white border border-cream-200 space-y-1">
+                    <span className="text-[10px] text-softgray font-semibold flex items-center gap-1">
+                      <Car className="w-3 h-3 text-peach-600" /> Parkir Mobil
+                    </span>
+                    <p className="font-bold text-darkcocoa text-[11px] leading-tight">
+                      {property.parkingFeeCar && property.parkingFeeCar > 0
+                        ? `${formatRupiah(property.parkingFeeCar)}/bln`
+                        : 'Gratis Parkir Mobil'}
+                    </p>
+                  </div>
+
+                  {/* 4. Akses / Jam Gerbang */}
+                  <div className="p-2.5 rounded-xl bg-white border border-cream-200 space-y-1">
+                    <span className="text-[10px] text-softgray font-semibold flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-peach-600" /> Akses Gerbang
+                    </span>
+                    <p
+                      className="font-bold text-darkcocoa text-[11px] leading-tight line-clamp-1"
+                      title={property.curfewPolicy || 'Akses 24 Jam Mandiri'}
+                    >
+                      {property.curfewPolicy || 'Akses 24 Jam Mandiri'}
+                    </p>
+                  </div>
+                </div>
+
+                {property.minimalRentMonths && property.minimalRentMonths > 1 && (
+                  <p className="text-[11px] text-darkcocoa/80 font-medium pt-1 border-t border-cream-200">
+                    📌 <strong>Catatan:</strong> Properti ini memberlakukan minimal masa sewa <strong>{property.minimalRentMonths} bulan</strong>.
+                  </p>
+                )}
+              </div>
+
+              {/* 2C. SURVEY SCHEDULER SECTION */}
+              <div className="p-4 rounded-2xl bg-peach-50/60 border border-peach-200/80 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-xl bg-peach-600 text-white flex items-center justify-center">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-heading font-extrabold text-xs sm:text-sm text-darkcocoa">
+                        Mau Cek Langsung? Jadwalkan Survei Lokasi
+                      </h4>
+                      <p className="text-[11px] text-softgray">
+                        Pilih tanggal &amp; jam untuk berkunjung dan melihat kamar secara langsung
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowSurveyScheduler(!showSurveyScheduler)}
+                    className="px-3 py-1.5 rounded-xl bg-white border border-peach-300 text-peach-700 text-xs font-bold hover:bg-peach-100 transition-colors flex-shrink-0"
+                  >
+                    {showSurveyScheduler ? 'Tutup Form' : 'Atur Jadwal'}
+                  </button>
+                </div>
+
+                {showSurveyScheduler && (
+                  <div className="pt-2 border-t border-peach-200/60 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in fade-in duration-150">
+                    <div>
+                      <label className="block text-[11px] font-bold text-darkcocoa uppercase tracking-wider mb-1">
+                        Pilih Tanggal Survei:
+                      </label>
+                      <input
+                        type="date"
+                        value={surveyDate}
+                        onChange={(e) => setSurveyDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-peach-300 text-xs font-bold text-darkcocoa focus:outline-none focus:ring-1 focus:ring-peach-600"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-darkcocoa uppercase tracking-wider mb-1">
+                        Perkiraan Jam Kunjungan:
+                      </label>
+                      <select
+                        value={surveyTimeSlot}
+                        onChange={(e) => setSurveyTimeSlot(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-peach-300 text-xs font-bold text-darkcocoa focus:outline-none focus:ring-1 focus:ring-peach-600"
+                      >
+                        <option value="09:00 - 12:00 WIB (Pagi)">09:00 - 12:00 WIB (Pagi)</option>
+                        <option value="13:00 - 15:00 WIB (Siang)">13:00 - 15:00 WIB (Siang)</option>
+                        <option value="15:00 - 17:00 WIB (Sore)">15:00 - 17:00 WIB (Sore)</option>
+                        <option value="19:00 - 20:30 WIB (Malam)">19:00 - 20:30 WIB (Malam)</option>
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleChatWhatsApp(true)}
+                        disabled={!surveyDate}
+                        className={`w-full py-2.5 rounded-xl font-heading font-bold text-xs flex items-center justify-center gap-2 transition-all ${
+                          surveyDate
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                            : 'bg-cream-200 text-softgray cursor-not-allowed'
+                        }`}
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        <span>
+                          {surveyDate
+                            ? `Kirim Permintaan Jadwal Survei (${surveyDate}) ke WhatsApp Pemilik`
+                            : 'Pilih Tanggal Terlebih Dahulu'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -416,8 +635,8 @@ export const KosDetailModal: React.FC<KosDetailModalProps> = ({
 
               <button
                 type="button"
-                onClick={handleChatWhatsApp}
-                className="flex-2 sm:flex-none justify-center px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-heading font-bold text-xs sm:text-sm shadow-cute flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
+                onClick={() => handleChatWhatsApp(false)}
+                className="flex-2 sm:flex-none justify-center px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-heading font-extrabold text-xs sm:text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Chat Pemilik via WhatsApp</span>

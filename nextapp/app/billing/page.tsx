@@ -287,21 +287,26 @@ export default function BillingPage() {
       };
       setSelectedInvoiceForView(paidInvoice);
     }
-    showToast(`Tagihan sewa ${tenantName} LUNAS! Stempel kaki kucing resmi diterbitkan 🐾✨`);
+    showToast(`Tagihan sewa ${tenantName} LUNAS! Kuitansi resmi berhasil diterbitkan.`);
   };
 
   // Send WhatsApp notification
   const handleSendWa = (inv: Invoice) => {
     const tenant = tenants.find((t) => t.id === inv.tenantId || t.name === inv.tenantName);
     const phone = tenant ? tenant.phone.replace(/[^0-9]/g, '').replace(/^0/, '62') : '';
+    const prop = properties.find((p) => p.id === inv.propertyId);
+    const kosNameReal = prop ? prop.name : (settings.kosName || 'KosanKu');
+    const bankName = prop?.bankName || settings.bankName || 'BCA';
+    const accountNumber = prop?.accountNumber || settings.accountNumber || '-';
+    const accountHolder = prop?.accountHolder || settings.accountHolder || prop?.managerName || 'Pengelola Kos';
 
     const isPaid = inv.status === 'paid';
     const waText = isPaid
       ? encodeURIComponent(
-          `Halo Kak ${inv.tenantName}! 👋\n\nTerima kasih banyak! Pembayaran sewa kamar *${inv.roomNumber}* periode *${inv.periodMonth}* sebesar *${formatRupiah(inv.amount)}* telah *LUNAS TERVERIFIKASI* dengan Stempel Resmi pawskost 🐾✨\n\nNomor Kuitansi: ${inv.invoiceNumber}\nTanggal: ${inv.paidAt || 'Hari Ini'}\n\nSalam hangat dari Mimi si Kucing Kos & Pengelola ${settings.kosName}! 🏡🌸`
+          `Halo Kak ${inv.tenantName}! 👋\n\nTerima kasih banyak! Pembayaran sewa kamar *${inv.roomNumber}* (${kosNameReal}) periode *${inv.periodMonth}* sebesar *${formatRupiah(inv.amount)}* telah *LUNAS TERVERIFIKASI*.\n\nNomor Kuitansi: ${inv.invoiceNumber}\nTanggal: ${inv.paidAt || 'Hari Ini'}\n\nSalam hangat,\nPengelola ${kosNameReal}`
         )
       : encodeURIComponent(
-          `Halo Kak ${inv.tenantName}! 👋 Salam manis dari pawskost & Mimi si Kucing Kos 🐱✨\n\nSekadar info manis, tagihan sewa kamar *${inv.roomNumber}* sebesar *${formatRupiah(inv.amount)}* untuk periode *${inv.periodMonth}* akan jatuh tempo pada *${inv.dueDate}*.\n\nPembayaran via Transfer ${settings.bankName}: *${settings.accountNumber}* (a.n *${settings.accountHolder}*).\n\nTerima kasih banyak sudah menjaga kenyamanan kost bersama Mimi! 🏡🌸`
+          `Halo Kak ${inv.tenantName}! 👋\n\nPemberitahuan tagihan sewa kamar *${inv.roomNumber}* di *${kosNameReal}*:\n\n📌 *Rincian Tagihan:*\n• Properti: *${kosNameReal}*\n• Kamar: *${inv.roomNumber}*\n• Periode: *${inv.periodMonth}*\n• Total Tagihan: *${formatRupiah(inv.amount)}*\n• Jatuh Tempo: *${inv.dueDate}*\n\n💳 *Rekening Pembayaran:*\nBank: ${bankName}\nNo. Rekening: *${accountNumber}*\nAtas Nama: *${accountHolder}*\n\nMohon konfirmasi dengan bukti transfer jika pembayaran telah dilakukan. Terima kasih banyak atas kerja samanya dalam menjaga kenyamanan di ${kosNameReal}! 🙏`
         );
 
     if (phone) {
